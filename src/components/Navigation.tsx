@@ -72,7 +72,10 @@ export default function Navigation({
               className="h-5 w-5"
             >
               <span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 bg-white" />
-              <span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 bg-white" style={{ rotate: open ? 90 : 0, transformOrigin: "center" }} />
+              <span
+                className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 bg-white"
+                style={{ rotate: open ? "90deg" : "0deg", transformOrigin: "center" }}
+              />
             </motion.div>
           </button>
         </div>
