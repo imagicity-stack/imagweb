@@ -11,8 +11,23 @@ interface Props {
   siteUrl: string;
 }
 
+const getCreatedAtValue = (value: BlogPost["createdAt"]) => {
+  if (typeof value === "object" && value !== null && "seconds" in value) {
+    const seconds = (value as { seconds?: number })?.seconds;
+    return seconds ? seconds * 1000 : 0;
+  }
+
+  if (typeof value === "string") {
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? 0 : time;
+  }
+
+  return 0;
+};
+
 const BlogIndex = ({ posts, siteUrl }: Props) => {
-  const [featured, ...rest] = posts;
+  const sortedPosts = [...(posts ?? [])].sort((a, b) => getCreatedAtValue(b.createdAt) - getCreatedAtValue(a.createdAt));
+  const [featured, ...rest] = sortedPosts;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -74,8 +89,8 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
                 </Link>
                 <p className="text-slate-300">{featured.intro}</p>
                 <div className="flex flex-wrap gap-2 text-xs text-cyan-100">
-                  <span className="rounded-full bg-slate-800 px-3 py-1">{featured.category}</span>
-                  {featured.tags.map((tag) => (
+                  {featured.category && <span className="rounded-full bg-slate-800 px-3 py-1">{featured.category}</span>}
+                  {featured.tags?.map((tag) => (
                     <span key={tag} className="rounded-full bg-slate-800 px-3 py-1 uppercase">
                       #{tag}
                     </span>
@@ -94,8 +109,8 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
             <h2 className="text-3xl font-semibold text-white">Browse every drop</h2>
             <p className="text-slate-300">Stories, engineering notes, and marketing breakdowns from the agency.</p>
           </div>
-          {posts.length ? (
-            <BlogList posts={rest.length ? rest : featured ? [featured] : []} />
+          {sortedPosts.length ? (
+            <BlogList posts={rest} />
           ) : (
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-slate-300">
               No articles yet. Publish from the admin dashboard to see them here.
@@ -108,7 +123,7 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const posts = await fetchPublishedPosts();
+  const posts = (await fetchPublishedPosts()) || [];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   return {
