@@ -41,7 +41,7 @@ export default function Cursor() {
 
   return (
     <motion.div
-      className="custom-cursor fixed top-0 left-0 z-50 h-8 w-8 rounded-full border border-cyan-200/50 bg-cyan-300/30"
+      className="custom-cursor pointer-events-none fixed top-0 left-0 z-50 h-8 w-8 rounded-full border border-cyan-200/50 bg-cyan-300/30"
       style={{ translateX: cursorX, translateY: cursorY }}
       animate={{ scale: active ? 1.6 : 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 200, damping: 18 }}

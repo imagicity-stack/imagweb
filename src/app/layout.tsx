@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import ClientRoot from "@/components/ClientRoot";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-space",
-  weight: ["400", "500", "600", "700"]
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"]
 });
 
-const siteName = "Imaginary Works";
-const siteUrl = "https://imagweb.example";
+const siteName = "Imagicity";
+const siteUrl = "https://imagicity.example";
 
 export const metadata: Metadata = {
   title: `${siteName} | Bold Creative Marketing Agency`,
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@imaginaryworks",
-    creator: "@imaginaryworks",
+    site: "@imagicity",
+    creator: "@imagicity",
     title: `${siteName} | Creative Marketing`,
     description:
       "Premium creative marketing studio building futuristic brands with motion, design, and technology."
@@ -66,15 +66,15 @@ export default function RootLayout({
     description:
       "Creative marketing agency blending GTM strategy, design systems, campaign planning, and cinematic web experiences.",
     sameAs: [
-      "https://www.linkedin.com/company/imaginary-works",
-      "https://www.behance.net/imaginaryworks"
+      "https://www.linkedin.com/company/imagicity",
+      "https://www.behance.net/imagicity"
     ],
     logo: `${siteUrl}/logo.svg`
   };
 
   return (
     <html lang="en" className="bg-black">
-      <body className={`${spaceGrotesk.variable} antialiased`}> 
+      <body className={`${plusJakartaSans.variable} antialiased`}>
         <ClientRoot>{children}</ClientRoot>
         <script
           type="application/ld+json"
