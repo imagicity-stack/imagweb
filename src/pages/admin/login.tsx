@@ -16,6 +16,9 @@ const AdminLogin = () => {
     setLoading(true);
     setError("");
     try {
+      if (!auth) {
+        throw new Error("Firebase is not configured for authentication.");
+      }
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin/dashboard");
     } catch (err: unknown) {

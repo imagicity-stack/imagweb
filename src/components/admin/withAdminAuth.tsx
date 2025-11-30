@@ -9,6 +9,12 @@ const withAdminAuth = <P extends object>(WrappedComponent: React.ComponentType<P
     const [checking, setChecking] = useState(true);
 
     useEffect(() => {
+      if (!auth) {
+        router.replace("/admin/login");
+        setChecking(false);
+        return () => {};
+      }
+
       const unsub = onAuthStateChanged(auth, (user) => {
         if (!user) {
           router.replace("/admin/login");

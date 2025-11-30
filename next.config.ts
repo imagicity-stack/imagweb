@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         pathname: "**"
       }
     ]
+  },
+  experimental: {
+    // Allow Turbopack to use system TLS certs so font downloads succeed in CI
+    turbopackUseSystemTlsCerts: true
   }
 };
 

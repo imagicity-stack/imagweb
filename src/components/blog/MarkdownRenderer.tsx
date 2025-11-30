@@ -15,41 +15,42 @@ const slugifyHeading = (text: string) =>
 
 const MarkdownRenderer = ({ content }: Props) => {
   return (
-    <ReactMarkdown
-      className="prose prose-invert max-w-none prose-img:rounded-xl prose-headings:text-white prose-p:text-slate-200"
-      remarkPlugins={[remarkGfm]}
-      components={{
-        h1: ({ children, ...props }) => {
-          const text = String(children);
-          const id = slugifyHeading(text);
-          return (
-            <h1 id={id} {...props}>
-              {children}
-            </h1>
-          );
-        },
-        h2: ({ children, ...props }) => {
-          const text = String(children);
-          const id = slugifyHeading(text);
-          return (
-            <h2 id={id} {...props}>
-              {children}
-            </h2>
-          );
-        },
-        h3: ({ children, ...props }) => {
-          const text = String(children);
-          const id = slugifyHeading(text);
-          return (
-            <h3 id={id} {...props}>
-              {children}
-            </h3>
-          );
-        }
-      }}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className="prose prose-invert max-w-none prose-img:rounded-xl prose-headings:text-white prose-p:text-slate-200">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h1: ({ children, ...props }) => {
+            const text = String(children);
+            const id = slugifyHeading(text);
+            return (
+              <h1 id={id} {...props}>
+                {children}
+              </h1>
+            );
+          },
+          h2: ({ children, ...props }) => {
+            const text = String(children);
+            const id = slugifyHeading(text);
+            return (
+              <h2 id={id} {...props}>
+                {children}
+              </h2>
+            );
+          },
+          h3: ({ children, ...props }) => {
+            const text = String(children);
+            const id = slugifyHeading(text);
+            return (
+              <h3 id={id} {...props}>
+                {children}
+              </h3>
+            );
+          }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 };
 

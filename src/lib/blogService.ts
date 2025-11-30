@@ -38,7 +38,7 @@ export type BlogPostInput = Omit<BlogPost, "id" | "createdAt" | "updatedAt" | "s
   slug?: string;
 };
 
-const postsRef = collection(db, "posts");
+const getPostsRef = () => (db ? collection(db, "posts") : null);
 
 const parseDate = (value: unknown) => {
   if (!value) return new Date().toISOString();
@@ -89,33 +89,43 @@ export const serializePost = (docSnap: DocumentSnapshot<DocumentData>): BlogPost
 };
 
 export const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
-  const q = query(postsRef, where("isPublished", "==", true), orderBy("createdAt", "desc"));
+  const ref = getPostsRef();
+  if (!ref) return [];
+  const q = query(ref, where("isPublished", "==", true), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(serializePost);
 };
 
 export const fetchAllPosts = async (): Promise<BlogPost[]> => {
-  const q = query(postsRef, orderBy("updatedAt", "desc"));
+  const ref = getPostsRef();
+  if (!ref) return [];
+  const q = query(ref, orderBy("updatedAt", "desc"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(serializePost);
 };
 
 export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-  const q = query(postsRef, where("slug", "==", slug), limit(1));
+  const ref = getPostsRef();
+  if (!ref) return null;
+  const q = query(ref, where("slug", "==", slug), limit(1));
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   return serializePost(snapshot.docs[0]);
 };
 
 export const fetchPostById = async (id: string): Promise<BlogPost | null> => {
-  const snapshot = await getDoc(doc(postsRef, id));
+  const ref = getPostsRef();
+  if (!ref) return null;
+  const snapshot = await getDoc(doc(ref, id));
   if (!snapshot.exists()) return null;
   return serializePost(snapshot);
 };
 
 export const fetchRelatedPosts = async (category: string, currentSlug: string): Promise<BlogPost[]> => {
+  const ref = getPostsRef();
+  if (!ref) return [];
   const q = query(
-    postsRef,
+    ref,
     where("category", "==", category),
     where("isPublished", "==", true),
     orderBy("createdAt", "desc"),
@@ -129,12 +139,19 @@ export const fetchRelatedPosts = async (category: string, currentSlug: string): 
 };
 
 export const uploadFeaturedImage = async (file: File, slug: string): Promise<string> => {
+  if (!storage) {
+    throw new Error("Firebase Storage is not configured.");
+  }
   const storageRef = ref(storage, `featured/${slug}-${Date.now()}`);
   const snapshot = await uploadBytes(storageRef, file);
   return getDownloadURL(snapshot.ref);
 };
 
 export const createBlogPost = async (data: BlogPostInput) => {
+  const ref = getPostsRef();
+  if (!ref) {
+    throw new Error("Firebase is not configured; cannot create blog posts.");
+  }
   const slug = data.slug && data.slug.length > 0 ? data.slug : createSlug(data.title);
   const payload = {
     ...data,
@@ -144,11 +161,15 @@ export const createBlogPost = async (data: BlogPostInput) => {
     updatedAt: serverTimestamp()
   };
 
-  const docRef = await addDoc(postsRef, payload);
+  const docRef = await addDoc(ref, payload);
   return fetchPostById(docRef.id);
 };
 
 export const updateBlogPost = async (id: string, data: BlogPostInput) => {
+  const ref = getPostsRef();
+  if (!ref) {
+    throw new Error("Firebase is not configured; cannot update blog posts.");
+  }
   const slug = data.slug && data.slug.length > 0 ? data.slug : createSlug(data.title);
   const payload = {
     ...data,
@@ -156,8 +177,14 @@ export const updateBlogPost = async (id: string, data: BlogPostInput) => {
     tags: normalizeTags(data.tags || []),
     updatedAt: serverTimestamp()
   };
-  await updateDoc(doc(postsRef, id), payload);
+  await updateDoc(doc(ref, id), payload);
   return fetchPostById(id);
 };
 
-export const deleteBlogPost = async (id: string) => deleteDoc(doc(postsRef, id));
+export const deleteBlogPost = async (id: string) => {
+  const ref = getPostsRef();
+  if (!ref) {
+    throw new Error("Firebase is not configured; cannot delete blog posts.");
+  }
+  return deleteDoc(doc(ref, id));
+};

@@ -22,6 +22,9 @@ export default function ContactSection() {
     setLoading(true);
     setMessage(null);
     try {
+      if (!db) {
+        throw new Error("Firebase is not configured.");
+      }
       await addDoc(collection(db, "contacts"), payload);
       setMessage("Request received. We'll respond within one business day.");
       event.currentTarget.reset();

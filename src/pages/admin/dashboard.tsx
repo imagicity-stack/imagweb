@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { signOut } from "firebase/auth";
 import withAdminAuth from "@/components/admin/withAdminAuth";
 import AdminBlogForm from "@/components/blog/AdminBlogForm";
@@ -14,6 +15,7 @@ import {
 import { auth } from "@/lib/firebase";
 
 const Dashboard = () => {
+  const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [active, setActive] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,7 @@ const Dashboard = () => {
           <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
         </div>
         <button
-          onClick={() => signOut(auth)}
+          onClick={() => (auth ? signOut(auth) : router.replace("/admin/login"))}
           className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-cyan-400"
         >
           Sign out
