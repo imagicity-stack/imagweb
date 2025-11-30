@@ -38,7 +38,7 @@ export type BlogPostInput = Omit<BlogPost, "id" | "createdAt" | "updatedAt" | "s
   slug?: string;
 };
 
-const getPostsRef = () => (db ? collection(db, "posts") : null);
+const getPostsRef = () => (db ? collection(db, "blogs") : null);
 
 const parseDate = (value: unknown) => {
   if (!value) return new Date().toISOString();
@@ -96,7 +96,7 @@ export const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(serializePost);
   } catch (error) {
-    console.error("Failed to fetch published posts", error);
+    console.error("Failed to fetch blog posts:", error);
     return [];
   }
 };
@@ -105,11 +105,11 @@ export const fetchAllPosts = async (): Promise<BlogPost[]> => {
   try {
     const ref = getPostsRef();
     if (!ref) return [];
-    const q = query(ref, orderBy("updatedAt", "desc"));
+    const q = query(ref, orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(serializePost);
   } catch (error) {
-    console.error("Failed to fetch all posts", error);
+    console.error("Failed to fetch all blog posts:", error);
     return [];
   }
 };
@@ -123,7 +123,7 @@ export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> =>
     if (snapshot.empty) return null;
     return serializePost(snapshot.docs[0]);
   } catch (error) {
-    console.error(`Failed to fetch post for slug: ${slug}`, error);
+    console.error(`Failed to fetch blog post for slug: ${slug}:`, error);
     return null;
   }
 };
@@ -136,7 +136,7 @@ export const fetchPostById = async (id: string): Promise<BlogPost | null> => {
     if (!snapshot.exists()) return null;
     return serializePost(snapshot);
   } catch (error) {
-    console.error(`Failed to fetch post by id: ${id}`, error);
+    console.error(`Failed to fetch blog post by id: ${id}:`, error);
     return null;
   }
 };
@@ -158,7 +158,7 @@ export const fetchRelatedPosts = async (category: string, currentSlug: string): 
       .filter((post) => post.slug !== currentSlug)
       .slice(0, 3);
   } catch (error) {
-    console.error(`Failed to fetch related posts for category: ${category}`, error);
+    console.error(`Failed to fetch related blog posts for category: ${category}:`, error);
     return [];
   }
 };
@@ -184,18 +184,24 @@ export const createBlogPost = async (data: BlogPostInput) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot create blog posts.");
   }
-  const slug = createSlug(data.title);
-  const payload = {
-    ...data,
-    slug,
-    tags: normalizeTags(data.tags || []),
-    featuredImageUrl: data.featuredImageUrl || "",
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  };
 
-  const docRef = await addDoc(ref, payload);
-  return fetchPostById(docRef.id);
+  try {
+    const slug = createSlug(data.title);
+    const payload = {
+      ...data,
+      slug,
+      tags: normalizeTags(data.tags || []),
+      featuredImageUrl: data.featuredImageUrl || "",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+
+    const docRef = await addDoc(ref, payload);
+    return fetchPostById(docRef.id);
+  } catch (error) {
+    console.error("Failed to create blog post:", error);
+    throw error;
+  }
 };
 
 export const updateBlogPost = async (id: string, data: BlogPostInput) => {
@@ -203,16 +209,22 @@ export const updateBlogPost = async (id: string, data: BlogPostInput) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot update blog posts.");
   }
-  const slug = createSlug(data.title);
-  const payload = {
-    ...data,
-    slug,
-    tags: normalizeTags(data.tags || []),
-    featuredImageUrl: data.featuredImageUrl || "",
-    updatedAt: serverTimestamp()
-  };
-  await updateDoc(doc(ref, id), payload);
-  return fetchPostById(id);
+
+  try {
+    const slug = createSlug(data.title);
+    const payload = {
+      ...data,
+      slug,
+      tags: normalizeTags(data.tags || []),
+      featuredImageUrl: data.featuredImageUrl || "",
+      updatedAt: serverTimestamp()
+    };
+    await updateDoc(doc(ref, id), payload);
+    return fetchPostById(id);
+  } catch (error) {
+    console.error(`Failed to update blog post with id ${id}:`, error);
+    throw error;
+  }
 };
 
 export const deleteBlogPost = async (id: string) => {
@@ -220,5 +232,10 @@ export const deleteBlogPost = async (id: string) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot delete blog posts.");
   }
-  return deleteDoc(doc(ref, id));
+  try {
+    return await deleteDoc(doc(ref, id));
+  } catch (error) {
+    console.error(`Failed to delete blog post with id ${id}:`, error);
+    throw error;
+  }
 };

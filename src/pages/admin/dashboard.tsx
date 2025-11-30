@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import withAdminAuth from "@/components/admin/withAdminAuth";
 import AdminBlogForm from "@/components/blog/AdminBlogForm";
 import type { BlogPost, BlogPostInput } from "@/lib/blogService";
@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [active, setActive] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   const loadPosts = useCallback(async () => {
     setLoading(true);
@@ -28,9 +29,20 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void loadPosts();
-  }, [loadPosts]);
+    if (!auth) {
+      void router.replace("/admin/login");
+      return () => {};
+    }
+
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setAuthReady(true);
+      if (user) {
+        void loadPosts();
+      }
+    });
+
+    return () => unsub();
+  }, [loadPosts, router]);
 
   const handleSubmit = async (data: BlogPostInput) => {
     if (active?.id) {
@@ -75,7 +87,7 @@ const Dashboard = () => {
         <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Existing Posts</h2>
-            {loading && <span className="text-xs text-cyan-300">Loading...</span>}
+            {authReady && loading && <span className="text-xs text-cyan-300">Loading...</span>}
           </div>
           <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
             {posts.map((post) => (
