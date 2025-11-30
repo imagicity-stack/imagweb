@@ -23,37 +23,40 @@ export default function MenuOverlay({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
+  useEffect(() => {
     const container = overlayRef.current;
     if (!container) return;
+    const ctx = gsap.context(() => {
+      const items = container.querySelectorAll("[data-link]");
+      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    gsap.set(container, { xPercent: 100 });
-    const items = container.querySelectorAll("[data-link]");
+      if (open) {
+        timeline
+          .set(container, { xPercent: 100, scale: 0.96, rotate: -3 })
+          .to(container, { xPercent: 0, scale: 1, rotate: 0, duration: 0.9, ease: "power4.out" })
+          .fromTo(
+            items,
+            { x: 40, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.8, stagger: 0.08, delay: 0.1 },
+            "<"
+          );
+      } else {
+        timeline.to(container, { xPercent: 110, scale: 0.94, rotate: 3, duration: 0.75, ease: "power4.inOut" });
+      }
+    }, container);
 
-    if (open) {
-      gsap.to(container, {
-        xPercent: 0,
-        duration: 0.9,
-        ease: "power4.out"
-      });
-      gsap.fromTo(
-        items,
-        { x: 40, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.08,
-          delay: 0.2
-        }
-      );
-    } else {
-      gsap.to(container, {
-        xPercent: 100,
-        duration: 0.9,
-        ease: "power4.inOut"
-      });
-    }
+    return () => ctx.revert();
   }, [open]);
 
   return (
@@ -61,13 +64,23 @@ export default function MenuOverlay({
       {open && (
         <motion.div
           ref={overlayRef}
-          className="fixed inset-0 z-20 flex bg-black/90 text-white"
+          className="fixed inset-0 z-20 flex overflow-hidden bg-black/90 text-white"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="flex-1 bg-gradient-to-r from-cyan-500/10 via-transparent to-transparent" />
-          <div className="flex flex-1 flex-col justify-center gap-6 px-10">
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 opacity-70"
+            animate={{ backgroundPosition: ["0% 0%", "120% 60%", "0% 0%"], rotate: [0, 2, -2, 0] }}
+            transition={{ duration: 14, ease: "easeInOut", repeat: Infinity }}
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 30%, rgba(29,229,255,0.18), transparent 30%), radial-gradient(circle at 80% 70%, rgba(124,58,237,0.22), transparent 32%)"
+            }}
+          />
+          <div className="flex-1 bg-gradient-to-r from-cyan-500/10 via-transparent to-transparent backdrop-blur-[2px]" />
+          <div className="relative flex flex-1 flex-col justify-center gap-6 px-10">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Navigate</p>
             <div className="space-y-4 text-4xl font-semibold sm:text-5xl">
               {links.map((link) => (

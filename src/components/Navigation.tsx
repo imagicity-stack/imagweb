@@ -40,12 +40,17 @@ export default function Navigation({
       >
         <div className="glass gradient-border flex items-center justify-between rounded-full px-5 py-3">
           <Link href="#home" className="flex items-center gap-3" aria-label="Go to home">
-            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/70 to-white/10 text-lg font-semibold">
-              IW
+            <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400/70 via-white/10 to-indigo-400/60 text-lg font-semibold uppercase tracking-[0.18em]">
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-br from-cyan-300/25 via-transparent to-white/10"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 12, ease: "linear", repeat: Infinity }}
+              />
+              <span className="relative">IM</span>
             </span>
             <div className="hidden sm:block">
-              <p className="text-sm uppercase tracking-[0.2em] text-cyan-100/80">Imaginary Works</p>
-              <p className="text-xs text-white/50">Creative Marketing Agency</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-cyan-100/80">Imagicity</p>
+              <p className="text-xs text-white/50">Cinematic Creative Agency</p>
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm uppercase tracking-[0.16em] text-white/70">
@@ -60,24 +65,60 @@ export default function Navigation({
               </Link>
             ))}
           </div>
-          <button
+          <motion.button
+            type="button"
             data-magnetic
             onClick={onToggle}
-            className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-white shadow-[0_10px_45px_rgba(0,0,0,0.4)] transition-all hover:bg-white/10"
+            aria-expanded={open}
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            className="group relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white/5 text-white shadow-[0_10px_45px_rgba(0,0,0,0.4)] transition-all hover:bg-white/10"
           >
+            <motion.span
+              className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(29,229,255,0.16),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(120,119,198,0.22),transparent_45%)]"
+              animate={{ rotate: [0, 6, 0, -4, 0], scale: [1, 1.03, 1.01, 1.04, 1] }}
+              transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
+            />
             <motion.div
-              animate={{ rotate: open ? 45 : 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="h-5 w-5"
+              initial="closed"
+              animate={open ? "open" : "closed"}
+              variants={{
+                closed: { rotate: 0 },
+                open: { rotate: 0 }
+              }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="relative flex h-6 w-6 items-center justify-center"
             >
-              <span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 bg-white" />
-              <span
-                className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -translate-y-1/2 bg-white"
-                style={{ rotate: open ? "90deg" : "0deg", transformOrigin: "center" }}
-              />
+              {["top", "middle", "bottom"].map((position, index) => (
+                <motion.span
+                  key={position}
+                  className="absolute left-1/2 block h-[2px] origin-center rounded-full bg-white"
+                  style={{ width: position === "middle" ? "1.4rem" : "1.25rem" }}
+                  variants={{
+                    closed: {
+                      rotate: 0,
+                      y: position === "top" ? -6 : position === "bottom" ? 6 : 0,
+                      x: 0,
+                      opacity: 1
+                    },
+                    open: {
+                      rotate: index === 0 ? 42 : index === 2 ? -42 : 0,
+                      y: 0,
+                      x: index === 1 ? -4 : 0,
+                      opacity: index === 1 ? 0 : 1
+                    }
+                  }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+              ))}
             </motion.div>
-          </button>
+            <motion.span
+              className="absolute inset-0 rounded-full border border-white/10"
+              animate={{ opacity: [0.25, 0.6, 0.25] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.button>
         </div>
       </div>
       <MenuOverlay open={open} onClose={onClose} />
