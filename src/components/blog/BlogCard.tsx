@@ -1,5 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { BlogPost } from "@/lib/blogService";
 
 interface Props {
@@ -10,13 +10,14 @@ const BlogCard = ({ post }: Props) => {
   return (
     <article className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
       {post.featuredImageUrl && (
-        <div className="h-56 overflow-hidden relative">
+        <div className="relative h-56 overflow-hidden">
           <Image
             src={post.featuredImageUrl}
             alt={post.title}
             fill
             className="object-cover transition duration-500 hover:scale-105"
-            sizes="(min-width: 1280px) 400px, (min-width: 768px) 320px, 100vw"
+            sizes="(min-width: 1280px) 380px, (min-width: 768px) 320px, 100vw"
+            priority={false}
           />
         </div>
       )}
