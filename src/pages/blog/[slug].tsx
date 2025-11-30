@@ -1,11 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import TableOfContents from "@/components/blog/TableOfContents";
 import MarkdownRenderer from "@/components/blog/MarkdownRenderer";
 import RelatedPosts from "@/components/blog/RelatedPosts";
 import type { BlogPost } from "@/lib/blogService";
-import { fetchPostBySlug, fetchPublishedPosts, fetchRelatedPosts } from "@/lib/blogService";
+import { fetchPostBySlug, fetchRelatedPosts } from "@/lib/blogService";
 
 interface Props {
   post: BlogPost;
@@ -88,15 +88,7 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await fetchPublishedPosts();
-  return {
-    paths: posts.map((post) => ({ params: { slug: post.slug } })),
-    fallback: "blocking"
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug as string;
   const post = await fetchPostBySlug(slug);
   if (!post) {
@@ -110,8 +102,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       post,
       related,
       siteUrl
-    },
-    revalidate: 120
+    }
   };
 };
 
