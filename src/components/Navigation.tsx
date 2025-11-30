@@ -6,7 +6,14 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import MenuOverlay from "./MenuOverlay";
 
-const navLinks = ["Home", "About", "Services", "Work", "Contact"];
+const navLinks = [
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Work", href: "#work" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "#contact" }
+];
 
 export default function Navigation({
   open,
@@ -56,11 +63,11 @@ export default function Navigation({
           <div className="hidden md:flex items-center gap-6 text-sm uppercase tracking-[0.16em] text-white/70">
             {navLinks.map((link) => (
               <Link
-                key={link}
-                href={`#${link.toLowerCase()}`}
+                key={link.label}
+                href={link.href}
                 className="group relative transition-colors duration-300 hover:text-white"
               >
-                {link}
+                {link.label}
                 <span className="absolute left-0 -bottom-1 h-px w-full scale-x-0 bg-cyan-300 transition-transform duration-300 ease-out group-hover:scale-x-100" />
               </Link>
             ))}
