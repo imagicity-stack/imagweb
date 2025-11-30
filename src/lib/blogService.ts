@@ -89,53 +89,78 @@ export const serializePost = (docSnap: DocumentSnapshot<DocumentData>): BlogPost
 };
 
 export const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
-  const ref = getPostsRef();
-  if (!ref) return [];
-  const q = query(ref, where("isPublished", "==", true), orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(serializePost);
+  try {
+    const ref = getPostsRef();
+    if (!ref) return [];
+    const q = query(ref, where("isPublished", "==", true), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(serializePost);
+  } catch (error) {
+    console.error("Failed to fetch published posts", error);
+    return [];
+  }
 };
 
 export const fetchAllPosts = async (): Promise<BlogPost[]> => {
-  const ref = getPostsRef();
-  if (!ref) return [];
-  const q = query(ref, orderBy("updatedAt", "desc"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(serializePost);
+  try {
+    const ref = getPostsRef();
+    if (!ref) return [];
+    const q = query(ref, orderBy("updatedAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(serializePost);
+  } catch (error) {
+    console.error("Failed to fetch all posts", error);
+    return [];
+  }
 };
 
 export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-  const ref = getPostsRef();
-  if (!ref) return null;
-  const q = query(ref, where("slug", "==", slug), limit(1));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-  return serializePost(snapshot.docs[0]);
+  try {
+    const ref = getPostsRef();
+    if (!ref) return null;
+    const q = query(ref, where("slug", "==", slug), limit(1));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    return serializePost(snapshot.docs[0]);
+  } catch (error) {
+    console.error(`Failed to fetch post for slug: ${slug}`, error);
+    return null;
+  }
 };
 
 export const fetchPostById = async (id: string): Promise<BlogPost | null> => {
-  const ref = getPostsRef();
-  if (!ref) return null;
-  const snapshot = await getDoc(doc(ref, id));
-  if (!snapshot.exists()) return null;
-  return serializePost(snapshot);
+  try {
+    const ref = getPostsRef();
+    if (!ref) return null;
+    const snapshot = await getDoc(doc(ref, id));
+    if (!snapshot.exists()) return null;
+    return serializePost(snapshot);
+  } catch (error) {
+    console.error(`Failed to fetch post by id: ${id}`, error);
+    return null;
+  }
 };
 
 export const fetchRelatedPosts = async (category: string, currentSlug: string): Promise<BlogPost[]> => {
-  const ref = getPostsRef();
-  if (!ref) return [];
-  const q = query(
-    ref,
-    where("category", "==", category),
-    where("isPublished", "==", true),
-    orderBy("createdAt", "desc"),
-    limit(3)
-  );
-  const snapshot = await getDocs(q);
-  return snapshot.docs
-    .map(serializePost)
-    .filter((post) => post.slug !== currentSlug)
-    .slice(0, 3);
+  try {
+    const ref = getPostsRef();
+    if (!ref) return [];
+    const q = query(
+      ref,
+      where("category", "==", category),
+      where("isPublished", "==", true),
+      orderBy("createdAt", "desc"),
+      limit(3)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map(serializePost)
+      .filter((post) => post.slug !== currentSlug)
+      .slice(0, 3);
+  } catch (error) {
+    console.error(`Failed to fetch related posts for category: ${category}`, error);
+    return [];
+  }
 };
 
 export const uploadFeaturedImage = async (file: File, slug: string): Promise<string> => {
