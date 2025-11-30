@@ -118,7 +118,7 @@ export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> =>
   try {
     const ref = getPostsRef();
     if (!ref) return null;
-    const q = query(ref, where("slug", "==", slug), limit(1));
+    const q = query(ref, where("slug", "==", slug), where("isPublished", "==", true), limit(1));
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
     return serializePost(snapshot.docs[0]);
@@ -168,11 +168,15 @@ export async function uploadBlogImage(file: File, slug: string) {
     throw new Error("Firebase Storage is not configured.");
   }
 
-  const imageRef = ref(storage, `blog-images/${slug}-${Date.now()}`);
-
-  await uploadBytes(imageRef, file);
-  const url = await getDownloadURL(imageRef);
-  return url;
+  try {
+    const imageRef = ref(storage, `blog-images/${slug}-${Date.now()}`);
+    await uploadBytes(imageRef, file);
+    const url = await getDownloadURL(imageRef);
+    return url;
+  } catch (error) {
+    console.error("Failed to upload blog image", error);
+    throw new Error("Unable to upload image. Please try again.");
+  }
 }
 
 export const createBlogPost = async (data: BlogPostInput) => {
@@ -180,11 +184,12 @@ export const createBlogPost = async (data: BlogPostInput) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot create blog posts.");
   }
-  const slug = data.slug && data.slug.length > 0 ? data.slug : createSlug(data.title);
+  const slug = createSlug(data.title);
   const payload = {
     ...data,
     slug,
     tags: normalizeTags(data.tags || []),
+    featuredImageUrl: data.featuredImageUrl || "",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   };
@@ -198,11 +203,12 @@ export const updateBlogPost = async (id: string, data: BlogPostInput) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot update blog posts.");
   }
-  const slug = data.slug && data.slug.length > 0 ? data.slug : createSlug(data.title);
+  const slug = createSlug(data.title);
   const payload = {
     ...data,
     slug,
     tags: normalizeTags(data.tags || []),
+    featuredImageUrl: data.featuredImageUrl || "",
     updatedAt: serverTimestamp()
   };
   await updateDoc(doc(ref, id), payload);

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { BlogPost, BlogPostInput } from "@/lib/blogService";
 import { createSlug, uploadBlogImage } from "@/lib/blogService";
@@ -24,6 +25,7 @@ const defaultState: BlogPostInput = {
 const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
   const [form, setForm] = useState<BlogPostInput>(defaultState);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,9 +45,16 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
 
   const handleImageUpload = async (file: File) => {
     setUploading(true);
+    setUploadError(null);
     try {
       const url = await uploadBlogImage(file, form.title ? createSlug(form.title) : "image");
       setForm((prev) => ({ ...prev, featuredImageUrl: url }));
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error(error);
+      setUploadError(error instanceof Error ? error.message : "Unable to upload image");
     } finally {
       setUploading(false);
     }
@@ -56,7 +65,8 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    await onSubmit({ ...form, slug: form.slug || slug });
+    const computedSlug = form.title ? createSlug(form.title) : form.slug || slug;
+    await onSubmit({ ...form, slug: computedSlug });
     if (!activePost) {
       setForm(defaultState);
     }
@@ -146,10 +156,9 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
             type="file"
             accept="image/*"
             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-            className="text-sm text-slate-200"
+            className="w-full text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-cyan-500 file:px-3 file:py-2 file:text-black file:font-semibold"
             disabled={uploading}
             ref={fileInputRef}
-            style={{ display: "none" }}
           />
           <button
             type="button"
@@ -157,9 +166,21 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
             disabled={uploading}
             className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm text-white transition hover:border hover:border-cyan-300"
           >
-            {uploading ? "Uploading..." : "Upload featured image"}
+            {uploading ? "Uploading..." : form.featuredImageUrl ? "Replace Image" : "Upload featured image"}
           </button>
           {uploading && <p className="text-xs text-cyan-300">Uploading image...</p>}
+          {uploadError && <p className="text-xs text-rose-400">{uploadError}</p>}
+          {form.featuredImageUrl && (
+            <div className="relative mt-2 h-40 w-full overflow-hidden rounded-xl border border-slate-700">
+              <Image
+                src={form.featuredImageUrl}
+                alt={form.title || "Uploaded blog image"}
+                fill
+                className="object-cover"
+                sizes="(min-width: 1024px) 420px, 100vw"
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <input

@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import Head from "next/head";
 import { GetStaticProps } from "next";
 import Link from "next/link";
@@ -56,14 +56,16 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
           {featured && (
             <article className="glass gradient-border relative w-full max-w-xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/60 shadow-2xl">
               {featured.featuredImageUrl && (
-                <img
-                  src={featured.featuredImageUrl}
-                  alt={featured.title}
-                  className="w-full rounded"
-                  loading="lazy"
-                  width={960}
-                  height={540}
-                />
+                <div className="relative aspect-[16/9] w-full">
+                  <Image
+                    src={featured.featuredImageUrl}
+                    alt={featured.title}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 540px, 100vw"
+                    priority
+                  />
+                </div>
               )}
               <div className="space-y-3 p-6">
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-200">Featured</p>
