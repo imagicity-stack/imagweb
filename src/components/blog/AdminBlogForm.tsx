@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { BlogPost, BlogPostInput } from "@/lib/blogService";
-import { createSlug, uploadFeaturedImage } from "@/lib/blogService";
+import { createSlug, uploadBlogImage } from "@/lib/blogService";
 
 interface Props {
   onSubmit: (data: BlogPostInput, id?: string) => Promise<void>;
@@ -25,6 +25,7 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
   const [form, setForm] = useState<BlogPostInput>(defaultState);
   const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (activePost) {
@@ -43,12 +44,14 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
   const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
-      const url = await uploadFeaturedImage(file, form.title ? createSlug(form.title) : "image");
+      const url = await uploadBlogImage(file, form.title ? createSlug(form.title) : "image");
       setForm((prev) => ({ ...prev, featuredImageUrl: url }));
     } finally {
       setUploading(false);
     }
   };
+
+  const openFilePicker = () => fileInputRef.current?.click();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +148,17 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
             className="text-sm text-slate-200"
             disabled={uploading}
+            ref={fileInputRef}
+            style={{ display: "none" }}
           />
+          <button
+            type="button"
+            onClick={openFilePicker}
+            disabled={uploading}
+            className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm text-white transition hover:border hover:border-cyan-300"
+          >
+            {uploading ? "Uploading..." : "Upload featured image"}
+          </button>
           {uploading && <p className="text-xs text-cyan-300">Uploading image...</p>}
         </div>
         <div className="flex items-center gap-3">

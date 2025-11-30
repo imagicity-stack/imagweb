@@ -10,8 +10,7 @@ const withAdminAuth = <P extends object>(WrappedComponent: React.ComponentType<P
 
     useEffect(() => {
       if (!auth) {
-        router.replace("/admin/login");
-        setChecking(false);
+        void router.replace("/admin/login").finally(() => setChecking(false));
         return () => {};
       }
 

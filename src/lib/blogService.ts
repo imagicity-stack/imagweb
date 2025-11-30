@@ -163,14 +163,17 @@ export const fetchRelatedPosts = async (category: string, currentSlug: string): 
   }
 };
 
-export const uploadFeaturedImage = async (file: File, slug: string): Promise<string> => {
+export async function uploadBlogImage(file: File, slug: string) {
   if (!storage) {
     throw new Error("Firebase Storage is not configured.");
   }
-  const storageRef = ref(storage, `featured/${slug}-${Date.now()}`);
-  const snapshot = await uploadBytes(storageRef, file);
-  return getDownloadURL(snapshot.ref);
-};
+
+  const imageRef = ref(storage, `blog-images/${slug}-${Date.now()}`);
+
+  await uploadBytes(imageRef, file);
+  const url = await getDownloadURL(imageRef);
+  return url;
+}
 
 export const createBlogPost = async (data: BlogPostInput) => {
   const ref = getPostsRef();

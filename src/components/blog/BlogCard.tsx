@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import Image from "next/image";
 import { BlogPost } from "@/lib/blogService";
 
 interface Props {
@@ -11,12 +11,13 @@ const BlogCard = ({ post }: Props) => {
     <article className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
       {post.featuredImageUrl && (
         <div className="h-56 overflow-hidden relative">
-          <Image
+          <img
             src={post.featuredImageUrl}
             alt={post.title}
-            fill
-            className="object-cover transition duration-500 hover:scale-105"
-            sizes="(min-width: 1280px) 400px, (min-width: 768px) 320px, 100vw"
+            className="h-full w-full object-cover transition duration-500 hover:scale-105"
+            loading="lazy"
+            width={640}
+            height={360}
           />
         </div>
       )}
