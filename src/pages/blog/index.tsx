@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Head from "next/head";
-import { GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import BlogList from "@/components/blog/BlogList";
 import type { BlogPost } from "@/lib/blogService";
@@ -107,7 +107,7 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const posts = await fetchPublishedPosts();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -115,8 +115,7 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       posts,
       siteUrl
-    },
-    revalidate: 60
+    }
   };
 };
 
