@@ -98,37 +98,57 @@ export default function Hero() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-white/5" />
             <div className="relative space-y-4">
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Futurist control room</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Cinematic ops board</p>
               <div className="space-y-3">
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
-                  <span className="text-sm text-white/70">Experience tempo</span>
-                  <span className="text-lg font-semibold text-cyan-200">+48%</span>
+                  <span className="text-sm text-white/70">Launch pods</span>
+                  <span className="text-lg font-semibold text-cyan-200">3 in motion</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
-                  <span className="text-sm text-white/70">Launch readiness</span>
-                  <span className="text-lg font-semibold text-cyan-200">Under 6 weeks</span>
+                  <span className="text-sm text-white/70">Response time</span>
+                  <span className="text-lg font-semibold text-cyan-200">Under 2h</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
-                  <span className="text-sm text-white/70">Motion fidelity</span>
-                  <span className="text-lg font-semibold text-cyan-200">GSAP + Framer</span>
+                  <span className="text-sm text-white/70">Production velocity</span>
+                  <span className="text-lg font-semibold text-cyan-200">Sprint 06</span>
                 </div>
               </div>
-              <div className="relative mt-6 rounded-2xl bg-gradient-to-br from-cyan-400/30 via-white/10 to-transparent p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/60">Neon waves</p>
-                <div className="mt-3 h-24 overflow-hidden rounded-xl bg-black/60">
-                  <div className="absolute inset-0 opacity-60 blur-3xl" />
-                  <svg className="h-full w-full text-cyan-300/60" viewBox="0 0 400 120" preserveAspectRatio="none">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[{ label: "Narrative arcs", value: 82 }, { label: "Interactive polish", value: 68 }].map(({ label, value }) => (
+                  <div key={label} className="glass gradient-border space-y-2 rounded-2xl p-4">
+                    <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
+                      <span>{label}</span>
+                      <span className="text-cyan-200">{value}%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className="h-full bg-gradient-to-r from-cyan-300 via-white/60 to-cyan-500"
+                        style={{ width: `${value}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="relative mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400/30 via-white/10 to-transparent p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/60">Aurora stream</p>
+                <div className="mt-4 h-24 overflow-hidden rounded-xl bg-black/60">
+                  <motion.div
+                    className="absolute inset-0 scale-110 bg-[radial-gradient(circle_at_30%_40%,rgba(29,229,255,0.2),transparent_30%),radial-gradient(circle_at_70%_60%,rgba(124,58,237,0.25),transparent_36%)]"
+                    animate={{ x: ["-10%", "6%", "-8%"], y: ["-6%", "4%", "-6%"], rotate: [0, 4, -3, 0] }}
+                    transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
+                  />
+                  <svg className="relative h-full w-full text-cyan-200/70" viewBox="0 0 400 120" preserveAspectRatio="none">
                     <path
-                      d="M0 60 Q100 10 200 60 T400 60"
+                      d="M0 60 Q80 20 160 60 T320 60 T400 60"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                     >
                       <animate
                         attributeName="d"
-                        dur="6s"
+                        dur="5.4s"
                         repeatCount="indefinite"
-                        values="M0 60 Q100 20 200 60 T400 60; M0 60 Q100 80 200 60 T400 60; M0 60 Q100 20 200 60 T400 60"
+                        values="M0 60 Q80 18 160 60 T320 60 T400 60; M0 60 Q80 90 160 60 T320 60 T400 60; M0 60 Q80 18 160 60 T320 60 T400 60"
                       />
                     </path>
                   </svg>

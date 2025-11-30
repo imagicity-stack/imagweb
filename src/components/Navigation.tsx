@@ -50,7 +50,7 @@ export default function Navigation({
             </span>
             <div className="hidden sm:block">
               <p className="text-sm uppercase tracking-[0.2em] text-cyan-100/80">Imagicity</p>
-              <p className="text-xs text-white/50">Cinematic Creative Agency</p>
+              <p className="text-xs text-white/50">Cinematic Agency</p>
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm uppercase tracking-[0.16em] text-white/70">
