@@ -58,7 +58,7 @@ export default function Hero() {
       />
       <div className="glass gradient-border relative mb-10 inline-flex items-center gap-3 rounded-full px-4 py-2" data-hero-kicker>
         <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(29,229,255,0.8)]" />
-        <span className="text-xs uppercase tracking-[0.3em] text-white/70">Strategy • Creativity • Velocity</span>
+        <span className="text-xs uppercase tracking-[0.3em] text-white/70">Brand strategy • Campaigns • Growth</span>
       </div>
       <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:items-center">
         <div className="space-y-8">
@@ -66,10 +66,11 @@ export default function Hero() {
             data-hero-title
             className="text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl"
           >
-            Premium, fully animated marketing experiences built with strategy-grade clarity.
+            Creative marketing teams that ship conversion-ready brand experiences.
           </h1>
           <p className="max-w-2xl text-lg text-white/70">
-            We combine GTM architecture, bold visual systems, and cinematic web development into one seamless delivery stream.
+            We pair GTM architecture with bold creative, building integrated campaigns, content engines, and high-speed digital
+            experiences that move the funnel.
           </p>
           <div className="flex flex-wrap items-center gap-4" data-hero-cta>
             <MagneticButton>Start a project</MagneticButton>
@@ -81,7 +82,7 @@ export default function Hero() {
             </div>
           </div>
           <div className="marquee gap-6 text-white/50">
-            {["Product launches", "Design systems", "Campaign OS", "Motion-first web"].map((item) => (
+            {["Product launches", "Integrated campaigns", "Content systems", "Conversion-focused web"].map((item) => (
               <div key={item} className="flex items-center gap-3 uppercase tracking-[0.3em]">
                 <span className="h-[1px] w-10 bg-white/20" />
                 {item}
@@ -98,23 +99,23 @@ export default function Hero() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-white/5" />
             <div className="relative space-y-4">
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Cinematic ops board</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Marketing ops dashboard</p>
               <div className="space-y-3">
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
-                  <span className="text-sm text-white/70">Launch pods</span>
-                  <span className="text-lg font-semibold text-cyan-200">3 in motion</span>
+                  <span className="text-sm text-white/70">Campaign pods</span>
+                  <span className="text-lg font-semibold text-cyan-200">3 in market</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
                   <span className="text-sm text-white/70">Response time</span>
                   <span className="text-lg font-semibold text-cyan-200">Under 2h</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
-                  <span className="text-sm text-white/70">Production velocity</span>
+                  <span className="text-sm text-white/70">Launch velocity</span>
                   <span className="text-lg font-semibold text-cyan-200">Sprint 06</span>
                 </div>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                {[{ label: "Narrative arcs", value: 82 }, { label: "Interactive polish", value: 68 }].map(({ label, value }) => (
+                {[{ label: "Pipeline-ready leads", value: 82 }, { label: "Engagement lift", value: 68 }].map(({ label, value }) => (
                   <div key={label} className="glass gradient-border space-y-2 rounded-2xl p-4">
                     <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
                       <span>{label}</span>
