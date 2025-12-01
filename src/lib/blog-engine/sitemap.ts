@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import { Post } from "./models";
 
 const getSiteUrl = () => process.env.NEXT_PUBLIC_SITE_URL || "https://imagweb.example";
@@ -18,7 +16,14 @@ export const buildSitemapXml = (posts: Post[]) => {
 };
 
 export const writeSitemap = async (xml: string) => {
+  if (typeof window !== "undefined") return null;
+
+  const [{ writeFile }, path] = await Promise.all([
+    import("fs/promises"),
+    import("path")
+  ]);
+
   const sitemapPath = path.join(process.cwd(), "public", "sitemap.xml");
-  await fs.writeFile(sitemapPath, xml, "utf8");
+  await writeFile(sitemapPath, xml, "utf8");
   return sitemapPath;
 };
