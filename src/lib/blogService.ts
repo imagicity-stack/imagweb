@@ -1,4 +1,3 @@
-import slugify from "slugify";
 import {
   addDoc,
   collection,
@@ -14,31 +13,23 @@ import {
   where
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "./firebase";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
-
-export interface BlogPost {
-  id?: string;
-  title: string;
-  slug: string;
-  metaTitle: string;
-  metaDescription: string;
-  featuredImageUrl: string;
-  category: string;
-  tags: string[];
-  intro: string;
-  content: string;
-  author: string;
-  createdAt?: string;
-  updatedAt?: string;
-  isPublished: boolean;
-}
-
-export type BlogPostInput = Omit<BlogPost, "id" | "createdAt" | "updatedAt" | "slug"> & {
+import { clientDb, clientStorage, isClientFirebaseConfigured } from "@/lib/firebase/client";
+import type { BlogPost } from "@/types/blog";
+export type { BlogPost } from "@/types/blog";
+export type BlogPostInput = Partial<BlogPost> & {
+  metaTitle?: string;
+  metaDescription?: string;
+  featuredImageUrl?: string;
+  intro?: string;
+  content?: string;
+  author?: string;
+  isPublished?: boolean;
   slug?: string;
 };
+import { createSlug, ensureLazyImages, generateTableOfContents, getReadingTime, getWordCount, sanitizeContentHtml } from "@/lib/cms/utils";
 
-const getPostsRef = () => (db ? collection(db, "blogs") : null);
+const getPostsRef = () => (clientDb ? collection(clientDb, "blogs") : null);
 
 const parseDate = (value: unknown) => {
   if (!value) return new Date().toISOString();
@@ -54,37 +45,68 @@ const parseDate = (value: unknown) => {
   return new Date().toISOString();
 };
 
-const normalizeTags = (tags: string[] | string): string[] => {
-  if (Array.isArray(tags)) return tags.map((t) => t.trim()).filter(Boolean);
-  return tags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-};
+type SnapshotLike = Pick<Partial<BlogPost>, keyof Partial<BlogPost>> & { id?: string };
 
-export const createSlug = (title: string) =>
-  slugify(title, {
-    lower: true,
-    strict: true
-  });
-
-export const serializePost = (docSnap: DocumentSnapshot<DocumentData>): BlogPost => {
-  const data = docSnap.data() || {};
+const normalizePost = (docSnap: DocumentSnapshot<DocumentData> | SnapshotLike): BlogPost => {
+  const data =
+    "data" in docSnap && typeof docSnap.data === "function"
+      ? ((docSnap.data() as Partial<BlogPost>) || {})
+      : (docSnap as Partial<BlogPost>);
+  const legacyData = data as {
+    metaTitle?: string;
+    metaDescription?: string;
+    focusKeyword?: string;
+    secondaryKeywords?: string[];
+    canonicalUrl?: string;
+    openGraphTitle?: string;
+    openGraphDescription?: string;
+    openGraphImage?: string;
+    twitterTitle?: string;
+    twitterDescription?: string;
+    twitterImage?: string;
+  };
+  const rawContent = (data as Partial<BlogPost> & { content?: string }).contentHtml || (data as { content?: string }).content || "";
+  const contentHtml = ensureLazyImages(sanitizeContentHtml(rawContent));
+  const wordCount = getWordCount(contentHtml);
   return {
     id: docSnap.id,
     title: data.title || "",
-    slug: data.slug || createSlug(data.title || docSnap.id),
-    metaTitle: data.metaTitle || data.title || "",
-    metaDescription: data.metaDescription || data.intro || "",
-    featuredImageUrl: data.featuredImageUrl || "",
+    slug: data.slug || createSlug(data.title || docSnap.id || ""),
+    featuredImage: data.featuredImage || data.featuredImageUrl || "",
+    featuredImageAlt:
+      data.featuredImageAlt || (data as { featuredImageAltText?: string }).featuredImageAltText || "",
     category: data.category || "General",
-    tags: normalizeTags(data.tags || []),
-    intro: data.intro || "",
-    content: data.content || "",
-    author: data.author || "",
+    tags: data.tags || [],
+    excerpt: data.excerpt || data.intro || "",
+    authorId: data.authorId || (data as { author?: string }).author || "",
+    status: data.status || ((data as { isPublished?: boolean }).isPublished ? "published" : "draft"),
+    publishDate: parseDate(data.publishDate || data.createdAt),
+    contentHtml,
+    tableOfContents: data.tableOfContents || generateTableOfContents(contentHtml),
+    readingTime: data.readingTime || getReadingTime(wordCount),
+    wordCount: data.wordCount || wordCount,
+    seo: data.seo || {
+      seoTitle: legacyData.metaTitle || data.title || "",
+      metaDescription: legacyData.metaDescription || data.excerpt || "",
+      focusKeyword: legacyData.focusKeyword || "",
+      secondaryKeywords: legacyData.secondaryKeywords || [],
+      canonicalUrl: legacyData.canonicalUrl || "",
+      openGraphTitle: legacyData.openGraphTitle || data.title || "",
+      openGraphDescription: legacyData.openGraphDescription || data.excerpt || "",
+      openGraphImage: legacyData.openGraphImage || data.featuredImage || "",
+      twitterTitle: legacyData.twitterTitle || data.title || "",
+      twitterDescription: legacyData.twitterDescription || data.excerpt || "",
+      twitterImage: legacyData.twitterImage || data.featuredImage || ""
+    },
+    schemaType: data.schemaType || "BlogPosting",
+    internalLinks: data.internalLinks || [],
+    openGraphImage: data.openGraphImage || data.featuredImage || "",
+    twitterImage: data.twitterImage || data.featuredImage || "",
+    cta: data.cta || { ctaEnabled: false, ctaLink: "", ctaText: "" },
     createdAt: parseDate(data.createdAt),
     updatedAt: parseDate(data.updatedAt),
-    isPublished: Boolean(data.isPublished)
+    featuredImageUrl: data.featuredImage || data.featuredImageUrl,
+    intro: data.excerpt || data.intro
   };
 };
 
@@ -92,9 +114,9 @@ export const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
   try {
     const ref = getPostsRef();
     if (!ref) return [];
-    const q = query(ref, where("isPublished", "==", true), orderBy("createdAt", "desc"));
+    const q = query(ref, where("status", "==", "published"), orderBy("publishDate", "desc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(serializePost);
+    return snapshot.docs.map(normalizePost);
   } catch (error) {
     console.error("Failed to fetch blog posts:", error);
     return [];
@@ -107,7 +129,7 @@ export const fetchAllPosts = async (): Promise<BlogPost[]> => {
     if (!ref) return [];
     const q = query(ref, orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(serializePost);
+    return snapshot.docs.map(normalizePost);
   } catch (error) {
     console.error("Failed to fetch all blog posts:", error);
     return [];
@@ -118,10 +140,10 @@ export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> =>
   try {
     const ref = getPostsRef();
     if (!ref) return null;
-    const q = query(ref, where("slug", "==", slug), where("isPublished", "==", true), limit(1));
+    const q = query(ref, where("slug", "==", slug), where("status", "==", "published"), limit(1));
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
-    return serializePost(snapshot.docs[0]);
+    return normalizePost(snapshot.docs[0]);
   } catch (error) {
     console.error(`Failed to fetch blog post for slug: ${slug}:`, error);
     return null;
@@ -134,7 +156,7 @@ export const fetchPostById = async (id: string): Promise<BlogPost | null> => {
     if (!ref) return null;
     const snapshot = await getDoc(doc(ref, id));
     if (!snapshot.exists()) return null;
-    return serializePost(snapshot);
+    return normalizePost({ ...snapshot, id });
   } catch (error) {
     console.error(`Failed to fetch blog post by id: ${id}:`, error);
     return null;
@@ -145,16 +167,10 @@ export const fetchRelatedPosts = async (category: string, currentSlug: string): 
   try {
     const ref = getPostsRef();
     if (!ref) return [];
-    const q = query(
-      ref,
-      where("category", "==", category),
-      where("isPublished", "==", true),
-      orderBy("createdAt", "desc"),
-      limit(3)
-    );
+    const q = query(ref, where("category", "==", category), where("status", "==", "published"), orderBy("publishDate", "desc"), limit(3));
     const snapshot = await getDocs(q);
     return snapshot.docs
-      .map(serializePost)
+      .map(normalizePost)
       .filter((post) => post.slug !== currentSlug)
       .slice(0, 3);
   } catch (error) {
@@ -164,12 +180,12 @@ export const fetchRelatedPosts = async (category: string, currentSlug: string): 
 };
 
 export async function uploadBlogImage(file: File, slug: string) {
-  if (!storage) {
+  if (!clientStorage) {
     throw new Error("Firebase Storage is not configured.");
   }
 
   try {
-    const imageRef = ref(storage, `blog-images/${slug}-${Date.now()}`);
+    const imageRef = ref(clientStorage, `blog-images/${slug}-${Date.now()}`);
     await uploadBytes(imageRef, file);
     const url = await getDownloadURL(imageRef);
     return url;
@@ -179,52 +195,39 @@ export async function uploadBlogImage(file: File, slug: string) {
   }
 }
 
-export const createBlogPost = async (data: BlogPostInput) => {
+export const createBlogPost = async (data: Partial<BlogPost>) => {
   const ref = getPostsRef();
   if (!ref) {
     throw new Error("Firebase is not configured; cannot create blog posts.");
   }
 
-  try {
-    const slug = createSlug(data.title);
-    const payload = {
-      ...data,
-      slug,
-      tags: normalizeTags(data.tags || []),
-      featuredImageUrl: data.featuredImageUrl || "",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    };
+  const payload = {
+    ...data,
+    slug: data.slug || createSlug(data.title || ""),
+    featuredImage: data.featuredImage || data.featuredImageUrl || "",
+    featuredImageUrl: undefined,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
 
-    const docRef = await addDoc(ref, payload);
-    return fetchPostById(docRef.id);
-  } catch (error) {
-    console.error("Failed to create blog post:", error);
-    throw error;
-  }
+  const docRef = await addDoc(ref, payload);
+  return fetchPostById(docRef.id);
 };
 
-export const updateBlogPost = async (id: string, data: BlogPostInput) => {
+export const updateBlogPost = async (id: string, data: Partial<BlogPost>) => {
   const ref = getPostsRef();
   if (!ref) {
     throw new Error("Firebase is not configured; cannot update blog posts.");
   }
 
-  try {
-    const slug = createSlug(data.title);
-    const payload = {
-      ...data,
-      slug,
-      tags: normalizeTags(data.tags || []),
-      featuredImageUrl: data.featuredImageUrl || "",
-      updatedAt: serverTimestamp()
-    };
-    await updateDoc(doc(ref, id), payload);
-    return fetchPostById(id);
-  } catch (error) {
-    console.error(`Failed to update blog post with id ${id}:`, error);
-    throw error;
-  }
+  const payload = {
+    ...data,
+    slug: data.slug || (data.title ? createSlug(data.title) : undefined),
+    featuredImage: data.featuredImage || data.featuredImageUrl,
+    updatedAt: serverTimestamp()
+  };
+  await updateDoc(doc(ref, id), payload);
+  return fetchPostById(id);
 };
 
 export const deleteBlogPost = async (id: string) => {
@@ -232,10 +235,10 @@ export const deleteBlogPost = async (id: string) => {
   if (!ref) {
     throw new Error("Firebase is not configured; cannot delete blog posts.");
   }
-  try {
-    return await deleteDoc(doc(ref, id));
-  } catch (error) {
-    console.error(`Failed to delete blog post with id ${id}:`, error);
-    throw error;
-  }
+  return deleteDoc(doc(ref, id));
 };
+
+export const isFirebaseReady = isClientFirebaseConfigured;
+
+// Re-export utility slug generator for admin form imports
+export { createSlug };
