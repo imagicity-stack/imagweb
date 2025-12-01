@@ -23,16 +23,16 @@ const BlogCard = ({ post }: Props) => {
       )}
       <div className="p-6 flex-1 flex flex-col gap-3">
         <div className="flex items-center gap-3 text-sm text-slate-400">
-          <span className="px-3 py-1 rounded-full bg-slate-800 text-cyan-300">{post.category}</span>
+          <span className="px-3 py-1 rounded-full bg-slate-800 text-orange-300">{post.category}</span>
           <span>{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ""}</span>
         </div>
-        <Link href={`/blog/${post.slug}`} className="text-2xl font-semibold text-white hover:text-cyan-300 transition">
+        <Link href={`/blog/${post.slug}`} className="text-2xl font-semibold text-white hover:text-orange-300 transition">
           {post.title}
         </Link>
         <p className="text-slate-300 flex-1">{post.intro}</p>
         <div className="flex flex-wrap gap-2 mt-3">
           {post.tags.map((tag) => (
-            <span key={tag} className="text-xs uppercase tracking-wide text-cyan-200 bg-slate-800 px-2 py-1 rounded-full">
+            <span key={tag} className="text-xs uppercase tracking-wide text-orange-200 bg-slate-800 px-2 py-1 rounded-full">
               #{tag}
             </span>
           ))}

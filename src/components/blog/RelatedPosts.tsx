@@ -27,7 +27,7 @@ const RelatedPosts = ({ posts }: Props) => {
               )}
               <div>
                 <p className="text-sm text-slate-400">{post.category}</p>
-                <p className="text-white font-semibold group-hover:text-cyan-300">{post.title}</p>
+                <p className="text-white font-semibold group-hover:text-orange-300">{post.title}</p>
               </div>
             </div>
           </Link>

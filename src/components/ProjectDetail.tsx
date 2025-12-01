@@ -60,33 +60,33 @@ export default function ProjectDetail({
             {project.title}
           </motion.h1>
           <p className="text-lg text-white/70">{project.summary}</p>
-          <div className="flex flex-wrap gap-3 text-sm uppercase tracking-[0.2em] text-cyan-100/80">
+          <div className="flex flex-wrap gap-3 text-sm uppercase tracking-[0.2em] text-orange-100/80">
             {project.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-white/5 px-3 py-1">
                 {tag}
               </span>
             ))}
           </div>
-          <div className="relative h-72 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-400/20 via-white/10 to-black/30">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(29,229,255,0.35),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.15),transparent_45%)]" />
-            <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/5 via-cyan-400/10 to-transparent" />
+          <div className="relative h-72 overflow-hidden rounded-3xl bg-gradient-to-br from-orange-400/25 via-rose-200/15 to-black/30">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,133,95,0.32),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(244,114,182,0.22),transparent_45%)]" />
+            <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/5 via-orange-300/12 to-transparent" />
           </div>
         </div>
         <div className="glass gradient-border h-fit rounded-3xl p-6" data-project-block>
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Outcome</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Outcome</p>
           <p className="mt-3 text-lg text-white/80">{project.highlight}</p>
           <div className="mt-6 space-y-4 text-sm text-white/70">
             <div className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
               <span>Launch velocity</span>
-              <span className="text-cyan-200">4 weeks</span>
+              <span className="text-orange-200">4 weeks</span>
             </div>
             <div className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
               <span>Motion fidelity</span>
-              <span className="text-cyan-200">GSAP + Framer</span>
+              <span className="text-orange-200">GSAP + Framer</span>
             </div>
             <div className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
               <span>Conversion lift</span>
-              <span className="text-cyan-200">+30%</span>
+              <span className="text-orange-200">+30%</span>
             </div>
           </div>
         </div>

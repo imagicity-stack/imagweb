@@ -41,13 +41,13 @@ export default function Cursor() {
 
   return (
     <motion.div
-      className="custom-cursor pointer-events-none fixed top-0 left-0 z-50 h-8 w-8 rounded-full border border-cyan-200/50 bg-cyan-300/30"
+      className="custom-cursor pointer-events-none fixed top-0 left-0 z-50 h-8 w-8 rounded-full border border-orange-200/50 bg-orange-300/30"
       style={{ translateX: cursorX, translateY: cursorY }}
       animate={{ scale: active ? 1.6 : 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 200, damping: 18 }}
     >
       <motion.div
-        className="absolute inset-0 -z-10 rounded-full bg-cyan-500/40 blur-2xl"
+        className="absolute inset-0 -z-10 rounded-full bg-orange-400/40 blur-2xl"
         animate={{ scale: active ? 2.4 : 1.4, opacity: active ? 0.6 : 0.3 }}
         transition={{ duration: 0.6 }}
       />

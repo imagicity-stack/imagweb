@@ -46,17 +46,17 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
 
       <article className="max-w-4xl mx-auto space-y-8">
         <div className="space-y-3 text-center">
-          <p className="text-sm text-cyan-300 uppercase tracking-wide">{post.category}</p>
+          <p className="text-sm text-orange-300 uppercase tracking-wide">{post.category}</p>
           <h1 className="text-4xl font-bold text-white">{post.title}</h1>
           <p className="text-slate-400 text-sm">
             {post.author && <span className="mr-2">By {post.author}</span>}
             {post.createdAt && new Date(post.createdAt).toLocaleDateString()}
           </p>
           <div className="flex justify-center gap-3 text-sm text-slate-300">
-            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${canonical}`} className="hover:text-cyan-300">
+            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${canonical}`} className="hover:text-orange-300">
               Share on X
             </a>
-            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${canonical}`} className="hover:text-cyan-300">
+            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${canonical}`} className="hover:text-orange-300">
               LinkedIn
             </a>
           </div>

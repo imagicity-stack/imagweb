@@ -22,11 +22,11 @@ const HomeBlogSection = () => {
   }, []);
 
   return (
-    <section id="blog" className="px-4 py-20 sm:px-8 lg:px-16 bg-gradient-to-b from-slate-950 via-slate-900/80 to-black">
+    <section id="blog" className="px-4 py-20 sm:px-8 lg:px-16 bg-gradient-to-b from-slate-950 via-[#120c1f] to-black">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Journal</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Journal</p>
             <h2 className="text-3xl font-semibold sm:text-4xl text-white">Latest thinking</h2>
             <p className="text-white/70 max-w-2xl">
               Fresh drops from the studio covering launches, motion craft, GTM playbooks, and behind-the-scenes builds that sync
@@ -35,7 +35,7 @@ const HomeBlogSection = () => {
           </div>
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 rounded-full border border-cyan-400/70 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cyan-400/10"
+            className="inline-flex items-center gap-2 rounded-full border border-orange-300/70 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-orange-400/10"
           >
             Read the blog
             <span aria-hidden className="text-lg">

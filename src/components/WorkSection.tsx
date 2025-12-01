@@ -27,10 +27,10 @@ export default function WorkSection() {
     <section id="work" className="px-4 py-24 sm:px-8 lg:px-16">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Selected work</p>
-          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Experiential builds for premium brands.</h2>
+          <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Selected work</p>
+          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Integrated marketing for brands obsessed with growth.</h2>
         </div>
-        <p className="text-white/60">Click any card to open the animated case file.</p>
+        <p className="text-white/60">Click any card to open the growth case file.</p>
       </div>
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
@@ -48,13 +48,13 @@ export default function WorkSection() {
               <div className="relative flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm uppercase tracking-[0.2em] text-white/70">{project.tags.join(" • ")}</p>
-                  <span className="text-sm text-cyan-100/80">Explore</span>
+                  <span className="text-sm text-orange-100/80">Explore</span>
                 </div>
                 <h3 className="text-2xl font-semibold">{project.title}</h3>
                 <p className="text-white/70">{project.summary}</p>
-                <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-black/50">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(29,229,255,0.3),transparent_40%),radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.08),transparent_40%)]" />
-                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/5 via-cyan-400/10 to-transparent" />
+              <div className="relative mt-4 h-32 overflow-hidden rounded-2xl bg-black/50">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,133,95,0.3),transparent_40%),radial-gradient(circle_at_80%_20%,rgba(244,114,182,0.2),transparent_40%)]" />
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-white/5 via-orange-300/15 to-transparent" />
                 </div>
                 <div className="flex items-center justify-between text-sm text-white/60">
                   <span>{project.highlight}</span>

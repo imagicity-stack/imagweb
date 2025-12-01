@@ -41,14 +41,14 @@ export default function ContactSection() {
       <div className="glass gradient-border relative overflow-hidden rounded-3xl p-10">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Contact</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Contact</p>
             <h2 className="text-3xl font-semibold sm:text-4xl">Let’s orchestrate your next launch.</h2>
             <p className="text-white/70">
               Tell us about the momentum you want. We will assemble a strike team in under 48 hours.
             </p>
-            <div className="glitch-map relative h-56 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_20%_20%,rgba(29,229,255,0.2),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_45%)]">
+            <div className="glitch-map relative h-56 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_20%_20%,rgba(255,133,95,0.24),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(244,114,182,0.18),transparent_45%)]">
               <div className="absolute inset-0 bg-[url('https://tile.openstreetmap.org/0/0/0.png')] opacity-10 mix-blend-screen" />
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 via-transparent to-white/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-400/30 via-rose-200/10 to-white/5" />
               <div className="absolute bottom-4 left-4 rounded-full bg-black/50 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
                 Remote first • Global
               </div>
@@ -67,7 +67,7 @@ export default function ContactSection() {
                 <input
                   name="name"
                   required
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-cyan-300 focus:bg-black/60"
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-orange-300 focus:bg-black/60"
                   placeholder="Nova Kim"
                 />
               </label>
@@ -77,7 +77,7 @@ export default function ContactSection() {
                   name="email"
                   type="email"
                   required
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-cyan-300 focus:bg-black/60"
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-orange-300 focus:bg-black/60"
                   placeholder="you@brand.com"
                 />
               </label>
@@ -88,18 +88,18 @@ export default function ContactSection() {
                 name="project"
                 rows={4}
                 required
-                className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-cyan-300 focus:bg-black/60"
+                className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-white outline-none transition focus:border-orange-300 focus:bg-black/60"
                 placeholder="Campaign, product launch, new site, or GTM overhaul"
               />
             </label>
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full rounded-full bg-gradient-to-r from-cyan-400 to-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-black shadow-[0_18px_60px_rgba(0,0,0,0.35)] transition hover:from-cyan-300 hover:to-white disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-6 w-full rounded-full bg-gradient-to-r from-orange-400 to-amber-200/60 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-black shadow-[0_18px_60px_rgba(0,0,0,0.35)] transition hover:from-orange-300 hover:to-amber-100 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Sending..." : "Send the signal"}
             </button>
-            {message && <p className="mt-4 text-sm text-cyan-100/80">{message}</p>}
+            {message && <p className="mt-4 text-sm text-orange-100/80">{message}</p>}
           </motion.form>
         </div>
       </div>
