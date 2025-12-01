@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import { BlogPostCore, BlogPostInput, PostStatus, RobotsFollow, RobotsIndex, SchemaType } from "./models";
+import { PostInput, PostStatus, RobotsFollow, RobotsIndex, SchemaType } from "./models";
 
 const MAX_TAGS = 8;
 const MIN_TAGS = 4;
@@ -12,7 +12,7 @@ const MAX_SEO_TITLE = 70;
 export interface ValidationResult {
   valid: boolean;
   errors: Record<string, string>;
-  sanitized?: Partial<BlogPostCore>;
+  sanitized?: PostInput;
 }
 
 const normalizeSlug = (value: string) =>
@@ -32,7 +32,7 @@ const isValidUrl = (value?: string) => {
 };
 
 const isValidStatus = (status?: string): status is PostStatus =>
-  Boolean(status && ["draft", "scheduled", "published", "private"].includes(status));
+  Boolean(status && ["Draft", "Scheduled", "Published", "Private"].includes(status));
 
 const isValidSchemaType = (schema?: string): schema is SchemaType =>
   Boolean(schema && ["Article", "BlogPosting", "FAQ", "HowTo"].includes(schema));
@@ -41,14 +41,14 @@ const isValidRobotsIndex = (index?: string): index is RobotsIndex => Boolean(ind
 const isValidRobotsFollow = (follow?: string): follow is RobotsFollow =>
   Boolean(follow && ["follow", "nofollow"].includes(follow));
 
-export const validatePostInput = (input: BlogPostInput): ValidationResult => {
+export const validatePostInput = (input: PostInput): ValidationResult => {
   const errors: Record<string, string> = {};
 
   if (!input.title || input.title.trim().length < 4) {
     errors.title = "Title is required and should be at least 4 characters.";
   }
 
-  const slugCandidate = input.overrideSlug || input.slug || input.title;
+  const slugCandidate = input.slug || input.title;
   if (!slugCandidate) {
     errors.slug = "Slug is required.";
   }
@@ -58,15 +58,15 @@ export const validatePostInput = (input: BlogPostInput): ValidationResult => {
     errors.slug = "Slug must be at least 3 characters.";
   }
 
-  if (!input.contentHtml || input.contentHtml.trim().length < 120) {
-    errors.contentHtml = "Content must be at least 120 characters and include headings.";
+  if (!input.content || input.content.trim().length < 120) {
+    errors.content = "Content must be at least 120 characters and include headings.";
   }
 
-  if (!input.featuredImage?.url) {
-    errors.featuredImage = "Featured image URL is required.";
+  if (!input.featuredImageUrl) {
+    errors.featuredImageUrl = "Featured image URL is required.";
   }
 
-  if (!input.featuredImage?.alt) {
+  if (!input.featuredImageAlt) {
     errors.featuredImageAlt = "Featured image alt text is required.";
   }
 
@@ -82,32 +82,32 @@ export const validatePostInput = (input: BlogPostInput): ValidationResult => {
     errors.excerpt = `Excerpt must be ${MIN_EXCERPT}-${MAX_EXCERPT} characters.`;
   }
 
-  if (!input.seo?.seoTitle || input.seo.seoTitle.length > MAX_SEO_TITLE) {
+  if (!input.seoTitle || input.seoTitle.length > MAX_SEO_TITLE) {
     errors.seoTitle = `SEO title is required and cannot exceed ${MAX_SEO_TITLE} characters.`;
   }
 
   if (
-    !input.seo?.metaDescription ||
-    input.seo.metaDescription.length < MIN_META_DESCRIPTION ||
-    input.seo.metaDescription.length > MAX_META_DESCRIPTION
+    !input.metaDescription ||
+    input.metaDescription.length < MIN_META_DESCRIPTION ||
+    input.metaDescription.length > MAX_META_DESCRIPTION
   ) {
     errors.metaDescription = `Meta description must be ${MIN_META_DESCRIPTION}-${MAX_META_DESCRIPTION} characters.`;
   }
 
-  if (input.seo && !isValidRobotsIndex(input.seo.robots?.index)) {
+  if (!isValidRobotsIndex(input.robotsIndex)) {
     errors.robotsIndex = "Robots index must be either index or noindex.";
   }
 
-  if (input.seo && !isValidRobotsFollow(input.seo.robots?.follow)) {
+  if (!isValidRobotsFollow(input.robotsFollow)) {
     errors.robotsFollow = "Robots follow must be either follow or nofollow.";
   }
 
-  if (input.seo?.canonicalUrl && !isValidUrl(input.seo.canonicalUrl)) {
+  if (input.canonicalUrl && !isValidUrl(input.canonicalUrl)) {
     errors.canonicalUrl = "Canonical URL must be a valid URL.";
   }
 
-  if (input.seo?.openGraph?.image && !input.seo.openGraph.image.alt) {
-    errors.ogAlt = "Open Graph image must include alt text.";
+  if (input.ogImageUrl && !isValidUrl(input.ogImageUrl)) {
+    errors.ogImageUrl = "Open Graph image must be a valid URL.";
   }
 
   if (!isValidStatus(input.status)) {
@@ -116,10 +116,6 @@ export const validatePostInput = (input: BlogPostInput): ValidationResult => {
 
   if (!isValidSchemaType(input.schemaType)) {
     errors.schemaType = "Schema type is invalid.";
-  }
-
-  if (input.internalLinks && input.internalLinks.length > 5) {
-    errors.internalLinks = "Limit internal links to 5 suggestions.";
   }
 
   return {

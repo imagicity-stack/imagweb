@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import PostForm from "@/components/blog-admin/PostForm";
-import type { BlogPostDocument, BlogPostInput } from "@/lib/blog-engine/models";
+import type { Post, PostInput } from "@/lib/blog-engine/models";
 
 const AdminPostsPage = () => {
-  const [active, setActive] = useState<BlogPostDocument | null>(null);
-  const [posts, setPosts] = useState<BlogPostDocument[]>([]);
+  const [active, setActive] = useState<Post | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ const AdminPostsPage = () => {
     void loadPosts();
   }, []);
 
-  const savePost = async (payload: BlogPostInput) => {
+  const savePost = async (payload: PostInput) => {
     setMessage(null);
     const method = payload.id ? "PUT" : "POST";
     const endpoint = payload.id ? `/api/posts/${payload.id}` : "/api/posts";
@@ -77,14 +77,14 @@ const AdminPostsPage = () => {
                     <p className="font-semibold text-white">{post.title}</p>
                     <p className="text-xs text-slate-500">/{post.slug}</p>
                   </div>
-                  <span className="text-xs text-slate-400">v{post.version}</span>
+                  <span className="text-xs text-slate-400">{post.status}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-400">
                   <span>Status: {post.status}</span>
                   <span className="w-px h-3 bg-slate-800" />
                   <span>{post.tags?.slice(0, 3).join(", ")}</span>
                   <span className="w-px h-3 bg-slate-800" />
-                  <span>{post.readingTimeMinutes} min read</span>
+                  <span>{post.readingTime} min read</span>
                 </div>
                 <div className="flex gap-2 text-sm">
                   <button

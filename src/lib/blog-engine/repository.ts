@@ -3,6 +3,7 @@ import {
   collection,
   DocumentData,
   DocumentSnapshot,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -10,138 +11,208 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  Timestamp,
   updateDoc,
   where
 } from "firebase/firestore";
+import slugify from "slugify";
 import { db } from "../firebase";
-import { BlogPostCore, BlogPostDocument, BlogPostInput, RedirectRule, VersionRecord } from "./models";
 import { estimateReadingTime } from "./readingTime";
 import { buildSitemapXml, writeSitemap } from "./sitemap";
 import { generateTocFromHtml } from "./toc";
 import { sanitizeTags, validatePostInput } from "./validation";
-import slugify from "slugify";
+import type { FirestorePostData, Post, PostInput } from "./models";
 
-const postsCollection = () => (db ? collection(db, "blogPosts") : null);
-const redirectCollection = () => (db ? collection(db, "redirects") : null);
+const postsCollection = () => (db ? collection(db, "blogs") : null);
 
-const serialize = (docSnap: DocumentSnapshot<DocumentData>): BlogPostDocument => {
-  const data = docSnap.data();
+const toDate = (value: Timestamp | Date | string | undefined): Date => {
+  if (!value) return new Date();
+  if (value instanceof Timestamp) return value.toDate();
+  if (value instanceof Date) return value;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+};
+
+export const firestoreDocToPost = (snapshot: DocumentSnapshot<DocumentData>): Post => {
+  const data = snapshot.data() as FirestorePostData;
   return {
-    id: docSnap.id,
-    ...data,
-    createdAt: (data.createdAt?.toDate?.() ?? new Date()).toISOString(),
-    updatedAt: (data.updatedAt?.toDate?.() ?? new Date()).toISOString(),
-    publishedAt: data.publishedAt || new Date().toISOString()
-  } as BlogPostDocument;
+    id: snapshot.id,
+    title: data.title,
+    slug: data.slug,
+    content: data.content,
+    excerpt: data.excerpt,
+    category: data.category,
+    tags: data.tags || [],
+    status: data.status,
+    authorId: data.authorId,
+    authorName: data.authorName,
+    featuredImageUrl: data.featuredImageUrl,
+    featuredImageAlt: data.featuredImageAlt,
+    createdAt: toDate(data.createdAt),
+    updatedAt: toDate(data.updatedAt),
+    publishDate: toDate(data.publishDate),
+    seoTitle: data.seoTitle,
+    metaDescription: data.metaDescription,
+    canonicalUrl: data.canonicalUrl,
+    ogTitle: data.ogTitle,
+    ogDescription: data.ogDescription,
+    ogImageUrl: data.ogImageUrl,
+    robotsIndex: data.robotsIndex,
+    robotsFollow: data.robotsFollow,
+    schemaType: data.schemaType,
+    readingTime: data.readingTime,
+    tocEnabled: data.tocEnabled,
+    redirects: data.redirects || [],
+    toc: data.toc,
+    isPublished: data.isPublished ?? data.status === "Published"
+  } satisfies Post;
 };
 
-const saveVersion = async (postId: string, version: number, payload: BlogPostCore) => {
-  const ref = postsCollection();
-  if (!ref) return null;
-  const versionCollection = collection(doc(ref, postId), "versions");
-  const versionDoc: VersionRecord = {
-    postId,
-    version,
-    payload,
-    createdAt: new Date().toISOString()
-  };
-  await addDoc(versionCollection, versionDoc);
-  return versionDoc;
+export const postToFirestoreData = (post: Post): FirestorePostData => {
+  const createdAtValue =
+    post.createdAt instanceof Date ? post.createdAt : typeof post.createdAt === "string" ? new Date(post.createdAt) : new Date();
+  const updatedAtValue =
+    post.updatedAt instanceof Date ? post.updatedAt : typeof post.updatedAt === "string" ? new Date(post.updatedAt) : new Date();
+  const publishDateValue =
+    post.publishDate instanceof Date
+      ? post.publishDate
+      : typeof post.publishDate === "string"
+        ? new Date(post.publishDate)
+        : new Date();
+
+  const createdAt = Timestamp.fromDate(createdAtValue);
+  const updatedAt = Timestamp.fromDate(updatedAtValue);
+  const publishDate = Timestamp.fromDate(publishDateValue);
+
+  return {
+    title: post.title,
+    slug: slugify(post.slug || post.title, { lower: true, strict: true }),
+    content: post.content,
+    excerpt: post.excerpt,
+    category: post.category,
+    tags: sanitizeTags(post.tags || []),
+    status: post.status,
+    authorId: post.authorId,
+    authorName: post.authorName,
+    featuredImageUrl: post.featuredImageUrl,
+    featuredImageAlt: post.featuredImageAlt,
+    createdAt: createdAt as Timestamp,
+    updatedAt: updatedAt as Timestamp,
+    publishDate: publishDate as Timestamp,
+    seoTitle: post.seoTitle,
+    metaDescription: post.metaDescription,
+    canonicalUrl: post.canonicalUrl,
+    ogTitle: post.ogTitle,
+    ogDescription: post.ogDescription,
+    ogImageUrl: post.ogImageUrl,
+    robotsIndex: post.robotsIndex,
+    robotsFollow: post.robotsFollow,
+    schemaType: post.schemaType,
+    readingTime: post.readingTime,
+    tocEnabled: post.tocEnabled,
+    redirects: post.redirects || [],
+    isPublished: post.status === "Published",
+    toc: post.toc
+  } satisfies FirestorePostData;
 };
 
-const recordRedirect = async (from: string, to: string) => {
-  const ref = redirectCollection();
-  if (!ref) return null;
-  const rule: RedirectRule = {
-    from,
-    to,
-    createdAt: new Date().toISOString()
-  };
-  await addDoc(ref, rule);
-  return rule;
+const buildPostFromInput = (input: PostInput, current?: Post): Post => {
+  const normalizedSlug = slugify(input.slug || input.title || current?.slug || "post", { lower: true, strict: true });
+  const content = input.content ?? current?.content ?? "";
+  const readingTime = estimateReadingTime(content);
+  const toc = (input.tocEnabled ?? current?.tocEnabled ?? false) ? generateTocFromHtml(content) : undefined;
+  const publishDate = input.publishDate ? toDate(input.publishDate as Date | string) : current?.publishDate || new Date();
+
+  return {
+    id: input.id || current?.id || "",
+    title: input.title || current?.title || "",
+    slug: normalizedSlug,
+    content,
+    excerpt: input.excerpt ?? current?.excerpt ?? "",
+    category: input.category ?? current?.category ?? "",
+    tags: sanitizeTags(input.tags ?? current?.tags ?? []),
+    status: input.status ?? current?.status ?? "Draft",
+    authorId: input.authorId ?? current?.authorId,
+    authorName: input.authorName ?? current?.authorName,
+    featuredImageUrl: input.featuredImageUrl ?? current?.featuredImageUrl ?? "",
+    featuredImageAlt: input.featuredImageAlt ?? current?.featuredImageAlt ?? "",
+    createdAt: current?.createdAt ?? new Date(),
+    updatedAt: new Date(),
+    publishDate,
+    seoTitle: input.seoTitle ?? current?.seoTitle ?? input.title ?? "",
+    metaDescription: input.metaDescription ?? current?.metaDescription ?? input.excerpt ?? "",
+    canonicalUrl: input.canonicalUrl ?? current?.canonicalUrl,
+    ogTitle: input.ogTitle ?? current?.ogTitle ?? input.title ?? "",
+    ogDescription: input.ogDescription ?? current?.ogDescription ?? input.excerpt ?? "",
+    ogImageUrl: input.ogImageUrl ?? current?.ogImageUrl,
+    robotsIndex: input.robotsIndex ?? current?.robotsIndex ?? "index",
+    robotsFollow: input.robotsFollow ?? current?.robotsFollow ?? "follow",
+    schemaType: input.schemaType ?? current?.schemaType ?? "BlogPosting",
+    readingTime,
+    tocEnabled: input.tocEnabled ?? current?.tocEnabled ?? false,
+    redirects: input.redirects ?? current?.redirects ?? [],
+    toc,
+    isPublished: (input.status ?? current?.status ?? "Draft") === "Published"
+  } satisfies Post;
 };
 
-const mapInputToPayload = (input: BlogPostInput, previous?: BlogPostDocument): BlogPostCore => {
-  const featuredImage = input.featuredImage || previous?.featuredImage;
-  if (!featuredImage) {
-    throw new Error("Featured image is required.");
+export const getAllPosts = async (): Promise<Post[]> => {
+  try {
+    const ref = postsCollection();
+    if (!ref) return [];
+    const q = query(ref, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(firestoreDocToPost);
+  } catch (error) {
+    console.error("Failed to fetch all posts", error);
+    return [];
   }
-
-  const slug = slugify((input.overrideSlug || input.slug || input.title || previous?.title || "post"), {
-    lower: true,
-    strict: true
-  });
-
-  const readingTimeMinutes = estimateReadingTime(input.contentHtml || previous?.contentHtml || "");
-  const toc = (input.tableOfContentsEnabled ?? previous?.tableOfContentsEnabled) ? generateTocFromHtml(input.contentHtml || previous?.contentHtml || "") : [];
-
-  return {
-    title: input.title || previous?.title || "Untitled",
-    slug,
-    excerpt: input.excerpt || previous?.excerpt || "",
-    contentHtml: input.contentHtml || previous?.contentHtml || "",
-    featuredImage,
-    category: input.category || previous?.category || "General",
-    tags: sanitizeTags(input.tags || previous?.tags || []),
-    status: input.status || previous?.status || "draft",
-    authorId: input.authorId || previous?.authorId || "unknown",
-    publishedAt: input.publishedAt || previous?.publishedAt || new Date().toISOString(),
-    schemaType: input.schemaType || previous?.schemaType || "BlogPosting",
-    tableOfContentsEnabled: Boolean(input.tableOfContentsEnabled ?? previous?.tableOfContentsEnabled ?? true),
-    readingTimeMinutes,
-    seo: input.seo ||
-      previous?.seo || {
-        seoTitle: input.title || previous?.title || "",
-        metaDescription: input.excerpt || previous?.excerpt || "",
-        canonicalUrl: input.canonicalUrl || previous?.canonicalUrl,
-        robots: {
-          index: "index",
-          follow: "follow"
-        },
-        openGraph: {
-          title: input.title || previous?.title || "",
-          description: input.excerpt || previous?.excerpt || "",
-          image: input.seo?.openGraph?.image || previous?.seo?.openGraph?.image || featuredImage
-        }
-      },
-    canonicalUrl: input.canonicalUrl || previous?.canonicalUrl,
-    internalLinks: input.internalLinks || previous?.internalLinks || [],
-    redirectFrom: previous?.redirectFrom || [],
-    toc
-  };
 };
 
-export const fetchPosts = async (): Promise<BlogPostDocument[]> => {
-  const ref = postsCollection();
-  if (!ref) return [];
-  const q = query(ref, orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(serialize);
+export const getPostById = async (id: string): Promise<Post | null> => {
+  try {
+    const ref = postsCollection();
+    if (!ref) return null;
+    const snap = await getDoc(doc(ref, id));
+    if (!snap.exists()) return null;
+    return firestoreDocToPost(snap);
+  } catch (error) {
+    console.error(`Failed to fetch post by id ${id}`, error);
+    return null;
+  }
 };
 
-export const fetchPostById = async (id: string): Promise<BlogPostDocument | null> => {
-  const ref = postsCollection();
-  if (!ref) return null;
-  const snap = await getDoc(doc(ref, id));
-  if (!snap.exists()) return null;
-  return serialize(snap);
+export const getPostBySlug = async (slug: string): Promise<Post | null> => {
+  try {
+    const ref = postsCollection();
+    if (!ref) return null;
+    const q = query(ref, where("slug", "==", slug), limit(1));
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+    return firestoreDocToPost(snap.docs[0]);
+  } catch (error) {
+    console.error(`Failed to fetch post by slug ${slug}`, error);
+    return null;
+  }
 };
 
-export const fetchSuggestions = async (): Promise<BlogPostDocument[]> => {
-  const ref = postsCollection();
-  if (!ref) return [];
-  const q = query(ref, where("status", "==", "published"), orderBy("createdAt", "desc"), limit(10));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(serialize);
+export const getPublishedPosts = async (): Promise<Post[]> => {
+  try {
+    const ref = postsCollection();
+    if (!ref) return [];
+    const q = query(ref, where("isPublished", "==", true), orderBy("publishDate", "desc"));
+    const snapshot = await getDocs(q);
+    const now = new Date();
+    return snapshot.docs
+      .map(firestoreDocToPost)
+      .filter((post) => post.status === "Published" && post.publishDate <= now);
+  } catch (error) {
+    console.error("Failed to fetch published posts", error);
+    return [];
+  }
 };
 
-const refreshSitemap = async () => {
-  const posts = await fetchPosts();
-  const xml = buildSitemapXml(posts);
-  await writeSitemap(xml);
-};
-
-export const createPost = async (input: BlogPostInput) => {
+export const createPost = async (input: PostInput): Promise<Post> => {
   const ref = postsCollection();
   if (!ref) throw new Error("Firestore is not configured");
 
@@ -150,27 +221,31 @@ export const createPost = async (input: BlogPostInput) => {
     throw new Error(`Post validation failed: ${JSON.stringify(validation.errors)}`);
   }
 
-  const sanitizedInput = (validation.sanitized as BlogPostInput) || input;
-  const payload = mapInputToPayload(sanitizedInput);
+  const basePost = buildPostFromInput(validation.sanitized || input);
+  const post: Post = {
+    ...basePost,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    redirects: basePost.redirects || []
+  };
+
+  const data = postToFirestoreData({ ...post, createdAt: post.createdAt, updatedAt: post.updatedAt });
   const docRef = await addDoc(ref, {
-    ...payload,
-    toc: payload.toc,
-    version: 1,
+    ...data,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   });
 
-  await saveVersion(docRef.id, 1, payload);
   await refreshSitemap();
   const saved = await getDoc(docRef);
-  return serialize(saved);
+  return firestoreDocToPost(saved);
 };
 
-export const updatePost = async (id: string, input: BlogPostInput) => {
+export const updatePost = async (id: string, input: PostInput): Promise<Post> => {
   const ref = postsCollection();
   if (!ref) throw new Error("Firestore is not configured");
 
-  const current = await fetchPostById(id);
+  const current = await getPostById(id);
   if (!current) throw new Error("Post not found");
 
   const validation = validatePostInput({ ...current, ...input });
@@ -178,46 +253,61 @@ export const updatePost = async (id: string, input: BlogPostInput) => {
     throw new Error(`Post validation failed: ${JSON.stringify(validation.errors)}`);
   }
 
-  const sanitizedInput = (validation.sanitized as BlogPostInput) || input;
-  const payload = mapInputToPayload(sanitizedInput, current);
-  const version = current.version + 1;
-
-  await saveVersion(id, version, {
-    ...current,
-    toc: payload.toc,
-    redirectFrom: payload.redirectFrom
-  });
-
-  if (current.slug !== payload.slug) {
-    payload.redirectFrom = Array.from(new Set([...(current.redirectFrom || []), current.slug]));
-    await recordRedirect(current.slug, payload.slug);
+  const nextPost = buildPostFromInput({ ...validation.sanitized, id }, current);
+  const redirects = [...(current.redirects || [])];
+  if (current.slug !== nextPost.slug) {
+    redirects.push(current.slug);
   }
 
-  await updateDoc(doc(ref, id), {
-    ...payload,
-    toc: payload.toc,
-    version,
-    updatedAt: serverTimestamp()
-  });
+  const post: Post = {
+    ...nextPost,
+    redirects,
+    createdAt: current.createdAt,
+    updatedAt: new Date(),
+    isPublished: nextPost.status === "Published"
+  };
+
+  const data = postToFirestoreData(post);
+  await updateDoc(doc(ref, id), { ...data, updatedAt: serverTimestamp() });
 
   await refreshSitemap();
-  const saved = await fetchPostById(id);
+  const saved = await getPostById(id);
+  if (!saved) throw new Error("Failed to load saved post");
   return saved;
 };
 
-export const rollbackVersion = async (postId: string, versionId: string) => {
+export const deletePost = async (id: string) => {
   const ref = postsCollection();
   if (!ref) throw new Error("Firestore is not configured");
-  const versionSnap = await getDoc(doc(collection(doc(ref, postId), "versions"), versionId));
-  if (!versionSnap.exists()) throw new Error("Version not found");
-  const version = versionSnap.data() as VersionRecord;
+  await deleteDoc(doc(ref, id));
+};
 
-  await updateDoc(doc(ref, postId), {
-    ...version.payload,
-    version: version.version,
-    updatedAt: serverTimestamp()
-  });
+export const listRelatedPosts = async (postIdOrSlug: string): Promise<Post[]> => {
+  const ref = postsCollection();
+  if (!ref) return [];
+  const target = (await getPostById(postIdOrSlug)) ?? (await getPostBySlug(postIdOrSlug));
+  if (!target) return [];
 
-  await refreshSitemap();
-  return fetchPostById(postId);
+  try {
+    const q = query(
+      ref,
+      where("category", "==", target.category),
+      where("isPublished", "==", true),
+      orderBy("publishDate", "desc"),
+      limit(5)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map(firestoreDocToPost)
+      .filter((post) => post.slug !== target.slug && post.status === "Published");
+  } catch (error) {
+    console.error("Failed to list related posts", error);
+    return [];
+  }
+};
+
+const refreshSitemap = async () => {
+  const posts = await getPublishedPosts();
+  const xml = buildSitemapXml(posts);
+  await writeSitemap(xml);
 };

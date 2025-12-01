@@ -1,11 +1,50 @@
-export type HeadingLevel = "h2" | "h3";
+import { Timestamp } from "firebase/firestore";
 
-export type PostStatus = "draft" | "scheduled" | "published" | "private";
+export type PostStatus = "Draft" | "Scheduled" | "Published" | "Private";
 
 export type SchemaType = "Article" | "BlogPosting" | "FAQ" | "HowTo";
 
 export type RobotsIndex = "index" | "noindex";
 export type RobotsFollow = "follow" | "nofollow";
+
+export interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  category: string;
+  tags: string[];
+  status: PostStatus;
+  authorId?: string;
+  authorName?: string;
+  featuredImageUrl: string;
+  featuredImageAlt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  publishDate: Date | string;
+  seoTitle: string;
+  metaDescription: string;
+  canonicalUrl?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImageUrl?: string;
+  robotsIndex: RobotsIndex;
+  robotsFollow: RobotsFollow;
+  schemaType: SchemaType;
+  readingTime: number;
+  tocEnabled: boolean;
+  redirects: string[];
+  isPublished: boolean;
+  toc?: TableOfContentsItem[];
+}
+
+export interface PostInput extends Partial<Post> {
+  id?: string;
+  slug?: string;
+}
+
+export type HeadingLevel = "h2" | "h3";
 
 export interface TableOfContentsItem {
   id: string;
@@ -13,88 +52,33 @@ export interface TableOfContentsItem {
   level: HeadingLevel;
 }
 
-export interface FeaturedImage {
-  url: string;
-  alt: string;
-  width?: number;
-  height?: number;
-}
-
-export interface OpenGraphMeta {
-  title: string;
-  description: string;
-  image?: FeaturedImage;
-}
-
-export interface SeoMeta {
-  seoTitle: string;
-  metaDescription: string;
-  canonicalUrl?: string;
-  robots: {
-    index: RobotsIndex;
-    follow: RobotsFollow;
-  };
-  openGraph: OpenGraphMeta;
-}
-
-export interface AuthorProfile {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-}
-
-export interface BlogPostCore {
+export interface FirestorePostData {
   title: string;
   slug: string;
+  content: string;
   excerpt: string;
-  contentHtml: string;
-  featuredImage: FeaturedImage;
   category: string;
   tags: string[];
   status: PostStatus;
-  authorId: string;
-  publishedAt: string;
-  schemaType: SchemaType;
-  tableOfContentsEnabled: boolean;
-  readingTimeMinutes: number;
-  seo: SeoMeta;
+  authorId?: string;
+  authorName?: string;
+  featuredImageUrl: string;
+  featuredImageAlt: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  publishDate: Timestamp;
+  seoTitle: string;
+  metaDescription: string;
   canonicalUrl?: string;
-  internalLinks: string[];
-  redirectFrom: string[];
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImageUrl?: string;
+  robotsIndex: RobotsIndex;
+  robotsFollow: RobotsFollow;
+  schemaType: SchemaType;
+  readingTime: number;
+  tocEnabled: boolean;
+  redirects: string[];
+  isPublished: boolean;
   toc?: TableOfContentsItem[];
-}
-
-export interface BlogPostDocument extends BlogPostCore {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  version: number;
-}
-
-export interface BlogPostInput extends Partial<BlogPostCore> {
-  id?: string;
-  slug?: string;
-  overrideSlug?: string;
-  publishAt?: string;
-}
-
-export interface VersionRecord {
-  id?: string;
-  postId: string;
-  version: number;
-  payload: BlogPostCore;
-  createdAt: string;
-}
-
-export interface RedirectRule {
-  from: string;
-  to: string;
-  createdAt: string;
-}
-
-export interface BlogSuggestion {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
 }

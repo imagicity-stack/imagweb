@@ -1,15 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
-import { BlogPostDocument } from "./models";
+import { Post } from "./models";
 
 const getSiteUrl = () => process.env.NEXT_PUBLIC_SITE_URL || "https://imagweb.example";
 
-export const buildSitemapXml = (posts: BlogPostDocument[]) => {
+export const buildSitemapXml = (posts: Post[]) => {
   const domain = getSiteUrl().replace(/\/$/, "");
   const urls = posts
-    .filter((post) => post.status === "published")
+    .filter((post) => post.status === "Published")
     .map((post) => {
-      const lastmod = new Date(post.updatedAt || post.publishedAt || post.createdAt).toISOString();
+      const lastmod = new Date(post.updatedAt || post.publishDate || post.createdAt).toISOString();
       return `  <url>\n    <loc>${domain}/blog/${post.slug}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>`;
     })
     .join("\n");
