@@ -156,7 +156,7 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
             type="file"
             accept="image/*"
             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-            className="w-full text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-cyan-500 file:px-3 file:py-2 file:text-black file:font-semibold"
+            className="w-full text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-orange-500 file:px-3 file:py-2 file:text-black file:font-semibold"
             disabled={uploading}
             ref={fileInputRef}
           />
@@ -164,11 +164,11 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
             type="button"
             onClick={openFilePicker}
             disabled={uploading}
-            className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm text-white transition hover:border hover:border-cyan-300"
+            className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm text-white transition hover:border hover:border-orange-300"
           >
             {uploading ? "Uploading..." : form.featuredImageUrl ? "Replace Image" : "Upload featured image"}
           </button>
-          {uploading && <p className="text-xs text-cyan-300">Uploading image...</p>}
+          {uploading && <p className="text-xs text-orange-300">Uploading image...</p>}
           {uploadError && <p className="text-xs text-rose-400">{uploadError}</p>}
           {form.featuredImageUrl && (
             <div className="relative mt-2 h-40 w-full overflow-hidden rounded-xl border border-slate-700">
@@ -191,13 +191,13 @@ const AdminBlogForm = ({ onSubmit, activePost, onCancelEdit }: Props) => {
           />
           <span className="text-sm text-slate-200">Published</span>
         </div>
-        <div className="text-sm text-slate-400">Slug preview: <span className="text-cyan-300">{form.slug || slug}</span></div>
+        <div className="text-sm text-slate-400">Slug preview: <span className="text-orange-300">{form.slug || slug}</span></div>
       </div>
       <div className="flex gap-3">
         <button
           type="submit"
           disabled={busy}
-          className="px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold hover:bg-cyan-400 disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-orange-500 text-black font-semibold hover:bg-orange-400 disabled:opacity-60"
         >
           {busy ? "Saving..." : activePost ? "Update Post" : "Create Post"}
         </button>

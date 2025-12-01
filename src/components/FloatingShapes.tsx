@@ -27,7 +27,7 @@ export default function FloatingShapes() {
     <div ref={ref} className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       <div
         data-floating
-        className="absolute left-12 top-20 h-32 w-32 rounded-full bg-cyan-400/10 blur-3xl"
+        className="absolute left-12 top-20 h-32 w-32 rounded-full bg-orange-400/15 blur-3xl"
       />
       <div
         data-floating
@@ -35,7 +35,7 @@ export default function FloatingShapes() {
       />
       <div
         data-floating
-        className="absolute bottom-12 left-1/2 h-36 w-36 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl"
+        className="absolute bottom-12 left-1/2 h-36 w-36 -translate-x-1/2 rounded-full bg-rose-400/15 blur-3xl"
       />
     </div>
   );

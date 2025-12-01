@@ -32,7 +32,7 @@ const TableOfContents = ({ content }: Props) => {
           <Link
             key={heading.id}
             href={`#${heading.id}`}
-            className="block text-sm text-slate-200 hover:text-cyan-300"
+            className="block text-sm text-slate-200 hover:text-orange-300"
             style={{ paddingLeft: (heading.depth - 1) * 12 }}
           >
             {heading.text}

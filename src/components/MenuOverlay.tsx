@@ -77,12 +77,12 @@ export default function MenuOverlay({
             transition={{ duration: 14, ease: "easeInOut", repeat: Infinity }}
             style={{
               backgroundImage:
-                "radial-gradient(circle at 20% 30%, rgba(29,229,255,0.18), transparent 30%), radial-gradient(circle at 80% 70%, rgba(124,58,237,0.22), transparent 32%)"
+                "radial-gradient(circle at 20% 30%, rgba(255,133,95,0.22), transparent 30%), radial-gradient(circle at 80% 70%, rgba(244,114,182,0.26), transparent 32%)"
             }}
           />
-          <div className="flex-1 bg-gradient-to-r from-cyan-500/10 via-transparent to-transparent backdrop-blur-[2px]" />
+          <div className="flex-1 bg-gradient-to-r from-orange-400/15 via-transparent to-transparent backdrop-blur-[2px]" />
           <div className="relative flex flex-1 flex-col justify-center gap-6 px-10">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Navigate</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Navigate</p>
             <div className="space-y-4 text-4xl font-semibold sm:text-5xl">
               {links.map((link) => (
                 <Link
@@ -92,8 +92,8 @@ export default function MenuOverlay({
                   onClick={onClose}
                   className="group flex items-center gap-4"
                 >
-                  <span className="h-[2px] w-8 bg-white/20 transition-all group-hover:w-12 group-hover:bg-cyan-300" />
-                  <span className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:text-cyan-200">
+                  <span className="h-[2px] w-8 bg-white/20 transition-all group-hover:w-12 group-hover:bg-orange-300" />
+                  <span className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:text-orange-200">
                     {link.label}
                   </span>
                 </Link>
@@ -106,7 +106,7 @@ export default function MenuOverlay({
                   className="glass gradient-border relative rounded-2xl px-4 py-3 text-sm text-white/80"
                 >
                   {item}
-                  <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(29,229,255,0.8)]" />
+                  <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_20px_rgba(255,133,95,0.8)]" />
                 </div>
               ))}
             </div>

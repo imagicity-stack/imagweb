@@ -54,10 +54,10 @@ export default function Hero() {
       <FloatingShapes />
       <motion.div
         style={{ y }}
-        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(29,229,255,0.2),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(29,229,255,0.15),transparent_40%)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(255,133,95,0.24),transparent_35%),radial-gradient(circle_at_82%_12%,rgba(244,114,182,0.18),transparent_40%)]"
       />
       <div className="glass gradient-border relative mb-10 inline-flex items-center gap-3 rounded-full px-4 py-2" data-hero-kicker>
-        <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(29,229,255,0.8)]" />
+        <span className="h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_20px_rgba(255,133,95,0.8)]" />
         <span className="text-xs uppercase tracking-[0.3em] text-white/70">Brand strategy • Campaigns • Growth</span>
       </div>
       <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:items-center">
@@ -97,21 +97,21 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-white/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-400/15 via-transparent to-rose-200/10" />
             <div className="relative space-y-4">
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Marketing ops dashboard</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Marketing ops dashboard</p>
               <div className="space-y-3">
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
                   <span className="text-sm text-white/70">Campaign pods</span>
-                  <span className="text-lg font-semibold text-cyan-200">3 in market</span>
+                  <span className="text-lg font-semibold text-orange-200">3 in market</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
                   <span className="text-sm text-white/70">Response time</span>
-                  <span className="text-lg font-semibold text-cyan-200">Under 2h</span>
+                  <span className="text-lg font-semibold text-orange-200">Under 2h</span>
                 </div>
                 <div className="glass gradient-border flex items-center justify-between rounded-2xl px-4 py-3">
                   <span className="text-sm text-white/70">Launch velocity</span>
-                  <span className="text-lg font-semibold text-cyan-200">Sprint 06</span>
+                  <span className="text-lg font-semibold text-orange-200">Sprint 06</span>
                 </div>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -119,26 +119,26 @@ export default function Hero() {
                   <div key={label} className="glass gradient-border space-y-2 rounded-2xl p-4">
                     <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
                       <span>{label}</span>
-                      <span className="text-cyan-200">{value}%</span>
+                      <span className="text-orange-200">{value}%</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-white/10">
                       <div
-                        className="h-full bg-gradient-to-r from-cyan-300 via-white/60 to-cyan-500"
+                        className="h-full bg-gradient-to-r from-orange-300 via-amber-200/70 to-rose-400"
                         style={{ width: `${value}%` }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="relative mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400/30 via-white/10 to-transparent p-6">
+              <div className="relative mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-400/30 via-rose-200/15 to-transparent p-6">
                 <p className="text-xs uppercase tracking-[0.3em] text-white/60">Aurora stream</p>
                 <div className="mt-4 h-24 overflow-hidden rounded-xl bg-black/60">
                   <motion.div
-                    className="absolute inset-0 scale-110 bg-[radial-gradient(circle_at_30%_40%,rgba(29,229,255,0.2),transparent_30%),radial-gradient(circle_at_70%_60%,rgba(124,58,237,0.25),transparent_36%)]"
+                    className="absolute inset-0 scale-110 bg-[radial-gradient(circle_at_30%_40%,rgba(255,133,95,0.2),transparent_30%),radial-gradient(circle_at_70%_60%,rgba(244,114,182,0.25),transparent_36%)]"
                     animate={{ x: ["-10%", "6%", "-8%"], y: ["-6%", "4%", "-6%"], rotate: [0, 4, -3, 0] }}
                     transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
                   />
-                  <svg className="relative h-full w-full text-cyan-200/70" viewBox="0 0 400 120" preserveAspectRatio="none">
+                  <svg className="relative h-full w-full text-orange-200/70" viewBox="0 0 400 120" preserveAspectRatio="none">
                     <path
                       d="M0 60 Q80 20 160 60 T320 60 T400 60"
                       fill="none"

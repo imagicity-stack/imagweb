@@ -11,7 +11,7 @@ export default function ServicesSection() {
     <section id="services" className="relative px-4 py-24 sm:px-8 lg:px-16">
       <div className="mb-12 flex items-center justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Capabilities</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Capabilities</p>
           <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Strategy + creativity + premium execution.</h2>
         </div>
         <div className="hidden text-sm text-white/60 lg:block">Hover for motion. Click for detail.</div>
@@ -26,7 +26,7 @@ export default function ServicesSection() {
             transition={{ type: "spring", stiffness: 180, damping: 16 }}
           >
             <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                 style={{ backgroundImage: `linear-gradient(135deg, rgba(29,229,255,0.12), rgba(255,255,255,0.05))` }}
+                 style={{ backgroundImage: `linear-gradient(135deg, rgba(255,133,95,0.18), rgba(244,114,182,0.08))` }}
             />
             <div className="relative flex items-start justify-between">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-xl">
@@ -36,8 +36,8 @@ export default function ServicesSection() {
             </div>
             <h3 className="relative mt-4 text-2xl font-semibold">{service.title}</h3>
             <p className="mt-2 text-white/70">{service.tagline}</p>
-            <div className="mt-6 flex items-center gap-3 text-sm text-cyan-100/80">
-              <span className="h-[1px] w-10 bg-cyan-300" />
+            <div className="mt-6 flex items-center gap-3 text-sm text-orange-100/80">
+              <span className="h-[1px] w-10 bg-orange-300" />
               Tap to open detail
             </div>
           </motion.button>
@@ -68,7 +68,7 @@ export default function ServicesSection() {
               >
                 ×
               </button>
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">{selected.title}</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">{selected.title}</p>
               <h4 className="mt-3 text-2xl font-semibold">{selected.tagline}</h4>
               <p className="mt-4 text-white/70">{selected.detail}</p>
               <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-white/60">

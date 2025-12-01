@@ -65,7 +65,7 @@ const AdminLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 rounded-lg bg-cyan-500 text-black font-semibold hover:bg-cyan-400 disabled:opacity-60"
+            className="w-full py-2 rounded-lg bg-orange-500 text-black font-semibold hover:bg-orange-400 disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Login"}
           </button>

@@ -11,7 +11,7 @@ export default function AboutSection() {
       <div className="glass gradient-border relative rounded-3xl p-10">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-xl">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">About the agency</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">About the agency</p>
             <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Creative marketing studio moving faster than the brief.</h2>
             <p className="mt-4 text-white/70">
               Strategy, creative, and engineering operate as one sprint team. We prototype with motion, validate with GTM math,
@@ -30,7 +30,7 @@ export default function AboutSection() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-semibold text-cyan-200">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-semibold text-orange-200">
                       {item.pin}
                     </span>
                     <div>
@@ -46,7 +46,7 @@ export default function AboutSection() {
           </div>
         </div>
         <div className="mt-12">
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Core team</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-orange-100/80">Core team</p>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {team.map((member) => (
               <motion.div
@@ -56,9 +56,9 @@ export default function AboutSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-white/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-400/15 via-rose-200/10 to-white/10 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/40 via-white/30 to-transparent text-lg font-semibold text-white">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-orange-400/40 via-rose-200/30 to-transparent text-lg font-semibold text-white">
                     {member.avatar}
                   </div>
                   <div>
@@ -67,8 +67,8 @@ export default function AboutSection() {
                   </div>
                 </div>
                 <p className="mt-4 text-white/70">{member.focus}</p>
-                <div className="mt-6 flex items-center gap-3 text-sm text-cyan-100/80">
-                  <span className="h-[1px] w-8 bg-cyan-300" />
+                <div className="mt-6 flex items-center gap-3 text-sm text-orange-100/80">
+                  <span className="h-[1px] w-8 bg-orange-300" />
                   Hover to reveal
                 </div>
               </motion.div>

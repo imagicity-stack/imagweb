@@ -47,17 +47,17 @@ export default function Navigation({
       >
         <div className="glass gradient-border flex items-center justify-between rounded-full px-5 py-3">
           <Link href="#home" className="flex items-center gap-3" aria-label="Go to home">
-            <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400/70 via-white/10 to-indigo-400/60 text-lg font-semibold uppercase tracking-[0.18em]">
+            <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-orange-400/70 via-white/10 to-rose-400/70 text-lg font-semibold uppercase tracking-[0.18em]">
               <motion.span
-                className="absolute inset-0 bg-gradient-to-br from-cyan-300/25 via-transparent to-white/10"
+                className="absolute inset-0 bg-gradient-to-br from-orange-300/30 via-transparent to-rose-200/25"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 12, ease: "linear", repeat: Infinity }}
               />
               <span className="relative">IM</span>
             </span>
             <div className="hidden sm:block">
-              <p className="text-sm uppercase tracking-[0.2em] text-cyan-100/80">Imagicity</p>
-              <p className="text-xs text-white/50">Cinematic Agency</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-orange-100/80">Imagicity</p>
+              <p className="text-xs text-white/50">Creative Marketing Studio</p>
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm uppercase tracking-[0.16em] text-white/70">
@@ -68,7 +68,7 @@ export default function Navigation({
                 className="group relative transition-colors duration-300 hover:text-white"
               >
                 {link.label}
-                <span className="absolute left-0 -bottom-1 h-px w-full scale-x-0 bg-cyan-300 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                <span className="absolute left-0 -bottom-1 h-px w-full scale-x-0 bg-orange-300 transition-transform duration-300 ease-out group-hover:scale-x-100" />
               </Link>
             ))}
           </div>
@@ -83,7 +83,7 @@ export default function Navigation({
             className="group relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white/5 text-white shadow-[0_10px_45px_rgba(0,0,0,0.4)] transition-all hover:bg-white/10"
           >
             <motion.span
-              className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(29,229,255,0.16),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(120,119,198,0.22),transparent_45%)]"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,133,95,0.18),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(244,114,182,0.22),transparent_45%)]"
               animate={{ rotate: [0, 6, 0, -4, 0], scale: [1, 1.03, 1.01, 1.04, 1] }}
               transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
             />

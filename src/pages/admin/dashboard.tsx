@@ -72,7 +72,7 @@ const Dashboard = () => {
         </div>
         <button
           onClick={() => (auth ? signOut(auth) : router.replace("/admin/login"))}
-          className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-cyan-400"
+          className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-orange-400"
         >
           Sign out
         </button>
@@ -87,7 +87,7 @@ const Dashboard = () => {
         <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Existing Posts</h2>
-            {authReady && loading && <span className="text-xs text-cyan-300">Loading...</span>}
+            {authReady && loading && <span className="text-xs text-orange-300">Loading...</span>}
           </div>
           <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
             {posts.map((post) => (
@@ -110,7 +110,7 @@ const Dashboard = () => {
                   <p className="text-xs text-slate-500">{post.isPublished ? "Published" : "Draft"}</p>
                   <div className="flex gap-3 mt-2 text-sm">
                     <button
-                      className="text-cyan-300 hover:text-cyan-200"
+                      className="text-orange-300 hover:text-orange-200"
                       onClick={() => setActive(post)}
                     >
                       Edit
