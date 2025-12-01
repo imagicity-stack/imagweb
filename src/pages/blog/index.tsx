@@ -3,27 +3,15 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import BlogList from "@/components/blog/BlogList";
-import type { BlogPost } from "@/lib/blogService";
+import type { Post } from "@/lib/blog-engine/models";
 import { fetchPublishedPosts } from "@/lib/blogService";
 
 interface Props {
-  posts: BlogPost[];
+  posts: Post[];
   siteUrl: string;
 }
 
-const getCreatedAtValue = (value: BlogPost["createdAt"]) => {
-  if (typeof value === "object" && value !== null && "seconds" in value) {
-    const seconds = (value as { seconds?: number })?.seconds;
-    return seconds ? seconds * 1000 : 0;
-  }
-
-  if (typeof value === "string") {
-    const time = new Date(value).getTime();
-    return Number.isNaN(time) ? 0 : time;
-  }
-
-  return 0;
-};
+const getCreatedAtValue = (value: Post["createdAt"]) => new Date(value || new Date()).getTime();
 
 const BlogIndex = ({ posts, siteUrl }: Props) => {
   const sortedPosts = [...(posts ?? [])].sort((a, b) => getCreatedAtValue(b.createdAt) - getCreatedAtValue(a.createdAt));
@@ -82,12 +70,12 @@ const BlogIndex = ({ posts, siteUrl }: Props) => {
                   />
                 </div>
               )}
-              <div className="space-y-3 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-orange-200">Featured</p>
-                <Link href={`/blog/${featured.slug}`} className="text-2xl font-semibold text-white hover:text-orange-300">
-                  {featured.title}
-                </Link>
-                <p className="text-slate-300">{featured.intro}</p>
+                <div className="space-y-3 p-6">
+                  <p className="text-xs uppercase tracking-[0.3em] text-orange-200">Featured</p>
+                  <Link href={`/blog/${featured.slug}`} className="text-2xl font-semibold text-white hover:text-orange-300">
+                    {featured.title}
+                  </Link>
+                  <p className="text-slate-300">{featured.excerpt}</p>
                 <div className="flex flex-wrap gap-2 text-xs text-orange-100">
                   {featured.category && <span className="rounded-full bg-slate-800 px-3 py-1">{featured.category}</span>}
                   {featured.tags?.map((tag) => (

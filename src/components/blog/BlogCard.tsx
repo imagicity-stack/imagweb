@@ -29,7 +29,7 @@ const BlogCard = ({ post }: Props) => {
         <Link href={`/blog/${post.slug}`} className="text-2xl font-semibold text-white hover:text-orange-300 transition">
           {post.title}
         </Link>
-        <p className="text-slate-300 flex-1">{post.intro}</p>
+        <p className="text-slate-300 flex-1">{post.excerpt}</p>
         <div className="flex flex-wrap gap-2 mt-3">
           {post.tags.map((tag) => (
             <span key={tag} className="text-xs uppercase tracking-wide text-orange-200 bg-slate-800 px-2 py-1 rounded-full">

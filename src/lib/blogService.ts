@@ -1,241 +1,98 @@
 import slugify from "slugify";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-  where
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "./firebase";
-import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
+import { listRelatedPosts, getPostBySlug, getPublishedPosts, getPostById, getAllPosts } from "./blog-engine/repository";
+import type { Post, PostInput } from "./blog-engine/models";
 
-export interface BlogPost {
-  id?: string;
-  title: string;
-  slug: string;
-  metaTitle: string;
-  metaDescription: string;
-  featuredImageUrl: string;
-  category: string;
-  tags: string[];
-  intro: string;
-  content: string;
-  author: string;
-  createdAt?: string;
-  updatedAt?: string;
-  isPublished: boolean;
-}
-
-export type BlogPostInput = Omit<BlogPost, "id" | "createdAt" | "updatedAt" | "slug"> & {
-  slug?: string;
+export type BlogPost = Post;
+export type BlogPostInput = PostInput & {
+  metaTitle?: string;
+  metaDescription?: string;
+  intro?: string;
+  author?: string;
+  featuredImageAlt?: string;
+  isPublished?: boolean;
 };
 
-const getPostsRef = () => (db ? collection(db, "blogs") : null);
+export const fetchPublishedPosts = async (): Promise<Post[]> => getPublishedPosts();
 
-const parseDate = (value: unknown) => {
-  if (!value) return new Date().toISOString();
-  if (typeof value === "string") return value;
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    "toDate" in value &&
-    typeof (value as { toDate?: () => Date }).toDate === "function"
-  ) {
-    return (value as { toDate: () => Date }).toDate().toISOString();
-  }
-  return new Date().toISOString();
+export const fetchAllPosts = async (): Promise<Post[]> => getAllPosts();
+
+export const fetchPostBySlug = async (slug: string): Promise<Post | null> => getPostBySlug(slug);
+
+export const fetchPostById = async (id: string): Promise<Post | null> => getPostById(id);
+
+export const fetchRelatedPosts = async (categoryOrSlug: string, currentSlug?: string): Promise<Post[]> => {
+  const related = await listRelatedPosts(categoryOrSlug);
+  if (!currentSlug) return related;
+  return related.filter((post) => post.slug !== currentSlug);
 };
 
-const normalizeTags = (tags: string[] | string): string[] => {
-  if (Array.isArray(tags)) return tags.map((t) => t.trim()).filter(Boolean);
-  return tags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-};
+const mapBlogInputToPost = (payload: BlogPostInput): PostInput => {
+  const tags = Array.isArray(payload.tags)
+    ? payload.tags
+    : typeof payload.tags === "string"
+      ? payload.tags.split(",").map((t) => t.trim())
+      : [];
 
-export const createSlug = (title: string) =>
-  slugify(title, {
-    lower: true,
-    strict: true
-  });
+  const status = payload.isPublished ? "Published" : payload.status ?? "Draft";
 
-export const serializePost = (docSnap: DocumentSnapshot<DocumentData>): BlogPost => {
-  const data = docSnap.data() || {};
   return {
-    id: docSnap.id,
-    title: data.title || "",
-    slug: data.slug || createSlug(data.title || docSnap.id),
-    metaTitle: data.metaTitle || data.title || "",
-    metaDescription: data.metaDescription || data.intro || "",
-    featuredImageUrl: data.featuredImageUrl || "",
-    category: data.category || "General",
-    tags: normalizeTags(data.tags || []),
-    intro: data.intro || "",
-    content: data.content || "",
-    author: data.author || "",
-    createdAt: parseDate(data.createdAt),
-    updatedAt: parseDate(data.updatedAt),
-    isPublished: Boolean(data.isPublished)
-  };
+    ...payload,
+    excerpt: payload.excerpt || payload.intro || "",
+    tags,
+    status,
+    authorName: payload.authorName || payload.author,
+    featuredImageAlt: payload.featuredImageAlt || payload.title || "",
+    seoTitle: payload.seoTitle || payload.metaTitle || payload.title,
+    metaDescription: payload.metaDescription || payload.excerpt || payload.intro || "",
+    ogTitle: payload.ogTitle || payload.metaTitle || payload.title,
+    ogDescription: payload.ogDescription || payload.metaDescription || payload.excerpt,
+    isPublished: status === "Published"
+  } satisfies PostInput;
 };
 
-export const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
-  try {
-    const ref = getPostsRef();
-    if (!ref) return [];
-    const q = query(ref, where("isPublished", "==", true), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(serializePost);
-  } catch (error) {
-    console.error("Failed to fetch blog posts:", error);
-    return [];
+const apiRequest = async <T>(url: string, options?: RequestInit): Promise<T> => {
+  const res = await fetch(url, options);
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || "Request failed");
   }
+  return json.data as T;
 };
 
-export const fetchAllPosts = async (): Promise<BlogPost[]> => {
-  try {
-    const ref = getPostsRef();
-    if (!ref) return [];
-    const q = query(ref, orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(serializePost);
-  } catch (error) {
-    console.error("Failed to fetch all blog posts:", error);
-    return [];
-  }
+export const createBlogPost = async (payload: BlogPostInput): Promise<Post> => {
+  const body = mapBlogInputToPost(payload);
+  return apiRequest<Post>("/api/posts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
 };
 
-export const fetchPostBySlug = async (slug: string): Promise<BlogPost | null> => {
-  try {
-    const ref = getPostsRef();
-    if (!ref) return null;
-    const q = query(ref, where("slug", "==", slug), where("isPublished", "==", true), limit(1));
-    const snapshot = await getDocs(q);
-    if (snapshot.empty) return null;
-    return serializePost(snapshot.docs[0]);
-  } catch (error) {
-    console.error(`Failed to fetch blog post for slug: ${slug}:`, error);
-    return null;
-  }
+export const updateBlogPost = async (id: string, payload: BlogPostInput): Promise<Post> => {
+  const body = mapBlogInputToPost(payload);
+  return apiRequest<Post>(`/api/posts/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
 };
 
-export const fetchPostById = async (id: string): Promise<BlogPost | null> => {
-  try {
-    const ref = getPostsRef();
-    if (!ref) return null;
-    const snapshot = await getDoc(doc(ref, id));
-    if (!snapshot.exists()) return null;
-    return serializePost(snapshot);
-  } catch (error) {
-    console.error(`Failed to fetch blog post by id: ${id}:`, error);
-    return null;
-  }
-};
+export const deleteBlogPost = async (id: string) =>
+  apiRequest<null>(`/api/posts/${id}`, { method: "DELETE" });
 
-export const fetchRelatedPosts = async (category: string, currentSlug: string): Promise<BlogPost[]> => {
-  try {
-    const ref = getPostsRef();
-    if (!ref) return [];
-    const q = query(
-      ref,
-      where("category", "==", category),
-      where("isPublished", "==", true),
-      orderBy("createdAt", "desc"),
-      limit(3)
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs
-      .map(serializePost)
-      .filter((post) => post.slug !== currentSlug)
-      .slice(0, 3);
-  } catch (error) {
-    console.error(`Failed to fetch related blog posts for category: ${category}:`, error);
-    return [];
-  }
-};
+export const createSlug = (value: string) => slugify(value || "", { lower: true, strict: true });
 
-export async function uploadBlogImage(file: File, slug: string) {
-  if (!storage) {
-    throw new Error("Firebase Storage is not configured.");
+export const uploadBlogImage = async (file: File, baseName: string): Promise<string> => {
+  const filename = `${createSlug(baseName || "image")}-${Date.now()}`;
+  const formData = new FormData();
+  formData.append("file", file, filename);
+
+  const res = await fetch("/api/upload", { method: "POST", body: formData });
+  if (res.ok) {
+    const json = await res.json();
+    return json.url || json.path || json.location || "";
   }
 
-  try {
-    const imageRef = ref(storage, `blog-images/${slug}-${Date.now()}`);
-    await uploadBytes(imageRef, file);
-    const url = await getDownloadURL(imageRef);
-    return url;
-  } catch (error) {
-    console.error("Failed to upload blog image", error);
-    throw new Error("Unable to upload image. Please try again.");
-  }
-}
-
-export const createBlogPost = async (data: BlogPostInput) => {
-  const ref = getPostsRef();
-  if (!ref) {
-    throw new Error("Firebase is not configured; cannot create blog posts.");
-  }
-
-  try {
-    const slug = createSlug(data.title);
-    const payload = {
-      ...data,
-      slug,
-      tags: normalizeTags(data.tags || []),
-      featuredImageUrl: data.featuredImageUrl || "",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    };
-
-    const docRef = await addDoc(ref, payload);
-    return fetchPostById(docRef.id);
-  } catch (error) {
-    console.error("Failed to create blog post:", error);
-    throw error;
-  }
-};
-
-export const updateBlogPost = async (id: string, data: BlogPostInput) => {
-  const ref = getPostsRef();
-  if (!ref) {
-    throw new Error("Firebase is not configured; cannot update blog posts.");
-  }
-
-  try {
-    const slug = createSlug(data.title);
-    const payload = {
-      ...data,
-      slug,
-      tags: normalizeTags(data.tags || []),
-      featuredImageUrl: data.featuredImageUrl || "",
-      updatedAt: serverTimestamp()
-    };
-    await updateDoc(doc(ref, id), payload);
-    return fetchPostById(id);
-  } catch (error) {
-    console.error(`Failed to update blog post with id ${id}:`, error);
-    throw error;
-  }
-};
-
-export const deleteBlogPost = async (id: string) => {
-  const ref = getPostsRef();
-  if (!ref) {
-    throw new Error("Firebase is not configured; cannot delete blog posts.");
-  }
-  try {
-    return await deleteDoc(doc(ref, id));
-  } catch (error) {
-    console.error(`Failed to delete blog post with id ${id}:`, error);
-    throw error;
-  }
+  // Fall back to a local object URL to keep the form usable if upload API is absent
+  return URL.createObjectURL(file);
 };

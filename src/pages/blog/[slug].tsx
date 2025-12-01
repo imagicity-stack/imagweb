@@ -4,24 +4,24 @@ import { GetServerSideProps } from "next";
 import TableOfContents from "@/components/blog/TableOfContents";
 import MarkdownRenderer from "@/components/blog/MarkdownRenderer";
 import RelatedPosts from "@/components/blog/RelatedPosts";
-import type { BlogPost } from "@/lib/blogService";
+import type { Post } from "@/lib/blog-engine/models";
 import { fetchPostBySlug, fetchRelatedPosts } from "@/lib/blogService";
 
 interface Props {
-  post: BlogPost;
-  related: BlogPost[];
+  post: Post;
+  related: Post[];
   siteUrl: string;
 }
 
-const createBlogJsonLd = (post: BlogPost, siteUrl: string) => ({
+const createBlogJsonLd = (post: Post, siteUrl: string) => ({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  headline: post.metaTitle || post.title,
+  headline: post.seoTitle || post.title,
   image: post.featuredImageUrl,
-  description: post.metaDescription || post.intro,
+  description: post.metaDescription || post.excerpt,
   author: {
     "@type": "Person",
-    name: post.author || "Imagweb"
+    name: post.authorName || post.authorId || "Imagweb"
   },
   url: `${siteUrl}/blog/${post.slug}`,
   datePublished: post.createdAt,
@@ -35,10 +35,10 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-10">
       <Head>
-        <title>{post.metaTitle || post.title}</title>
-        <meta name="description" content={post.metaDescription || post.intro} />
-        <meta property="og:title" content={post.metaTitle || post.title} />
-        <meta property="og:description" content={post.metaDescription || post.intro} />
+        <title>{post.seoTitle || post.title}</title>
+        <meta name="description" content={post.metaDescription || post.excerpt} />
+        <meta property="og:title" content={post.ogTitle || post.seoTitle || post.title} />
+        <meta property="og:description" content={post.ogDescription || post.metaDescription || post.excerpt} />
         <meta property="og:image" content={post.featuredImageUrl} />
         <link rel="canonical" href={canonical} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -49,7 +49,7 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
           <p className="text-sm text-orange-300 uppercase tracking-wide">{post.category}</p>
           <h1 className="text-4xl font-bold text-white">{post.title}</h1>
           <p className="text-slate-400 text-sm">
-            {post.author && <span className="mr-2">By {post.author}</span>}
+            {(post.authorName || post.authorId) && <span className="mr-2">By {post.authorName || post.authorId}</span>}
             {post.createdAt && new Date(post.createdAt).toLocaleDateString()}
           </p>
           <div className="flex justify-center gap-3 text-sm text-slate-300">
@@ -94,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!post) {
     return { notFound: true };
   }
-  const related = await fetchRelatedPosts(post.category, post.slug);
+  const related = await fetchRelatedPosts(post.slug, post.slug);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   return {
