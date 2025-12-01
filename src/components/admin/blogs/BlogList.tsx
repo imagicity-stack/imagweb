@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { BlogTable, Panel, PillButton, TextInput } from "./AdminUI";
 import type { BlogPost } from "@/types/blog";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 export function BlogList({ onSelect }: Props) {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<{ status?: string; category?: string; authorId?: string }>({});
 
   const load = async () => {
@@ -26,12 +28,36 @@ export function BlogList({ onSelect }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.status, filters.category, filters.authorId]);
 
+  const visibleBlogs = useMemo(() => {
+    if (!search.trim()) return blogs;
+    const query = search.toLowerCase();
+    return blogs.filter(
+      (blog) =>
+        blog.title.toLowerCase().includes(query) ||
+        blog.category?.toLowerCase().includes(query) ||
+        blog.tags?.some((tag) => tag.toLowerCase().includes(query))
+    );
+  }, [blogs, search]);
+
   return (
-    <div className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 text-white">
-      <div className="flex flex-wrap items-center gap-3 text-sm">
-        <h2 className="text-lg font-semibold">Blog Library</h2>
+    <Panel
+      title="Blog Dashboard"
+      description="Search, filter, and open posts to edit"
+      action={
+        <div className="flex items-center gap-2 text-xs text-slate-300">
+          <PillButton onClick={load} className="!text-orange-200">
+            Refresh
+          </PillButton>
+        </div>
+      }
+    >
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="flex flex-1 min-w-[200px] items-center gap-2 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-sm shadow-inner">
+          <span className="text-slate-500">🔍</span>
+          <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, tags, category" />
+        </div>
         <select
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1"
+          className="min-w-[140px] rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white shadow-inner"
           value={filters.status || ""}
           onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value || undefined }))}
         >
@@ -41,38 +67,20 @@ export function BlogList({ onSelect }: Props) {
           <option value="published">Published</option>
           <option value="private">Private</option>
         </select>
-        <input
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1"
+        <TextInput
+          className="min-w-[140px]"
           placeholder="Category"
           value={filters.category || ""}
           onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value || undefined }))}
         />
-        <input
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1"
+        <TextInput
+          className="min-w-[140px]"
           placeholder="Author ID"
           value={filters.authorId || ""}
           onChange={(e) => setFilters((f) => ({ ...f, authorId: e.target.value || undefined }))}
         />
-        <button className="ml-auto text-xs text-orange-200 hover:underline" onClick={load}>
-          Refresh
-        </button>
       </div>
-      <div className="divide-y divide-slate-800">
-        {blogs.map((blog) => (
-          <button
-            key={blog.id}
-            onClick={() => onSelect(blog)}
-            className="flex w-full items-center justify-between py-3 text-left hover:text-orange-200"
-          >
-            <div>
-              <p className="font-semibold">{blog.title}</p>
-              <p className="text-xs text-slate-400">{blog.status} · {blog.category} · {blog.tags?.slice(0, 3).join(", ")}</p>
-            </div>
-            <div className="text-xs text-slate-400">{blog.publishDate?.slice(0, 10)}</div>
-          </button>
-        ))}
-        {!blogs.length && <p className="py-4 text-sm text-slate-400">No posts yet. Create the first one!</p>}
-      </div>
-    </div>
+      <BlogTable blogs={visibleBlogs} onSelect={onSelect} onRefresh={load} />
+    </Panel>
   );
 }
