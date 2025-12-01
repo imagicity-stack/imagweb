@@ -107,7 +107,7 @@ const Dashboard = () => {
                 <div className="flex-1">
                   <p className="text-xs text-slate-400">{post.category}</p>
                   <p className="font-semibold text-white">{post.title}</p>
-                  <p className="text-xs text-slate-500">{post.isPublished ? "Published" : "Draft"}</p>
+                  <p className="text-xs text-slate-500">{post.status === "published" ? "Published" : "Draft"}</p>
                   <div className="flex gap-3 mt-2 text-sm">
                     <button
                       className="text-orange-300 hover:text-orange-200"

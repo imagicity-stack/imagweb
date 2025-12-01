@@ -16,12 +16,12 @@ interface Props {
 const createBlogJsonLd = (post: BlogPost, siteUrl: string) => ({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  headline: post.metaTitle || post.title,
+  headline: post.seo?.seoTitle || post.title,
   image: post.featuredImageUrl,
-  description: post.metaDescription || post.intro,
+  description: post.seo?.metaDescription || post.intro,
   author: {
     "@type": "Person",
-    name: post.author || "Imagweb"
+    name: post.authorId || "Imagweb"
   },
   url: `${siteUrl}/blog/${post.slug}`,
   datePublished: post.createdAt,
@@ -35,10 +35,10 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 px-4 py-10">
       <Head>
-        <title>{post.metaTitle || post.title}</title>
-        <meta name="description" content={post.metaDescription || post.intro} />
-        <meta property="og:title" content={post.metaTitle || post.title} />
-        <meta property="og:description" content={post.metaDescription || post.intro} />
+        <title>{post.seo?.seoTitle || post.title}</title>
+        <meta name="description" content={post.seo?.metaDescription || post.intro} />
+        <meta property="og:title" content={post.seo?.openGraphTitle || post.title} />
+        <meta property="og:description" content={post.seo?.openGraphDescription || post.intro} />
         <meta property="og:image" content={post.featuredImageUrl} />
         <link rel="canonical" href={canonical} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -49,7 +49,7 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
           <p className="text-sm text-orange-300 uppercase tracking-wide">{post.category}</p>
           <h1 className="text-4xl font-bold text-white">{post.title}</h1>
           <p className="text-slate-400 text-sm">
-            {post.author && <span className="mr-2">By {post.author}</span>}
+            {post.authorId && <span className="mr-2">By {post.authorId}</span>}
             {post.createdAt && new Date(post.createdAt).toLocaleDateString()}
           </p>
           <div className="flex justify-center gap-3 text-sm text-slate-300">
@@ -76,10 +76,10 @@ const BlogPostPage = ({ post, related, siteUrl }: Props) => {
 
         <div className="grid lg:grid-cols-[1fr,320px] gap-8">
           <div className="space-y-6">
-            <MarkdownRenderer content={post.content} />
+            <MarkdownRenderer content={post.contentHtml} />
           </div>
           <div className="space-y-4">
-            <TableOfContents content={post.content} />
+            <TableOfContents content={post.contentHtml} />
             <RelatedPosts posts={related} />
           </div>
         </div>

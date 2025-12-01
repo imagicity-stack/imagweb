@@ -98,6 +98,37 @@ export function BlogEditor({ selectedBlog, onSaved, onDeleted, onDuplicated, sug
     return () => controller.abort();
   }, [blog.title, blog.category, blog.tags]);
 
+  const handleSave = useCallback(async (isAutosave = false) => {
+    if (!blog.title) return;
+    setSaving(true);
+    const payload: BlogPost = {
+      ...blog,
+      slug: blog.slug || createSlug(blog.title),
+      contentHtml: content,
+      ...readingMetrics,
+      status: blog.status || "draft",
+      tableOfContents: readingMetrics.tableOfContents,
+      readingTime: readingMetrics.readingTime,
+      wordCount: readingMetrics.wordCount
+    };
+
+    const method = blog.id ? "PUT" : "POST";
+    const endpoint = blog.id ? `/api/blogs/${blog.id}` : "/api/blogs";
+    const res = await fetch(endpoint, {
+      method,
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error("Failed to save blog");
+    const saved = (await res.json()) as BlogPost;
+    setBlog(saved);
+    setContent(saved.contentHtml);
+    onSaved?.(saved);
+    if (!isAutosave && !mediaLibrary.length && saved.id) {
+      listBlogMedia(saved.id).then(setMediaLibrary);
+    }
+    setSaving(false);
+  }, [blog, content, mediaLibrary.length, onSaved, readingMetrics]);
+
   useEffect(() => {
     if (!autosaveEnabled) return;
     const interval = setInterval(() => {
@@ -128,37 +159,6 @@ export function BlogEditor({ selectedBlog, onSaved, onDeleted, onDuplicated, sug
       setUploading(false);
     }
   };
-
-  const handleSave = useCallback(async (isAutosave = false) => {
-    if (!blog.title) return;
-    setSaving(true);
-    const payload: BlogPost = {
-      ...blog,
-      slug: blog.slug || createSlug(blog.title),
-      contentHtml: content,
-      ...readingMetrics,
-      status: blog.status || "draft",
-      tableOfContents: readingMetrics.tableOfContents,
-      readingTime: readingMetrics.readingTime,
-      wordCount: readingMetrics.wordCount
-    };
-
-    const method = blog.id ? "PUT" : "POST";
-    const endpoint = blog.id ? `/api/blogs/${blog.id}` : "/api/blogs";
-    const res = await fetch(endpoint, {
-      method,
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error("Failed to save blog");
-    const saved = (await res.json()) as BlogPost;
-    setBlog(saved);
-    setContent(saved.contentHtml);
-    onSaved?.(saved);
-    if (!isAutosave && !mediaLibrary.length && saved.id) {
-      listBlogMedia(saved.id).then(setMediaLibrary);
-    }
-    setSaving(false);
-  }, [blog, content, readingMetrics, mediaLibrary.length, onSaved]);
 
   const handleDelete = async () => {
     if (!blog.id) return;

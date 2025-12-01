@@ -38,7 +38,7 @@ export const getReadingTime = (wordCount: number) => Math.max(1, Math.ceil(wordC
 
 export const generateTableOfContents = (html: string): TableOfContentsItem[] => {
   if (!html) return [];
-  const matches = [...html.matchAll(/<h(2|3)[^>]*>(.*?)<\/h\1>/gims)];
+  const matches = [...html.matchAll(/<h(2|3)[^>]*>([\s\S]*?)<\/h\1>/gim)];
   return matches.map((match, index) => ({
     id: `toc-${index}`,
     text: sanitizeHtml(match[2], { allowedTags: [], allowedAttributes: {} }),

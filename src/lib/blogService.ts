@@ -16,6 +16,17 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { clientDb, clientStorage, isClientFirebaseConfigured } from "@/lib/firebase/client";
 import type { BlogPost } from "@/types/blog";
+export type { BlogPost } from "@/types/blog";
+export type BlogPostInput = Partial<BlogPost> & {
+  metaTitle?: string;
+  metaDescription?: string;
+  featuredImageUrl?: string;
+  intro?: string;
+  content?: string;
+  author?: string;
+  isPublished?: boolean;
+  slug?: string;
+};
 import { createSlug, ensureLazyImages, generateTableOfContents, getReadingTime, getWordCount, sanitizeContentHtml } from "@/lib/cms/utils";
 
 const getPostsRef = () => (clientDb ? collection(clientDb, "blogs") : null);
@@ -37,37 +48,55 @@ const parseDate = (value: unknown) => {
 type SnapshotLike = Pick<Partial<BlogPost>, keyof Partial<BlogPost>> & { id?: string };
 
 const normalizePost = (docSnap: DocumentSnapshot<DocumentData> | SnapshotLike): BlogPost => {
-  const data = "data" in docSnap && typeof docSnap.data === "function" ? (docSnap.data() as Partial<BlogPost>) : docSnap;
-  const contentHtml = ensureLazyImages(sanitizeContentHtml(data.contentHtml || data.content || ""));
+  const data =
+    "data" in docSnap && typeof docSnap.data === "function"
+      ? ((docSnap.data() as Partial<BlogPost>) || {})
+      : (docSnap as Partial<BlogPost>);
+  const legacyData = data as {
+    metaTitle?: string;
+    metaDescription?: string;
+    focusKeyword?: string;
+    secondaryKeywords?: string[];
+    canonicalUrl?: string;
+    openGraphTitle?: string;
+    openGraphDescription?: string;
+    openGraphImage?: string;
+    twitterTitle?: string;
+    twitterDescription?: string;
+    twitterImage?: string;
+  };
+  const rawContent = (data as Partial<BlogPost> & { content?: string }).contentHtml || (data as { content?: string }).content || "";
+  const contentHtml = ensureLazyImages(sanitizeContentHtml(rawContent));
   const wordCount = getWordCount(contentHtml);
   return {
     id: docSnap.id,
     title: data.title || "",
-    slug: data.slug || createSlug(data.title || docSnap.id),
+    slug: data.slug || createSlug(data.title || docSnap.id || ""),
     featuredImage: data.featuredImage || data.featuredImageUrl || "",
-    featuredImageAlt: data.featuredImageAlt || data.featuredImageAltText || "",
+    featuredImageAlt:
+      data.featuredImageAlt || (data as { featuredImageAltText?: string }).featuredImageAltText || "",
     category: data.category || "General",
     tags: data.tags || [],
     excerpt: data.excerpt || data.intro || "",
-    authorId: data.authorId || data.author || "",
-    status: data.status || (data.isPublished ? "published" : "draft"),
+    authorId: data.authorId || (data as { author?: string }).author || "",
+    status: data.status || ((data as { isPublished?: boolean }).isPublished ? "published" : "draft"),
     publishDate: parseDate(data.publishDate || data.createdAt),
     contentHtml,
     tableOfContents: data.tableOfContents || generateTableOfContents(contentHtml),
     readingTime: data.readingTime || getReadingTime(wordCount),
     wordCount: data.wordCount || wordCount,
     seo: data.seo || {
-      seoTitle: data.metaTitle || data.title || "",
-      metaDescription: data.metaDescription || data.excerpt || "",
-      focusKeyword: data.focusKeyword || "",
-      secondaryKeywords: data.secondaryKeywords || [],
-      canonicalUrl: data.canonicalUrl || "",
-      openGraphTitle: data.openGraphTitle || data.title || "",
-      openGraphDescription: data.openGraphDescription || data.excerpt || "",
-      openGraphImage: data.openGraphImage || data.featuredImage || "",
-      twitterTitle: data.twitterTitle || data.title || "",
-      twitterDescription: data.twitterDescription || data.excerpt || "",
-      twitterImage: data.twitterImage || data.featuredImage || ""
+      seoTitle: legacyData.metaTitle || data.title || "",
+      metaDescription: legacyData.metaDescription || data.excerpt || "",
+      focusKeyword: legacyData.focusKeyword || "",
+      secondaryKeywords: legacyData.secondaryKeywords || [],
+      canonicalUrl: legacyData.canonicalUrl || "",
+      openGraphTitle: legacyData.openGraphTitle || data.title || "",
+      openGraphDescription: legacyData.openGraphDescription || data.excerpt || "",
+      openGraphImage: legacyData.openGraphImage || data.featuredImage || "",
+      twitterTitle: legacyData.twitterTitle || data.title || "",
+      twitterDescription: legacyData.twitterDescription || data.excerpt || "",
+      twitterImage: legacyData.twitterImage || data.featuredImage || ""
     },
     schemaType: data.schemaType || "BlogPosting",
     internalLinks: data.internalLinks || [],
@@ -210,3 +239,6 @@ export const deleteBlogPost = async (id: string) => {
 };
 
 export const isFirebaseReady = isClientFirebaseConfigured;
+
+// Re-export utility slug generator for admin form imports
+export { createSlug };

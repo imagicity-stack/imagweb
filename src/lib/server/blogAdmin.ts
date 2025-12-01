@@ -85,7 +85,7 @@ const normalizeBlog = (payload: Partial<BlogPost>): BlogPost => {
 export const fetchBlogById = async (id: string): Promise<BlogPost | null> => {
   if (!adminDb) return null;
   const snap = await adminDb.collection(BLOG_COLLECTION).doc(id).get();
-  if (!snap.exists()) return null;
+  if (!snap.exists) return null;
   const data = snap.data() as BlogPost;
   return {
     ...data,
