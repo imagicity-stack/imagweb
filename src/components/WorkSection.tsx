@@ -28,9 +28,9 @@ export default function WorkSection() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">Selected work</p>
-          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Experiential builds for premium brands.</h2>
+          <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Integrated marketing for brands obsessed with growth.</h2>
         </div>
-        <p className="text-white/60">Click any card to open the animated case file.</p>
+        <p className="text-white/60">Click any card to open the growth case file.</p>
       </div>
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (

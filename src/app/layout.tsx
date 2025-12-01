@@ -15,7 +15,7 @@ const siteUrl = "https://imagicity.example";
 export const metadata: Metadata = {
   title: `${siteName} | Bold Creative Marketing Agency`,
   description:
-    "Bold, minimal, and futuristic creative marketing agency crafting GTM strategy, design, web builds, and campaign planning with cinematic experiences.",
+    "Bold, minimal, and futuristic creative marketing agency crafting GTM strategy, design, web builds, and campaign planning with measurable performance.",
   metadataBase: new URL(siteUrl),
   openGraph: {
     title: `${siteName} | Creative Strategy & Premium Execution`,
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     creator: "@imagicity",
     title: `${siteName} | Creative Marketing`,
     description:
-      "Premium creative marketing studio building futuristic brands with motion, design, and technology."
+      "Premium creative marketing studio building futuristic brands with strategy, content, and technology."
   },
   keywords: [
     "creative agency",
@@ -64,7 +64,7 @@ export default function RootLayout({
     name: siteName,
     url: siteUrl,
     description:
-      "Creative marketing agency blending GTM strategy, design systems, campaign planning, and cinematic web experiences.",
+      "Creative marketing agency blending GTM strategy, design systems, campaign planning, and conversion-first web experiences.",
     sameAs: [
       "https://www.linkedin.com/company/imagicity",
       "https://www.behance.net/imagicity"

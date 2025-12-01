@@ -12,9 +12,10 @@ export default function AboutSection() {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-xl">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-100/70">About the agency</p>
-            <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Immersive marketing studio moving faster than the brief.</h2>
+            <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">Creative marketing studio moving faster than the brief.</h2>
             <p className="mt-4 text-white/70">
-              Strategy, design, and engineering operate as one sprint team. We prototype with motion, validate with GTM math, and deliver with premium craft.
+              Strategy, creative, and engineering operate as one sprint team. We prototype with motion, validate with GTM math,
+              and ship campaigns that convert without sacrificing craft.
             </p>
           </div>
           <div className="grid w-full max-w-xl gap-4">

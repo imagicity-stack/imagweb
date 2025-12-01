@@ -1,34 +1,34 @@
 export const services = [
   {
-    title: "GTM Strategy",
-    tagline: "Precision plans for category-defining launches.",
+    title: "Brand Positioning",
+    tagline: "Narratives and messaging that anchor demand.",
     detail:
-      "Full-funnel go-to-market systems blending positioning, channel prioritization, growth loops, and revenue dashboards.",
-    icon: "🎯",
+      "Category mapping, value propositions, audience frameworks, and conversion-ready storylines informed by research and testing.",
+    icon: "🧭",
     accent: "from-cyan-400/60 to-white/10"
   },
   {
-    title: "Graphic Design",
-    tagline: "Futuristic visuals with strategic clarity.",
+    title: "Integrated Campaigns",
+    tagline: "Performance creative shipped with operational rigor.",
     detail:
-      "Design language systems, key visuals, social systems, and motion-ready assets crafted for premium brands.",
-    icon: "🛠️",
+      "Cross-channel concepts, media kits, landing pages, and experiments coordinated through rapid sprints and KPI dashboards.",
+    icon: "🚀",
     accent: "from-cyan-300/70 via-white/20 to-transparent"
   },
   {
-    title: "Website Development",
-    tagline: "Cinematic, high-performance experiences.",
+    title: "Content Systems",
+    tagline: "Social, email, and thought-leadership engines.",
     detail:
-      "Next.js builds with animation direction, CRO best practices, composable CMS options, and design system governance.",
-    icon: "💻",
+      "Editorial roadmaps, modular asset kits, automation flows, and channel-specific creative that keeps your brand consistently active.",
+    icon: "🧩",
     accent: "from-cyan-400/70 via-cyan-300/30 to-white/5"
   },
   {
-    title: "Campaign Planning",
-    tagline: "Narratives that move culture and metrics.",
+    title: "Web & Funnel",
+    tagline: "Conversion-first digital experiences.",
     detail:
-      "Full creative direction, content calendars, paid-social packs, landing pages, and interactive storytelling with rigorous measurement.",
-    icon: "🚀",
+      "Next.js builds with CRO best practices, analytics wiring, marketing automation, and design systems calibrated for fast iterations.",
+    icon: "💻",
     accent: "from-cyan-300/80 via-white/10 to-transparent"
   }
 ];
@@ -48,14 +48,14 @@ export const timeline = [
   },
   {
     year: "2022",
-    title: "Experiential web",
-    copy: "Pioneered neon-futurist systems with Framer Motion, GSAP, and headless architectures.",
+    title: "Performance creative",
+    copy: "Rolled out integrated campaign pods with motion-first design systems and CRO playbooks.",
     pin: "Innovation"
   },
   {
     year: "2024",
-    title: "Premium retainers",
-    copy: "Embedded teams orchestrating GTM, design, and engineering with cinematic delivery.",
+    title: "Growth retainers",
+    copy: "Embedded teams orchestrating GTM, design, content, and engineering with measurable revenue impact.",
     pin: "Today"
   }
 ];
@@ -87,27 +87,27 @@ export const team = [
 export const projects = [
   {
     slug: "vanta-neon",
-    title: "Vanta Neon Platform",
-    summary: "Immersive SaaS story with kinetic UI and realtime data cues.",
-    tags: ["GTM", "Web", "Product Design"],
-    highlight: "Increased demo conversions by 38% after launch.",
+    title: "Vanta Growth Platform",
+    summary: "Product-led story with kinetic UI, email drips, and sales enablement all tied to shared analytics.",
+    tags: ["GTM", "Campaign", "Product"],
+    highlight: "Demo requests up 38% with aligned nurture flows.",
     palette: "from-cyan-400/60 via-white/15 to-transparent",
     cover: "/images/vanta-grid.png"
   },
   {
     slug: "lumen-studio",
-    title: "Lumen Studio",
-    summary: "Portfolio built like a light installation with magnetic navigation.",
-    tags: ["Brand", "3D", "Website"],
-    highlight: "Award finalist for experiential digital craft.",
+    title: "Lumen Studio Brand",
+    summary: "Brand refresh and campaign kit with modular social assets, press templates, and launch microsite.",
+    tags: ["Brand", "Content", "Website"],
+    highlight: "Press kit adoption across 5 markets within 2 weeks.",
     palette: "from-white/60 via-cyan-200/30 to-transparent",
     cover: "/images/lumen-grid.png"
   },
   {
     slug: "orbit-campaign",
     title: "Orbit Campaign System",
-    summary: "Cross-channel storytelling kit with modular landing pages.",
-    tags: ["Campaign", "Motion", "Strategy"],
+    summary: "Cross-channel performance system with testing matrix, LP variations, and on-brand ad creative.",
+    tags: ["Campaign", "Performance", "Strategy"],
     highlight: "Rolled out in 6 markets with unified analytics.",
     palette: "from-cyan-500/50 via-white/15 to-transparent",
     cover: "/images/orbit-grid.png"
