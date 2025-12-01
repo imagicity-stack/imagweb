@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deletePost, getPostById, updatePost } from "@/lib/blog-engine/repository";
 
-interface Params {
-  params: { id: string };
-}
+type RouteContext = { params: Promise<{ id: string }> };
 
-export async function GET(_request: NextRequest, { params }: Params) {
+export async function GET(_request: NextRequest, context: RouteContext) {
   try {
-    const post = await getPostById(params.id);
+    const { id } = await context.params;
+    const post = await getPostById(id);
     if (!post) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -18,10 +17,11 @@ export async function GET(_request: NextRequest, { params }: Params) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: Params) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   try {
+    const { id } = await context.params;
     const payload = await request.json();
-    const updated = await updatePost(params.id, payload);
+    const updated = await updatePost(id, payload);
     return NextResponse.json({ data: updated });
   } catch (error) {
     console.error("Failed to update post", error);
@@ -29,9 +29,10 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export async function DELETE(_request: NextRequest, context: RouteContext) {
   try {
-    await deletePost(params.id);
+    const { id } = await context.params;
+    await deletePost(id);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Failed to delete post", error);
