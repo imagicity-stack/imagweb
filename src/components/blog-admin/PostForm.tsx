@@ -85,7 +85,7 @@ const PostForm = ({ active, onSubmit }: Props) => {
     try {
       const payload: PostInput = {
         ...form,
-        slug: slugify(form.slug || form.title, { lower: true, strict: true }),
+        slug: slugify(form.slug ?? form.title ?? "", { lower: true, strict: true }),
         readingTime,
         toc,
         isPublished: form.status === "Published",
