@@ -73,8 +73,8 @@ export default function Hero() {
             experiences that move the funnel.
           </p>
           <div className="flex flex-wrap items-center gap-4" data-hero-cta>
-            <MagneticButton>Start a project</MagneticButton>
-            <MagneticButton className="bg-transparent hover:bg-white/10" href="#work">
+            <MagneticButton href="/contact">Start a project</MagneticButton>
+            <MagneticButton className="bg-transparent hover:bg-white/10" href="/work">
               View work
             </MagneticButton>
             <div className="relative hidden sm:block">

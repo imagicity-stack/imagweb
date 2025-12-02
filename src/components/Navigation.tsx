@@ -7,12 +7,12 @@ import gsap from "gsap";
 import MenuOverlay from "./MenuOverlay";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/work" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "#contact" }
+  { label: "Contact", href: "/contact" }
 ];
 
 export default function Navigation({
@@ -46,7 +46,7 @@ export default function Navigation({
         className="fixed top-0 left-0 right-0 z-30 px-4 py-4 lg:px-10"
       >
         <div className="glass gradient-border flex items-center justify-between rounded-full px-5 py-3">
-          <Link href="#home" className="flex items-center gap-3" aria-label="Go to home">
+          <Link href="/" className="flex items-center gap-3" aria-label="Go to home">
             <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-orange-400/70 via-white/10 to-rose-400/70 text-lg font-semibold uppercase tracking-[0.18em]">
               <motion.span
                 className="absolute inset-0 bg-gradient-to-br from-orange-300/30 via-transparent to-rose-200/25"
