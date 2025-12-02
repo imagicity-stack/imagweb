@@ -6,12 +6,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
 
 const links = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/work" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "#contact" }
+  { label: "Contact", href: "/contact" }
 ];
 
 export default function MenuOverlay({
