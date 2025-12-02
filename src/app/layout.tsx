@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import ClientRoot from "@/components/ClientRoot";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-jakarta",
-  weight: ["400", "500", "600", "700", "800"]
+  variable: "--font-space",
+  weight: ["400", "500", "600", "700"]
 });
 
 const siteName = "Imagicity";
@@ -74,7 +74,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="bg-black">
-      <body className={`${plusJakartaSans.variable} antialiased`}>
+      <body className={`${spaceGrotesk.variable} antialiased`}>
         <ClientRoot>{children}</ClientRoot>
         <script
           type="application/ld+json"

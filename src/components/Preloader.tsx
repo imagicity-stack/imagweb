@@ -7,7 +7,7 @@ export default function Preloader() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 1600);
+    const timer = setTimeout(() => setVisible(false), 900);
     return () => clearTimeout(timer);
   }, []);
 
@@ -18,26 +18,26 @@ export default function Preloader() {
           className="fixed inset-0 z-40 flex items-center justify-center bg-black"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6 } }}
+          exit={{ opacity: 0, transition: { duration: 0.4 } }}
         >
           <motion.div
-            className="relative flex h-28 w-28 items-center justify-center rounded-full border border-orange-300/30"
-            initial={{ scale: 0.7, rotate: -8 }}
-            animate={{ scale: 1, rotate: 360 }}
-            transition={{ duration: 1.3, ease: "easeInOut" }}
+            className="relative flex h-24 w-24 items-center justify-center rounded-3xl border border-white/10 bg-white/5"
+            initial={{ scale: 0.92, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <motion.div
-              className="absolute inset-2 rounded-full bg-gradient-to-br from-orange-400/50 to-white/10"
-              animate={{ borderRadius: [24, 56, 24], rotate: [0, 90, 180, 360] }}
-              transition={{ duration: 1.3, ease: "easeInOut" }}
+              className="absolute inset-3 rounded-2xl bg-gradient-to-br from-orange-400/30 via-rose-200/15 to-transparent"
+              animate={{ rotate: [0, 8, -8, 0] }}
+              transition={{ duration: 1.2, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.span
-              className="relative text-lg font-semibold tracking-[0.2em]"
+              className="relative text-lg font-semibold tracking-[0.18em] text-white"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
-              IW
+              Imagicity
             </motion.span>
           </motion.div>
         </motion.div>
