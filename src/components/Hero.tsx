@@ -21,24 +21,24 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       gsap.from("[data-hero-kicker]", {
         opacity: 0,
-        y: 20,
-        duration: 0.8,
-        ease: "power3.out"
+        y: 16,
+        duration: 0.6,
+        ease: "power2.out"
       });
       gsap.from("[data-hero-title]", {
         opacity: 0,
-        y: 60,
-        duration: 1,
-        ease: "power3.out",
-        delay: 0.1
+        y: 50,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.08
       });
       gsap.from("[data-hero-cta]", {
         opacity: 0,
-        y: 40,
-        duration: 0.8,
-        ease: "power3.out",
+        y: 32,
+        duration: 0.6,
+        ease: "power2.out",
         stagger: 0.12,
-        delay: 0.4
+        delay: 0.3
       });
     }, ref);
 
@@ -54,23 +54,23 @@ export default function Hero() {
       <FloatingShapes />
       <motion.div
         style={{ y }}
-        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(255,133,95,0.24),transparent_35%),radial-gradient(circle_at_82%_12%,rgba(244,114,182,0.18),transparent_40%)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(255,122,89,0.22),transparent_35%),radial-gradient(circle_at_82%_12%,rgba(76,110,245,0.16),transparent_40%)]"
       />
       <div className="glass gradient-border relative mb-10 inline-flex items-center gap-3 rounded-full px-4 py-2" data-hero-kicker>
-        <span className="h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_20px_rgba(255,133,95,0.8)]" />
-        <span className="text-xs uppercase tracking-[0.3em] text-white/70">Brand strategy • Campaigns • Growth</span>
+        <span className="h-2 w-2 rounded-full bg-orange-300 shadow-[0_0_20px_rgba(255,122,89,0.8)]" />
+        <span className="text-xs uppercase tracking-[0.28em] text-white/70">Integrated marketing studio • US + EU</span>
       </div>
       <div className="grid gap-10 lg:grid-cols-[3fr_2fr] lg:items-center">
         <div className="space-y-8">
           <h1
             data-hero-title
-            className="text-balance text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl"
+            className="text-balance text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl"
           >
-            Creative marketing teams that ship conversion-ready brand experiences.
+            Creative marketing teams crafting bold stories, revenue-first launches, and digital polish.
           </h1>
-          <p className="max-w-2xl text-lg text-white/70">
-            We pair GTM architecture with bold creative, building integrated campaigns, content engines, and high-speed digital
-            experiences that move the funnel.
+          <p className="max-w-2xl text-lg text-white/75">
+            We blend GTM architecture with vibrant creative, building conversion-led campaigns, content engines, and responsive
+            product storytelling for brands on a mission.
           </p>
           <div className="flex flex-wrap items-center gap-4" data-hero-cta>
             <MagneticButton href="/contact">Start a project</MagneticButton>

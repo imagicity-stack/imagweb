@@ -9,13 +9,39 @@ import Preloader from "./Preloader";
 
 export default function ClientRoot({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [enableCursor, setEnableCursor] = useState(false);
+  const [enableLenis, setEnableLenis] = useState(false);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarsePointer = window.matchMedia("(pointer: coarse)");
+
+    const updateFlags = () => {
+      const allowMotion = !prefersReducedMotion.matches;
+      const allowDesktopFeatures = !coarsePointer.matches;
+      setEnableCursor(allowMotion && allowDesktopFeatures);
+      setEnableLenis(allowMotion && allowDesktopFeatures);
+    };
+
+    updateFlags();
+    prefersReducedMotion.addEventListener("change", updateFlags);
+    coarsePointer.addEventListener("change", updateFlags);
+
+    return () => {
+      prefersReducedMotion.removeEventListener("change", updateFlags);
+      coarsePointer.removeEventListener("change", updateFlags);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enableLenis) return;
+
     const lenis = new Lenis({
       smoothWheel: true,
-      lerp: 0.08,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.1
+      lerp: 0.1,
+      wheelMultiplier: 0.85,
+      touchMultiplier: 0.9,
+      duration: 1.1
     });
 
     let animationFrame: number;
@@ -30,13 +56,13 @@ export default function ClientRoot({ children }: { children: ReactNode }) {
       cancelAnimationFrame(animationFrame);
       lenis.destroy();
     };
-  }, []);
+  }, [enableLenis]);
 
   return (
     <>
       <Preloader />
       <NoiseOverlay />
-      <Cursor />
+      {enableCursor && <Cursor />}
       <Navigation
         open={menuOpen}
         onToggle={() => setMenuOpen((prev) => !prev)}
