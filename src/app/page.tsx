@@ -1,6 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 
-const navLinks = ["Main", "Services", "Team", "Contacts"];
+const navLinks = [
+  { label: "Main", href: "#main" },
+  { label: "Services", href: "#services" },
+  { label: "Team", href: "#team" },
+  { label: "Contacts", href: "#contact" }
+];
 
 const services = [
   {
@@ -31,7 +37,7 @@ const logoMarks = ["Nova", "Pixel", "Spark", "Loom", "Axis", "Zing"];
 export default function HomePage() {
   return (
     <main className="bg-[#f7cf46] text-[#111111]">
-      <section className="relative overflow-hidden px-4 pb-16 pt-12 sm:px-8">
+      <section id="main" className="relative overflow-hidden px-4 pb-16 pt-12 sm:px-8">
         <div className="pointer-events-none absolute inset-0">
           <div className="sunburst" />
         </div>
@@ -56,14 +62,21 @@ export default function HomePage() {
               </div>
               <nav className="flex flex-wrap items-center gap-3 rounded-full bg-white/90 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em]">
                 {navLinks.map((link) => (
-                  <span key={link} className="text-[#111111]">
-                    {link}
-                  </span>
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-[#111111] transition-transform duration-200 hover:-translate-y-0.5"
+                  >
+                    {link.label}
+                  </Link>
                 ))}
               </nav>
-              <button className="rounded-full bg-[#f7cf46] px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-[#111111]">
+              <Link
+                href="#contact"
+                className="rounded-full bg-[#f7cf46] px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-[#111111] transition-transform duration-200 hover:-translate-y-0.5"
+              >
                 Request
-              </button>
+              </Link>
             </header>
 
             <div className="relative mt-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
@@ -90,9 +103,12 @@ export default function HomePage() {
                   We turn messy projects into magnetic launches with visual systems, content
                   sparks, and campaign strategy that feels like a festival.
                 </p>
-                <button className="mt-8 rounded-full bg-[#f7cf46] px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#111111]">
+                <Link
+                  href="#contact"
+                  className="mt-8 inline-flex rounded-full bg-[#f7cf46] px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#111111] transition-transform duration-200 hover:-translate-y-0.5"
+                >
                   Make a request
-                </button>
+                </Link>
                 <div className="mt-10 flex flex-wrap items-center gap-6 text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
                   {logoMarks.map((mark) => (
                     <span key={mark}>{mark}</span>
@@ -138,7 +154,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-4 pb-20 sm:px-8">
+      <section id="services" className="px-4 pb-20 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="services-card">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -183,6 +199,56 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <section id="team" className="px-4 pb-16 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="black-card flex flex-wrap items-center justify-between gap-6">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#f7cf46]">
+                Our squad
+              </p>
+              <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-4xl">
+                A studio of makers, shapers, and launch pilots
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <div className="rounded-full border-2 border-white/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white">
+                Brand
+              </div>
+              <div className="rounded-full border-2 border-white/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white">
+                Digital
+              </div>
+              <div className="rounded-full border-2 border-white/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white">
+                Content
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer id="contact" className="px-4 pb-20 sm:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="services-card flex flex-wrap items-center justify-between gap-6">
+            <div>
+              <h3 className="text-2xl font-black uppercase text-[#111111] sm:text-3xl">
+                Ready to make noise?
+              </h3>
+              <p className="mt-3 max-w-xl text-sm text-[#111111]/70">
+                Drop a brief and we will craft the launch kit, visuals, and content engine that
+                keeps your next project unforgettable.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.2em]">
+              <a className="rounded-full border-2 border-[#111111] px-5 py-3" href="mailto:hello@imagicity.studio">
+                hello@imagicity.studio
+              </a>
+              <a className="rounded-full bg-[#ff3277] px-5 py-3 text-center text-white" href="tel:+15551234567">
+                +1 (555) 123-4567
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
