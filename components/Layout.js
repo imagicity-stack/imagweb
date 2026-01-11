@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 
 const navLinks = [
@@ -9,10 +10,26 @@ const navLinks = [
 ];
 
 export default function Layout({ children }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogoClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setMenuOpen((open) => !open);
+    }
+  };
+
   return (
     <div className="page">
       <header className="site-header">
-        <div className="logo-chip">Imagicity</div>
+        <button
+          type="button"
+          className="logo-chip logo-button"
+          onClick={handleLogoClick}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+        >
+          Imagicity
+        </button>
         <nav className="nav-pill">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className="nav-link">
@@ -24,6 +41,35 @@ export default function Layout({ children }) {
           Request
         </Link>
       </header>
+      <div
+        className={`menu-overlay ${menuOpen ? "open" : ""}`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden={!menuOpen}
+      />
+      <aside
+        id="mobile-menu"
+        className={`mobile-menu ${menuOpen ? "open" : ""}`}
+      >
+        <nav className="mobile-menu-links">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="mobile-nav-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <Link
+          href="/contact"
+          className="button-primary mobile-request"
+          onClick={() => setMenuOpen(false)}
+        >
+          Request
+        </Link>
+      </aside>
       <main>{children}</main>
       <footer className="site-footer">
         <div>

@@ -16,8 +16,6 @@ const highlights = [
   }
 ];
 
-const trustedLogos = ["Nova Labs", "Wavelane", "Orbito", "Mira", "Lumen", "Astor"];
-
 export default function HomePage() {
   return (
     <Layout>
@@ -37,13 +35,6 @@ export default function HomePage() {
             <Link href="/services" className="button-secondary">
               Explore Services
             </Link>
-          </div>
-          <div className="logo-row">
-            {trustedLogos.map((logo) => (
-              <span key={logo} className="logo-chip">
-                {logo}
-              </span>
-            ))}
           </div>
         </div>
         <div className="hero-stickers">
