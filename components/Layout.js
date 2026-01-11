@@ -12,24 +12,12 @@ const navLinks = [
 export default function Layout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogoClick = () => {
-    if (typeof window !== "undefined" && window.innerWidth <= 768) {
-      setMenuOpen((open) => !open);
-    }
-  };
-
   return (
     <div className="page">
       <header className="site-header">
-        <button
-          type="button"
-          className="logo-chip logo-button"
-          onClick={handleLogoClick}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-        >
+        <Link href="/" className="logo-chip">
           Imagicity
-        </button>
+        </Link>
         <nav className="nav-pill">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className="nav-link">
@@ -40,6 +28,18 @@ export default function Layout({ children }) {
         <Link href="/contact" className="cta-pill">
           Request
         </Link>
+        <button
+          type="button"
+          className="menu-toggle"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </header>
       <div
         className={`menu-overlay ${menuOpen ? "open" : ""}`}
