@@ -1,6 +1,77 @@
+import { useState } from "react";
+
 import Layout from "../components/Layout";
 
 export default function ContactPage() {
+  const [formState, setFormState] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: ""
+  });
+  const [status, setStatus] = useState({
+    state: "idle",
+    message: ""
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setStatus({ state: "loading", message: "" });
+
+    const payload = {
+      name: `${formState.firstName} ${formState.lastName}`.trim(),
+      email: formState.email.trim(),
+      phone: formState.phone.trim(),
+      subject: formState.subject.trim(),
+      message: formState.message.trim()
+    };
+
+    const contentTypeHeader = `Content${String.fromCharCode(45)}Type`;
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          [contentTypeHeader]: "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setStatus({
+          state: "error",
+          message: data.message || "Something went wrong. Please try again soon."
+        });
+        return;
+      }
+
+      setStatus({
+        state: "success",
+        message: "Thanks for reaching out. We will respond soon."
+      });
+      setFormState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: ""
+      });
+    } catch (error) {
+      setStatus({
+        state: "error",
+        message: "Something went wrong. Please try again soon."
+      });
+    }
+  };
+
   return (
     <Layout>
       <section className="hero compact">
@@ -29,21 +100,80 @@ export default function ContactPage() {
       </section>
 
       <section className="section-card">
-        <form className="contact-form">
+        <form className="contact-form" onSubmit={handleSubmit}>
           <label>
-            Full name
-            <input type="text" placeholder="Your name" />
+            First name
+            <input
+              type="text"
+              name="firstName"
+              placeholder="Jane"
+              value={formState.firstName}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Last name
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Doe"
+              value={formState.lastName}
+              onChange={handleChange}
+              required
+            />
           </label>
           <label>
             Work email
-            <input type="email" placeholder="you@company.com" />
+            <input
+              type="email"
+              name="email"
+              placeholder="you@company.com"
+              value={formState.email}
+              onChange={handleChange}
+              required
+            />
           </label>
           <label>
-            What do you need help with?
-            <textarea rows="5" placeholder="Share your goals" />
+            Phone number
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Your phone"
+              value={formState.phone}
+              onChange={handleChange}
+              required
+            />
           </label>
-          <button type="submit" className="button-primary">
-            Submit request
+          <label>
+            Subject
+            <input
+              type="text"
+              name="subject"
+              placeholder="Project inquiry"
+              value={formState.subject}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Message
+            <textarea
+              rows="5"
+              name="message"
+              placeholder="Share your goals"
+              value={formState.message}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          {status.message ? <p>{status.message}</p> : null}
+          <button
+            type="submit"
+            className="button-primary"
+            disabled={status.state === "loading"}
+          >
+            {status.state === "loading" ? "Sending..." : "Submit request"}
           </button>
         </form>
       </section>

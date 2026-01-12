@@ -18,7 +18,15 @@
 
 body {
   font-family: "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
-  background: radial-gradient(circle at top, #fff6c8, var(--yellow)) no-repeat;
+  background-color: var(--yellow);
+  background-image:
+    repeating-conic-gradient(
+      from 200deg at 50% 65%,
+      rgba(255, 255, 255, 0.45) 0deg 12deg,
+      rgba(255, 255, 255, 0.12) 12deg 24deg
+    ),
+    radial-gradient(circle at 50% 65%, #fff6c8 0%, var(--yellow) 58%, #f0c53c 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   color: var(--black);
 }
