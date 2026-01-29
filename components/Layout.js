@@ -91,8 +91,8 @@ export default function Layout({ children }) {
         </div>
         <div>
           <h4>Contact</h4>
-          <p>hello@imagicity.com</p>
-          <p>+91 90000 00000</p>
+          <p>connect@imagicity.in</p>
+          <p>+91 9122289578</p>
           <p>Hyderabad · Bengaluru · Dubai</p>
         </div>
       </footer>

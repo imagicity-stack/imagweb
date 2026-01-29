@@ -89,11 +89,11 @@ export default function ContactPage() {
             </div>
             <div>
               <h3>Email</h3>
-              <p>hello@imagicity.com</p>
+              <p>connect@imagicity.in</p>
             </div>
             <div>
               <h3>Call</h3>
-              <p>+91 90000 00000</p>
+              <p>+91 9122289578</p>
             </div>
           </div>
         </div>
