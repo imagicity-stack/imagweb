@@ -94,6 +94,18 @@ export default function Layout({ children }) {
           <p>connect@imagicity.in</p>
           <p>+91 9122289578</p>
           <p>Hyderabad · Bengaluru · Dubai</p>
+          <div className="social-links">
+            <a
+              href="https://www.instagram.com/imagicity.in"
+              target="_blank"
+              rel="noreferrer"
+              className="social-link"
+              aria-label="Follow Imagicity on Instagram"
+            >
+              <img src="/instagram.svg" alt="Instagram" width="20" height="20" />
+              <span>Instagram</span>
+            </a>
+          </div>
         </div>
       </footer>
     </div>
