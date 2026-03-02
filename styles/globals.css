@@ -320,6 +320,44 @@ ul {
   border: 2px dashed rgba(0, 0, 0, 0.15);
   border-radius: 24px;
   padding: 24px;
+  background: linear-gradient(145deg, #ffffff, #fff8ef);
+}
+
+.service-detail-header {
+  display: grid;
+  gap: 10px;
+}
+
+.service-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.service-badge.pink {
+  background: var(--pink);
+  color: var(--white);
+}
+
+.service-badge.aqua {
+  background: var(--aqua);
+  color: var(--black);
+}
+
+.service-badge.yellow {
+  background: var(--yellow-soft);
+  color: var(--black);
+}
+
+.service-badge.purple {
+  background: var(--purple);
+  color: var(--white);
 }
 
 .service-detail h2 {
@@ -327,22 +365,48 @@ ul {
   font-size: 1.4rem;
 }
 
-.service-detail ul {
+.service-pill-list {
   margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.service-pill-list li {
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(107, 110, 249, 0.09);
+  border: 1px solid rgba(107, 110, 249, 0.28);
+  font-size: 0.9rem;
+}
+
+.service-more {
+  margin-top: 18px;
+  border-top: 2px dotted rgba(0, 0, 0, 0.12);
+  padding-top: 14px;
+}
+
+.service-more summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.service-more ul {
+  margin-top: 12px;
   display: grid;
   gap: 8px;
 }
 
-.service-detail li {
+.service-more li {
   padding-left: 16px;
   position: relative;
 }
 
-.service-detail li::before {
+.service-more li::before {
   content: "✦";
+  color: var(--pink);
   position: absolute;
   left: 0;
-  color: var(--pink);
 }
 
 .contact-grid {
@@ -391,6 +455,26 @@ ul {
 .site-footer ul {
   display: grid;
   gap: 6px;
+}
+
+
+.social-links {
+  margin-top: 14px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.social-link img {
+  display: block;
 }
 
 .menu-overlay {

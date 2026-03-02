@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="igGradient" x1="9" y1="55" x2="55" y2="9" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FEDA75"/>
+      <stop offset="0.35" stop-color="#FA7E1E"/>
+      <stop offset="0.6" stop-color="#D62976"/>
+      <stop offset="0.8" stop-color="#962FBF"/>
+      <stop offset="1" stop-color="#4F5BD5"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#igGradient)"/>
+  <rect x="18" y="18" width="28" height="28" rx="9" stroke="white" stroke-width="4"/>
+  <circle cx="32" cy="32" r="7" stroke="white" stroke-width="4"/>
+  <circle cx="42.5" cy="21.5" r="2.5" fill="white"/>
+</svg>
