@@ -131,6 +131,8 @@ const services = [
   }
 ];
 
+const accentClasses = ["pink", "aqua", "yellow", "purple"];
+
 export default function ServicesPage() {
   return (
     <Layout>
@@ -147,19 +149,38 @@ export default function ServicesPage() {
       </section>
 
       <section className="section-card services-grid">
-        {services.map((service) => (
+        {services.map((service, index) => {
+          const featured = service.offerings.slice(0, 4);
+          const extended = service.offerings.slice(4);
+
+          return (
           <article key={service.title} className="service-detail">
-            <header>
+            <header className="service-detail-header">
+              <span className={`service-badge ${accentClasses[index % accentClasses.length]}`}>
+                Service Track {String(index + 1).padStart(2, "0")}
+              </span>
               <h2>{service.title}</h2>
               <p>{service.description}</p>
             </header>
-            <ul>
-              {service.offerings.map((item) => (
+            <ul className="service-pill-list">
+              {featured.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
+
+            {extended.length > 0 ? (
+              <details className="service-more">
+                <summary>View more in this service</summary>
+                <ul>
+                  {extended.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </details>
+            ) : null}
           </article>
-        ))}
+          );
+        })}
       </section>
     </Layout>
   );
