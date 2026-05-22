@@ -1287,12 +1287,10 @@ main {
   gap: 20px;
 }
 
-.quote-card .mark {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  line-height: 0.6;
-  color: var(--pink);
-  height: 26px;
+.quote-stars {
+  display: flex;
+  gap: 4px;
+  color: var(--amber);
 }
 
 .quote-card p {
@@ -1307,17 +1305,16 @@ main {
   margin-top: auto;
 }
 
-.quote-avatar {
-  width: 46px;
-  height: 46px;
+.quote-dot {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  color: #fff;
-  background: var(--grad-hot);
+  flex-shrink: 0;
 }
+
+.quote-dot.violet { background: var(--violet); box-shadow: 0 0 12px rgba(139, 92, 246, 0.7); }
+.quote-dot.pink { background: var(--pink); box-shadow: 0 0 12px rgba(255, 61, 139, 0.7); }
+.quote-dot.aqua { background: var(--aqua); box-shadow: 0 0 12px rgba(46, 230, 214, 0.7); }
 
 .quote-author .name {
   font-weight: 700;

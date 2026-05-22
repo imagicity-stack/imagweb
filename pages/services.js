@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
+import Icon from "../components/Icon";
 import { serviceCategories, getServiceMap } from "../lib/services";
 
 export default function ServicesPage() {
@@ -59,7 +60,7 @@ export default function ServicesPage() {
                       className="card svc-card"
                     >
                       <div className={`card-icon ${service.accent}`}>
-                        {service.icon}
+                        <Icon name={service.icon} />
                       </div>
                       <h3>{service.title}</h3>
                       <p>{service.tagline}</p>
