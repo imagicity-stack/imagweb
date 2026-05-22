@@ -30,7 +30,7 @@
   --shadow-glow: 0 18px 50px rgba(139, 92, 246, 0.35);
 
   --maxw: 1180px;
-  --font-display: "Syne", "Trebuchet MS", system-ui, sans-serif;
+  --font-display: "Sora", "Trebuchet MS", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -970,31 +970,8 @@ main {
   transform: scaleX(1);
 }
 
-/* ---------- Services detail ---------- */
-.services-list {
-  display: grid;
-  gap: 22px;
-}
-
-.service-row {
-  position: relative;
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 30px;
-  padding: 34px;
-  border-radius: var(--radius);
-  background: var(--glass);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(10px);
-  transition: border-color 0.35s ease, background 0.35s ease;
-}
-
-.service-row:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: var(--glass-strong);
-}
-
-.service-row .badge {
+/* ---------- Badges ---------- */
+.badge {
   display: inline-flex;
   width: fit-content;
   padding: 6px 13px;
@@ -1003,49 +980,197 @@ main {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 16px;
 }
 
 .badge.violet { background: rgba(139, 92, 246, 0.18); color: #c9b6ff; border: 1px solid rgba(139,92,246,0.4); }
 .badge.pink { background: rgba(255, 61, 139, 0.16); color: #ff9ec3; border: 1px solid rgba(255,61,139,0.4); }
 .badge.aqua { background: rgba(46, 230, 214, 0.14); color: #8ff3ea; border: 1px solid rgba(46,230,214,0.4); }
 .badge.amber { background: rgba(249, 211, 79, 0.14); color: #ffe7a0; border: 1px solid rgba(249,211,79,0.4); }
+.badge.lime { background: rgba(155, 229, 72, 0.14); color: #d2f3a0; border: 1px solid rgba(155,229,72,0.4); }
 
-.service-row h3 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+/* ---------- Services index (grouped) ---------- */
+.svc-categories {
+  display: grid;
+  gap: clamp(48px, 6vw, 76px);
 }
 
-.service-row .desc {
+.svc-cat-head {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.svc-cat-index {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.svc-cat-head h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  letter-spacing: -0.02em;
+}
+
+.svc-cat-head p {
   color: var(--muted);
-  margin-top: 14px;
+  margin-top: 6px;
   font-size: 1rem;
 }
 
-.offer-list {
+.svc-card {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-content: flex-start;
+  flex-direction: column;
 }
 
-.offer-list li {
-  padding: 9px 15px;
-  border-radius: 12px;
+.svc-card h3 {
+  font-size: 1.18rem;
+}
+
+.svc-card > p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.svc-card-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0 22px;
+}
+
+.svc-card-tags li {
+  position: relative;
+  padding-left: 20px;
   font-size: 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--line-soft);
-  color: rgba(244, 241, 255, 0.8);
-  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  color: rgba(244, 241, 255, 0.78);
 }
 
-.offer-list li:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 61, 139, 0.5);
+.svc-card-tags li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--grad-cool);
+}
+
+.svc-explore {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.92rem;
   color: #fff;
+}
+
+.svc-explore .arrow {
+  transition: transform 0.25s ease;
+}
+
+.svc-card:hover .svc-explore .arrow {
+  transform: translateX(6px);
+}
+
+/* ---------- Service detail page ---------- */
+.svc-detail-hero .badge {
+  margin: 6px auto 0;
+}
+
+.svc-back {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--muted);
+  transition: color 0.25s ease;
+}
+
+.svc-back:hover {
+  color: #fff;
+}
+
+.svc-detail-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 0.85fr;
+  gap: clamp(30px, 4vw, 54px);
+  align-items: start;
+}
+
+.include-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.include-grid li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  font-size: 0.96rem;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.include-grid li:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.svc-aside {
+  display: grid;
+  gap: 18px;
+  position: sticky;
+  top: 100px;
+}
+
+.svc-aside-card {
+  padding: 26px;
+  border-radius: var(--radius);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.svc-aside-card h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-soft);
+  margin-bottom: 12px;
+}
+
+.svc-aside-card p {
+  color: rgba(244, 241, 255, 0.9);
+  font-size: 0.98rem;
+}
+
+.svc-aside-links {
+  display: grid;
+  gap: 12px;
+}
+
+.svc-aside-links a {
+  font-weight: 600;
+  color: var(--ink);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.svc-aside-links a:hover {
+  color: var(--pink);
+  transform: translateX(4px);
 }
 
 /* ---------- Portfolio ---------- */
@@ -1610,9 +1735,12 @@ main {
     order: -1;
   }
 
-  .service-row {
+  .svc-detail-layout {
     grid-template-columns: 1fr;
-    gap: 22px;
+  }
+
+  .svc-aside {
+    position: static;
   }
 
   .contact-layout {
@@ -1652,13 +1780,21 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .contact-form {
+  .contact-form,
+  .include-grid {
     grid-template-columns: 1fr;
+  }
+
+  .contact-form {
     padding: 26px;
   }
 
+  .svc-cat-head {
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .card,
-  .service-row,
   .quote-card,
   .contact-panel {
     padding: 24px;

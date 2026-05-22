@@ -13,11 +13,11 @@ const navLinks = [
 ];
 
 const serviceLinks = [
-  "Strategy & GTM",
-  "Brand & Positioning",
-  "Creative Studio",
-  "Performance Marketing",
-  "Funnels & Automation"
+  { label: "Strategy & GTM", slug: "strategy-go-to-market" },
+  { label: "Brand & Positioning", slug: "brand-strategy-positioning" },
+  { label: "Creative Studio", slug: "creative-design-studio" },
+  { label: "Performance Marketing", slug: "performance-marketing" },
+  { label: "Funnels & Lead Gen", slug: "lead-generation-funnels" }
 ];
 
 const SITE_NAME = "Imagicity";
@@ -204,8 +204,8 @@ export default function Layout({
             <h4>Services</h4>
             <ul>
               {serviceLinks.map((service) => (
-                <li key={service}>
-                  <Link href="/services">{service}</Link>
+                <li key={service.slug}>
+                  <Link href={`/services/${service.slug}`}>{service.label}</Link>
                 </li>
               ))}
             </ul>

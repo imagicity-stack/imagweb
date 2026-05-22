@@ -1,141 +1,11 @@
 import Link from "next/link";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
-
-const services = [
-  {
-    title: "Strategy and Go-To-Market Planning",
-    description:
-      "We help businesses define how to enter, position, and grow in their target market with clarity and precision.",
-    offerings: [
-      "Market and competitor research",
-      "Target audience and customer profiling",
-      "Brand positioning and differentiation",
-      "Go-To-Market strategy for launches and expansions",
-      "Channel and distribution strategy",
-      "Pricing and offer structuring",
-      "Messaging and value proposition framework"
-    ]
-  },
-  {
-    title: "Brand Strategy and Positioning",
-    description:
-      "We build brands that are clear, consistent, and credible across all touchpoints.",
-    offerings: [
-      "Brand positioning and narrative development",
-      "Brand voice and communication tone",
-      "Brand architecture and naming support",
-      "Rebranding and repositioning strategy",
-      "Campaign-level brand storytelling"
-    ]
-  },
-  {
-    title: "Creative and Graphic Design Studio",
-    description:
-      "Our design studio translates strategy into impactful visual communication.",
-    offerings: [
-      "Logo design and brand identity systems",
-      "Brand guidelines and visual frameworks",
-      "Social media creatives and content templates",
-      "Performance marketing ad creatives",
-      "Website and landing page visual design",
-      "Print and offline creatives",
-      "Pitch decks and presentation design",
-      "Motion graphics and logo animations"
-    ]
-  },
-  {
-    title: "Performance Marketing and Paid Media",
-    description:
-      "We run data-driven paid campaigns focused on measurable growth.",
-    offerings: [
-      "Meta Ads and Google Ads strategy and execution",
-      "Campaign structuring and funnel alignment",
-      "Creative testing and optimization",
-      "Budget planning and scaling strategy",
-      "Performance tracking including CAC and ROI"
-    ]
-  },
-  {
-    title: "Lead Generation and Funnel Systems",
-    description:
-      "We design end-to-end systems to capture, nurture, and convert leads.",
-    offerings: [
-      "Lead magnet and offer planning",
-      "Landing page and form strategy",
-      "CRM setup and lead routing",
-      "WhatsApp and call-based follow-ups",
-      "Lead nurturing workflows",
-      "Funnel performance analysis"
-    ]
-  },
-  {
-    title: "Content and Social Media Marketing",
-    description:
-      "We create content systems that build authority and long-term visibility.",
-    offerings: [
-      "Content strategy and content pillars",
-      "Platform-specific planning for Instagram, LinkedIn, and YouTube",
-      "Founder-led and brand-led content frameworks",
-      "Monthly content calendars",
-      "Community building strategy",
-      "Content performance tracking"
-    ]
-  },
-  {
-    title: "Marketing Automation and AI Solutions",
-    description:
-      "We implement automation to improve efficiency and scalability.",
-    offerings: [
-      "CRM and pipeline automation",
-      "WhatsApp and email automation workflows",
-      "AI voice call systems for follow-ups and admissions",
-      "No-code automation using modern tools",
-      "Internal marketing process automation"
-    ]
-  },
-  {
-    title: "Website and Conversion Optimization",
-    description:
-      "We design digital experiences that convert visitors into customers.",
-    offerings: [
-      "Website structure and UX planning",
-      "Conversion-focused copywriting",
-      "Landing page optimization",
-      "CTA and form optimization",
-      "User behavior analysis",
-      "Website performance optimization"
-    ]
-  },
-  {
-    title: "Local and Regional Marketing",
-    description:
-      "We help brands grow in city-specific and regional markets with context-driven strategies.",
-    offerings: [
-      "City and region-focused campaign planning",
-      "Offline-to-online funnel integration",
-      "Local influencer collaborations",
-      "Event-based marketing strategy",
-      "Community-driven marketing initiatives"
-    ]
-  },
-  {
-    title: "Campaign Planning and Launch Execution",
-    description:
-      "We plan and execute integrated campaigns across channels.",
-    offerings: [
-      "Campaign ideation and concept development",
-      "Creative direction and execution roadmap",
-      "Multi-channel campaign rollout",
-      "Launch planning and timelines",
-      "Post-campaign reporting and analysis"
-    ]
-  }
-];
-
-const badges = ["violet", "pink", "aqua", "amber"];
+import { serviceCategories, getServiceMap } from "../lib/services";
 
 export default function ServicesPage() {
+  const map = getServiceMap();
+
   return (
     <Layout
       title="Services"
@@ -154,34 +24,59 @@ export default function ServicesPage() {
           </Reveal>
           <Reveal delay={160}>
             <p>
-              Imagicity offers structured, strategy-led marketing services
-              designed to help startups, institutions, and growing businesses
-              build strong brands, acquire customers, and scale sustainably.
+              Ten focused service tracks, organized into four clear pillars.
+              Start with one or combine them into a connected growth system —
+              tap any service to see exactly what's included.
             </p>
           </Reveal>
         </div>
       </section>
 
       <section className="section tight">
-        <div className="container">
-          <div className="services-list">
-            {services.map((service, index) => (
-              <Reveal key={service.title} className="service-row">
+        <div className="container svc-categories">
+          {serviceCategories.map((category, catIndex) => (
+            <div className="svc-category" key={category.title}>
+              <Reveal className="svc-cat-head">
+                <span className="svc-cat-index">
+                  {String(catIndex + 1).padStart(2, "0")}
+                </span>
                 <div>
-                  <span className={`badge ${badges[index % badges.length]}`}>
-                    Track {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3>{service.title}</h3>
-                  <p className="desc">{service.description}</p>
+                  <h2>{category.title}</h2>
+                  <p>{category.blurb}</p>
                 </div>
-                <ul className="offer-list">
-                  {service.offerings.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
               </Reveal>
-            ))}
-          </div>
+
+              <div className="grid grid-3 svc-cat-grid">
+                {category.slugs.map((slug, index) => {
+                  const service = map[slug];
+                  if (!service) return null;
+                  return (
+                    <Reveal
+                      key={slug}
+                      delay={(index % 3) * 90}
+                      as={Link}
+                      href={`/services/${slug}`}
+                      className="card svc-card"
+                    >
+                      <div className={`card-icon ${service.accent}`}>
+                        {service.icon}
+                      </div>
+                      <h3>{service.title}</h3>
+                      <p>{service.tagline}</p>
+                      <ul className="svc-card-tags">
+                        {service.offerings.slice(0, 3).map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                      <span className="svc-explore">
+                        Explore service <span className="arrow">→</span>
+                      </span>
+                    </Reveal>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
