@@ -3,40 +3,41 @@ import Image from "next/image";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
 import Counter from "../components/Counter";
+import Icon from "../components/Icon";
 
 const services = [
   {
-    icon: "S",
+    icon: "target",
     accent: "violet",
     title: "Strategy & Go-To-Market",
     body: "We architect market entry, positioning, and channel plans that align brand and revenue from day one."
   },
   {
-    icon: "C",
+    icon: "pen",
     accent: "pink",
     title: "Creative & Design Studio",
     body: "Design, copy, and campaigns that look bold and convert faster across every single touchpoint."
   },
   {
-    icon: "P",
+    icon: "chart",
     accent: "aqua",
     title: "Performance Marketing",
     body: "Data-driven paid media engineered around CAC, ROAS, and the metrics that actually move growth."
   },
   {
-    icon: "F",
+    icon: "funnel",
     accent: "amber",
     title: "Funnels & Automation",
     body: "Lead systems, CRM, and AI workflows working together to scale visibility and demand on autopilot."
   },
   {
-    icon: "B",
+    icon: "diamond",
     accent: "lime",
     title: "Brand & Positioning",
     body: "Clear, consistent, credible brands — narrative, voice, and identity built to be unforgettable."
   },
   {
-    icon: "W",
+    icon: "browser",
     accent: "violet",
     title: "Web & Conversion",
     body: "Conversion-led websites and landing pages that turn attention into qualified pipeline."
@@ -63,21 +64,21 @@ const testimonials = [
       "Imagicity rebuilt our entire growth engine in eight weeks. Demo requests doubled and our CAC dropped by a third.",
     name: "Ananya Rao",
     role: "Founder, Wavelane",
-    initials: "AR"
+    accent: "violet"
   },
   {
     quote:
       "The most strategic creative team we've worked with. They think like operators, not just designers.",
     name: "Karan Mehta",
     role: "CMO, Nova Health",
-    initials: "KM"
+    accent: "pink"
   },
   {
     quote:
       "From positioning to paid media, everything finally works as one system. Our pipeline has never been healthier.",
     name: "Sara Iqbal",
     role: "VP Growth, Orbito Labs",
-    initials: "SI"
+    accent: "aqua"
   }
 ];
 
@@ -219,7 +220,7 @@ export default function HomePage() {
                 className="card"
               >
                 <div className={`card-icon ${service.accent}`}>
-                  {service.icon}
+                  <Icon name={service.icon} />
                 </div>
                 <h3>{service.title}</h3>
                 <p>{service.body}</p>
@@ -323,10 +324,14 @@ export default function HomePage() {
           <div className="grid grid-3">
             {testimonials.map((item, index) => (
               <Reveal key={item.name} delay={index * 100} className="quote-card">
-                <div className="mark">“</div>
+                <div className="quote-stars">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="star" size={18} />
+                  ))}
+                </div>
                 <p>{item.quote}</p>
                 <div className="quote-author">
-                  <span className="quote-avatar">{item.initials}</span>
+                  <span className={`quote-dot ${item.accent}`} />
                   <div>
                     <div className="name">{item.name}</div>
                     <div className="role">{item.role}</div>
