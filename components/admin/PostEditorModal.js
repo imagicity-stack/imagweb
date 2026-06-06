@@ -61,6 +61,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [savedAt, setSavedAt] = useState(null);
+  const [activeTab, setActiveTab] = useState("seo");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -261,173 +262,202 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
 
       <div className="editor-modal-body">
         <div className="editor-main">
-          <div className="editor-main-inner">
-          <input
-            className="editor-title-input"
-            placeholder="Add title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <div className="editor-permalink">
-            <span>
-              {host}/blog/
-            </span>
+          <div className="editor-main-head">
             <input
-              value={slug}
-              onChange={(e) => {
-                setSlug(slugify(e.target.value));
-                setSlugEdited(true);
-              }}
-              placeholder="post-url"
+              className="editor-title-input"
+              placeholder="Add title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
+            <div className="editor-permalink">
+              <span>{host}/blog/</span>
+              <input
+                value={slug}
+                onChange={(e) => {
+                  setSlug(slugify(e.target.value));
+                  setSlugEdited(true);
+                }}
+                placeholder="post-url"
+              />
+            </div>
           </div>
 
           <RichTextEditor value={content} onChange={setContent} uid={user?.uid} />
-
-          <label className="editor-excerpt">
-            <span>Excerpt</span>
-            <textarea
-              rows={3}
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              placeholder="Short summary used in listings and social cards (auto-generated if left blank)."
-            />
-          </label>
-          </div>
         </div>
 
         <aside className="editor-sidebar">
-          <div className="editor-box">
-            <h4>Publish</h4>
-            <label className="editor-inline-toggle">
-              <input
-                type="checkbox"
-                checked={featured}
-                onChange={(e) => setFeatured(e.target.checked)}
-              />
-              <span>Feature this post</span>
-            </label>
-            {status === "published" ? (
-              <button
-                type="button"
-                className="editor-text-btn"
-                onClick={() => handleSave("draft")}
-                disabled={saving}
-              >
-                Switch back to draft
-              </button>
-            ) : null}
+          <div className="editor-tabs" role="tablist">
             <button
               type="button"
-              className="editor-danger-btn"
-              onClick={handleDelete}
-              disabled={saving}
+              role="tab"
+              aria-selected={activeTab === "seo"}
+              className={activeTab === "seo" ? "active" : ""}
+              onClick={() => setActiveTab("seo")}
             >
-              Delete post
+              SEO
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "settings"}
+              className={activeTab === "settings" ? "active" : ""}
+              onClick={() => setActiveTab("settings")}
+            >
+              Settings
             </button>
           </div>
 
-          <div className="editor-box">
-            <h4>Cover image</h4>
-            {coverImage.url ? (
-              <div className="editor-cover-preview">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={coverImage.url} alt={coverImage.alt || "Cover"} />
-                <button
-                  type="button"
-                  onClick={() => setCoverImage({ url: "", alt: "", width: null, height: null })}
-                >
-                  Remove
-                </button>
-              </div>
-            ) : null}
-            <label className="editor-upload-btn">
-              {coverUploading ? `Uploading… ${coverProgress}%` : coverImage.url ? "Replace image" : "Upload image"}
-              <input type="file" accept="image/*" onChange={handleCover} hidden />
-            </label>
-            {coverImage.url ? (
-              <label className="editor-field">
-                <span>Alt text</span>
-                <input
-                  type="text"
-                  value={coverImage.alt}
-                  onChange={(e) =>
-                    setCoverImage((prev) => ({ ...prev, alt: e.target.value }))
-                  }
-                  placeholder="Describe the image"
-                />
-              </label>
-            ) : null}
-          </div>
-
-          <div className="editor-box">
-            <h4>Organization</h4>
-            <label className="editor-field">
-              <span>Category</span>
-              <input
-                list="category-options"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Choose or type a category"
+          <div className="editor-tab-body">
+            {activeTab === "seo" ? (
+              <SeoPanel
+                title={title}
+                slug={slug}
+                content={content}
+                excerpt={excerpt}
+                coverImageUrl={coverImage.url}
+                seo={seo}
+                onSeoChange={updateSeo}
+                onChangeTitle={setTitle}
+                onAddTags={addTags}
+                getToken={getToken}
               />
-              <datalist id="category-options">
-                {DEFAULT_CATEGORIES.map((option) => (
-                  <option key={option} value={option} />
-                ))}
-              </datalist>
-            </label>
-            <label className="editor-field">
-              <span>Tags</span>
-              <input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKey}
-                placeholder="Type a tag and press Enter"
-              />
-            </label>
-            {tags.length ? (
-              <div className="editor-tags">
-                {tags.map((tag) => (
-                  <span key={tag} className="editor-tag">
-                    {tag}
+            ) : (
+              <>
+                <div className="editor-box">
+                  <h4>Publish</h4>
+                  <label className="editor-inline-toggle">
+                    <input
+                      type="checkbox"
+                      checked={featured}
+                      onChange={(e) => setFeatured(e.target.checked)}
+                    />
+                    <span>Feature this post</span>
+                  </label>
+                  {status === "published" ? (
                     <button
                       type="button"
-                      onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
-                      aria-label={`Remove ${tag}`}
+                      className="editor-text-btn"
+                      onClick={() => handleSave("draft")}
+                      disabled={saving}
                     >
-                      ×
+                      Switch back to draft
                     </button>
-                  </span>
-                ))}
-              </div>
-            ) : null}
-          </div>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="editor-danger-btn"
+                    onClick={handleDelete}
+                    disabled={saving}
+                  >
+                    Delete post
+                  </button>
+                </div>
 
-          <div className="editor-box">
-            <h4>Search engine optimization</h4>
-            <SeoPanel
-              title={title}
-              slug={slug}
-              content={content}
-              excerpt={excerpt}
-              coverImageUrl={coverImage.url}
-              seo={seo}
-              onSeoChange={updateSeo}
-              onChangeTitle={setTitle}
-              onAddTags={addTags}
-              getToken={getToken}
-            />
-          </div>
+                <div className="editor-box">
+                  <h4>Excerpt</h4>
+                  <textarea
+                    className="editor-bio"
+                    rows={3}
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                    placeholder="Short summary for listings and social cards (auto-generated if blank)."
+                  />
+                </div>
 
-          <div className="editor-box">
-            <h4>Author bio (optional)</h4>
-            <textarea
-              className="editor-bio"
-              rows={3}
-              value={authorBio}
-              onChange={(e) => setAuthorBio(e.target.value)}
-              placeholder="A short bio shown at the end of the article."
-            />
+                <div className="editor-box">
+                  <h4>Cover image</h4>
+                  {coverImage.url ? (
+                    <div className="editor-cover-preview">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={coverImage.url} alt={coverImage.alt || "Cover"} />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCoverImage({ url: "", alt: "", width: null, height: null })
+                        }
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : null}
+                  <label className="editor-upload-btn">
+                    {coverUploading
+                      ? `Uploading… ${coverProgress}%`
+                      : coverImage.url
+                      ? "Replace image"
+                      : "Upload image"}
+                    <input type="file" accept="image/*" onChange={handleCover} hidden />
+                  </label>
+                  {coverImage.url ? (
+                    <label className="editor-field">
+                      <span>Alt text</span>
+                      <input
+                        type="text"
+                        value={coverImage.alt}
+                        onChange={(e) =>
+                          setCoverImage((prev) => ({ ...prev, alt: e.target.value }))
+                        }
+                        placeholder="Describe the image"
+                      />
+                    </label>
+                  ) : null}
+                </div>
+
+                <div className="editor-box">
+                  <h4>Organization</h4>
+                  <label className="editor-field">
+                    <span>Category</span>
+                    <input
+                      list="category-options"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="Choose or type a category"
+                    />
+                    <datalist id="category-options">
+                      {DEFAULT_CATEGORIES.map((option) => (
+                        <option key={option} value={option} />
+                      ))}
+                    </datalist>
+                  </label>
+                  <label className="editor-field">
+                    <span>Tags</span>
+                    <input
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={handleTagKey}
+                      placeholder="Type a tag and press Enter"
+                    />
+                  </label>
+                  {tags.length ? (
+                    <div className="editor-tags">
+                      {tags.map((tag) => (
+                        <span key={tag} className="editor-tag">
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                            aria-label={`Remove ${tag}`}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="editor-box">
+                  <h4>Author bio (optional)</h4>
+                  <textarea
+                    className="editor-bio"
+                    rows={3}
+                    value={authorBio}
+                    onChange={(e) => setAuthorBio(e.target.value)}
+                    placeholder="A short bio shown at the end of the article."
+                  />
+                </div>
+              </>
+            )}
           </div>
         </aside>
       </div>
