@@ -8,7 +8,18 @@ A multi-page Next.js website for Imagicity, a creative marketing agency. The sit
 - About Us
 - Services
 - Portfolio
+- Blog (`/blog`) — SEO-optimized, powered by Firebase
 - Contact
+
+## Blog + Admin
+
+A state-of-the-art, SEO-first blog with a WordPress-style admin at `/admin`,
+powered by Firebase (Auth, Firestore, Storage) with Google Gemini for AI SEO
+checks. Configuration is entirely via environment variables (no secrets in code).
+
+See **[BLOG_SETUP.md](./BLOG_SETUP.md)** for the full setup checklist (registering
+the Firebase Web App, enabling Email/Google/Phone auth, env vars, and deploying
+security rules).
 
 ## Local Development
 

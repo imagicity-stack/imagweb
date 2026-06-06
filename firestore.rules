@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// Blog posts are read publicly only when published. All writes happen through
+// the server (Admin SDK) or from an authenticated admin (admin custom claim).
+// The public website reads posts via the Admin SDK in getStaticProps, so these
+// rules mainly protect any direct client access.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /posts/{postId} {
+      allow read: if resource.data.status == 'published';
+      allow create, update, delete: if request.auth != null
+        && request.auth.token.admin == true;
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
