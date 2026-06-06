@@ -3812,3 +3812,206 @@ main {
     flex-wrap: wrap;
   }
 }
+
+/* ============================================================
+   ADMIN — DAY / NIGHT THEME
+   The admin area redefines the design tokens within .admin-root so the whole
+   backend can switch between a bright (light) and dark theme. The public site
+   is unaffected. Default is the bright "day" theme.
+   ============================================================ */
+.admin-root {
+  color: var(--ink);
+}
+
+/* Day (light) theme tokens */
+.admin-root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f6fb;
+  --bg-2: #eceef6;
+  --ink: #16131f;
+  --muted: rgba(22, 19, 31, 0.66);
+  --muted-soft: rgba(22, 19, 31, 0.45);
+  --glass: rgba(22, 19, 31, 0.035);
+  --glass-strong: rgba(22, 19, 31, 0.06);
+  --line: rgba(22, 19, 31, 0.14);
+  --line-soft: rgba(22, 19, 31, 0.08);
+  --shadow: 0 18px 50px rgba(22, 19, 31, 0.12);
+}
+
+.admin-root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Softer animated background for the bright theme */
+.admin-root[data-theme="light"] .bg-mesh {
+  background:
+    radial-gradient(1000px 700px at 85% -8%, rgba(139, 92, 246, 0.12), transparent 60%),
+    radial-gradient(820px 620px at -5% 8%, rgba(255, 61, 139, 0.08), transparent 55%),
+    radial-gradient(820px 820px at 50% 115%, rgba(46, 230, 214, 0.08), transparent 55%),
+    var(--bg);
+}
+
+.admin-root[data-theme="light"] .orb {
+  opacity: 0.16;
+}
+
+.admin-root[data-theme="light"] .grain {
+  opacity: 0.025;
+}
+
+/* Frosted-white surfaces in day mode (these were hardcoded dark) */
+.admin-root[data-theme="light"] .admin-topbar {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.admin-root[data-theme="light"] .admin-auth-card,
+.admin-root[data-theme="light"] .editor-box,
+.admin-root[data-theme="light"] .admin-post-row,
+.admin-root[data-theme="light"] .editor {
+  background: #ffffff;
+}
+
+.admin-root[data-theme="light"] .editor-modal-bar {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.admin-root[data-theme="light"] .editor-sidebar {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.admin-root[data-theme="light"] .editor-toolbar {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.admin-root[data-theme="light"] .editor-modal::before {
+  background:
+    radial-gradient(900px 600px at 85% -10%, rgba(139, 92, 246, 0.1), transparent 60%),
+    radial-gradient(700px 500px at 0% 10%, rgba(255, 61, 139, 0.06), transparent 55%);
+}
+
+/* Inputs readable on light surfaces */
+.admin-root[data-theme="light"] .admin-search,
+.admin-root[data-theme="light"] .admin-auth-form input,
+.admin-root[data-theme="light"] .editor-field input,
+.admin-root[data-theme="light"] .editor-excerpt textarea,
+.admin-root[data-theme="light"] .editor-bio,
+.admin-root[data-theme="light"] .seo-field input,
+.admin-root[data-theme="light"] .seo-field textarea,
+.admin-root[data-theme="light"] .seo-snippet {
+  background: #ffffff;
+  border-color: var(--line);
+}
+
+.admin-root[data-theme="light"] .editor-upload-btn {
+  background: rgba(22, 19, 31, 0.04);
+}
+
+.admin-root[data-theme="light"] .editor-source {
+  background: #f1f2f8;
+  color: var(--ink);
+}
+
+/* Google-style snippet preview in day mode */
+.admin-root[data-theme="light"] .seo-snippet-title {
+  color: #1a0dab;
+}
+
+.admin-root[data-theme="light"] .seo-snippet-url {
+  color: #006621;
+}
+
+/* Editor preview body needs dark text on the bright theme */
+.admin-root[data-theme="light"] .editor-area.post-content {
+  color: var(--ink);
+}
+
+.admin-root[data-theme="light"] .editor-area.post-content a {
+  color: var(--violet-deep);
+}
+
+.admin-root[data-theme="light"] .editor-area.post-content code {
+  background: rgba(22, 19, 31, 0.08);
+}
+
+.admin-root[data-theme="light"] .editor-area.post-content pre {
+  background: #f1f2f8;
+}
+
+/* Status pills tuned for light backgrounds */
+.admin-root[data-theme="light"] .status-pill.published {
+  background: rgba(11, 125, 115, 0.12);
+  color: #0b7d73;
+  border: 1px solid rgba(11, 125, 115, 0.4);
+}
+
+.admin-root[data-theme="light"] .status-pill.draft {
+  background: rgba(148, 106, 6, 0.12);
+  color: #946a06;
+  border: 1px solid rgba(148, 106, 6, 0.4);
+}
+
+/* ---------- Day / night slider ---------- */
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 62px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.theme-toggle-icon {
+  font-size: 13px;
+  line-height: 1;
+  z-index: 1;
+}
+
+.theme-toggle-icon.sun {
+  color: var(--amber);
+}
+
+.theme-toggle-icon.moon {
+  color: var(--violet);
+}
+
+.theme-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, var(--amber), var(--orange));
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s ease;
+}
+
+.theme-toggle[data-state="dark"] .theme-toggle-knob {
+  transform: translateX(32px);
+  background: linear-gradient(140deg, var(--violet), var(--violet-deep));
+}
+
+.admin-auth-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.admin-auth-screen {
+  position: relative;
+}

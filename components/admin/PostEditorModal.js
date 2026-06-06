@@ -8,6 +8,7 @@ import { getStorageInstance } from "../../lib/firebase/client";
 import { slugify, DEFAULT_CATEGORIES } from "../../lib/blog";
 import { SITE_URL } from "../../lib/site";
 import { useAdminAuth } from "./AdminAuthGate";
+import { ThemeToggle } from "./ThemeProvider";
 import RichTextEditor from "./RichTextEditor";
 import SeoPanel from "./SeoPanel";
 
@@ -224,6 +225,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
           ) : savedAt ? (
             <span className="editor-saved">All changes saved</span>
           ) : null}
+          <ThemeToggle />
         </div>
         <div className="editor-modal-bar-right">
           {status === "published" && slug ? (
