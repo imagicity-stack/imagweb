@@ -11,7 +11,7 @@ export default function Document() {
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
           rel="stylesheet"
         />
         <link rel="icon" href="/ICONS/SSA.png" type="image/png" />

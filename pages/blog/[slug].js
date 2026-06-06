@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import Layout from "../../components/Layout";
-import Reveal from "../../components/Reveal";
-import BlogCard from "../../components/blog/BlogCard";
+import NewsLayout from "../../components/blog/NewsLayout";
+import NewsCard from "../../components/blog/NewsCard";
 import {
   getPostBySlug,
   getPublishedSlugs,
@@ -18,10 +16,7 @@ export default function BlogPost({ post, related }) {
   const publishedLabel = formatDate(post.publishedAt || post.createdAt);
   const metaDescription = post.seo.description || post.excerpt;
   const ogImage = post.seo.ogImage || post.coverImage?.url || "";
-
-  const keywords = [post.seo.focusKeyword, ...(post.tags || [])]
-    .filter(Boolean)
-    .join(", ");
+  const keywords = [post.seo.focusKeyword, ...(post.tags || [])].filter(Boolean).join(", ");
 
   const jsonLd = [
     {
@@ -67,7 +62,7 @@ export default function BlogPost({ post, related }) {
 
   const shareLinks = [
     {
-      label: "X",
+      label: "Share on X",
       href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.title)}`
     },
     {
@@ -81,7 +76,7 @@ export default function BlogPost({ post, related }) {
   ];
 
   return (
-    <Layout
+    <NewsLayout
       title={post.seo.title || post.title}
       description={metaDescription}
       canonical={post.seo.canonicalUrl || url}
@@ -98,180 +93,137 @@ export default function BlogPost({ post, related }) {
       }}
       jsonLd={jsonLd}
     >
-      <article className="post">
-        <div className="container post-container">
-          <Reveal>
-            <nav className="post-breadcrumb" aria-label="Breadcrumb">
-              <Link href="/">Home</Link>
-              <span aria-hidden="true">/</span>
-              <Link href="/blog">Blog</Link>
-              <span aria-hidden="true">/</span>
-              <span className="current">{post.category || "Article"}</span>
-            </nav>
-          </Reveal>
+      <article className="news-article">
+        <nav className="news-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/blog">Blog</Link>
+          <span aria-hidden="true">/</span>
+          <span className="current">{post.category || "Article"}</span>
+        </nav>
 
-          <header className="post-header">
-            <Reveal delay={60}>
-              {post.category ? (
-                <span className="badge violet">{post.category}</span>
-              ) : null}
-            </Reveal>
-            <Reveal delay={120}>
-              <h1 className="h-display post-title">{post.title}</h1>
-            </Reveal>
-            {post.excerpt ? (
-              <Reveal delay={180}>
-                <p className="post-lede">{post.excerpt}</p>
-              </Reveal>
-            ) : null}
-            <Reveal delay={240}>
-              <div className="post-byline">
-                <div className="post-author">
-                  {post.author?.picture ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={post.author.picture}
-                      alt={post.author.name}
-                      className="post-author-avatar"
-                      width={40}
-                      height={40}
-                    />
-                  ) : (
-                    <span className="post-author-avatar fallback" aria-hidden="true">
-                      {(post.author?.name || "I").slice(0, 1)}
-                    </span>
-                  )}
-                  <span>{post.author?.name || SITE_NAME}</span>
-                </div>
-                <span className="dot" aria-hidden="true">
-                  ·
-                </span>
-                {publishedLabel ? (
-                  <time dateTime={post.publishedAt || post.createdAt || undefined}>
-                    {publishedLabel}
-                  </time>
-                ) : null}
-                <span className="dot" aria-hidden="true">
-                  ·
-                </span>
-                <span>{post.readingTimeMinutes} min read</span>
-              </div>
-            </Reveal>
-          </header>
-
-          {post.coverImage?.url ? (
-            <Reveal variant="scale" delay={120} className="post-cover">
-              <Image
-                src={post.coverImage.url}
-                alt={post.coverImage.alt || post.title}
-                fill
-                priority
-                sizes="(max-width: 900px) 100vw, 880px"
-                className="post-cover-img"
-              />
-            </Reveal>
+        <header className="news-article-head">
+          {post.category ? (
+            <span className="news-kicker accent">{post.category}</span>
           ) : null}
+          <h1 className="news-headline">{post.title}</h1>
+          {post.excerpt ? <p className="news-standfirst">{post.excerpt}</p> : null}
 
-          <div
-            className="post-content"
-            // Content is sanitized server-side before being stored in Firestore.
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-
-          {post.tags?.length ? (
-            <div className="post-tags">
-              {post.tags.map((tag) => (
-                <span key={tag} className="post-tag">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          ) : null}
-
-          <div className="post-share">
-            <span className="post-share-label">Share</span>
-            {shareLinks.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="post-share-btn"
-              >
-                {item.label}
-              </a>
-            ))}
-            <button type="button" className="post-share-btn" onClick={handleCopy}>
-              {copied ? "Copied!" : "Copy link"}
-            </button>
-          </div>
-
-          {post.author?.bio ? (
-            <div className="post-author-card">
-              {post.author.picture ? (
+          <div className="news-byline">
+            <div className="news-byline-author">
+              {post.author?.picture ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={post.author.picture}
-                  alt={post.author.name}
-                  className="post-author-card-avatar"
-                />
+                <img src={post.author.picture} alt={post.author.name} />
               ) : (
-                <span className="post-author-card-avatar fallback" aria-hidden="true">
+                <span className="news-avatar-fallback" aria-hidden="true">
                   {(post.author?.name || "I").slice(0, 1)}
                 </span>
               )}
               <div>
-                <span className="post-author-card-label">Written by</span>
-                <h3>{post.author.name}</h3>
-                <p>{post.author.bio}</p>
+                <span className="news-byline-name">{post.author?.name || SITE_NAME}</span>
+                <span className="news-byline-sub">
+                  {publishedLabel ? (
+                    <time dateTime={post.publishedAt || post.createdAt || undefined}>
+                      {publishedLabel}
+                    </time>
+                  ) : null}
+                  {publishedLabel ? <span aria-hidden="true"> · </span> : null}
+                  {post.readingTimeMinutes} min read
+                </span>
               </div>
             </div>
-          ) : null}
+          </div>
+        </header>
+
+        {post.coverImage?.url ? (
+          <figure className="news-hero-figure">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.coverImage.url}
+              alt={post.coverImage.alt || post.title}
+              className="news-hero-img"
+            />
+            {post.coverImage.alt ? (
+              <figcaption>{post.coverImage.alt}</figcaption>
+            ) : null}
+          </figure>
+        ) : null}
+
+        <div
+          className="news-article-body"
+          // Content is sanitized server-side before being stored in Firestore.
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        {post.tags?.length ? (
+          <div className="news-tags">
+            {post.tags.map((tag) => (
+              <span key={tag} className="news-tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
+        <div className="news-share">
+          <span className="news-share-label">Share this story</span>
+          <div className="news-share-links">
+            {shareLinks.map((item) => (
+              <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer">
+                {item.label}
+              </a>
+            ))}
+            <button type="button" onClick={handleCopy}>
+              {copied ? "Link copied" : "Copy link"}
+            </button>
+          </div>
         </div>
+
+        {post.author?.bio ? (
+          <aside className="news-author-card">
+            {post.author.picture ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={post.author.picture} alt={post.author.name} />
+            ) : (
+              <span className="news-avatar-fallback large" aria-hidden="true">
+                {(post.author?.name || "I").slice(0, 1)}
+              </span>
+            )}
+            <div>
+              <span className="news-author-label">Written by</span>
+              <h3>{post.author.name}</h3>
+              <p>{post.author.bio}</p>
+            </div>
+          </aside>
+        ) : null}
       </article>
 
       {related?.length ? (
-        <section className="section tight">
-          <div className="container">
-            <div className="section-head">
-              <Reveal>
-                <span className="eyebrow">Keep reading</span>
-              </Reveal>
-              <Reveal delay={80}>
-                <h2>Related articles</h2>
-              </Reveal>
-            </div>
-            <div className="blog-grid">
-              {related.map((item, index) => (
-                <Reveal key={item.id} delay={(index % 3) * 80}>
-                  <BlogCard post={item} />
-                </Reveal>
-              ))}
-            </div>
+        <section className="news-related">
+          <div className="news-section-rule">
+            <span>More from the Journal</span>
+          </div>
+          <div className="news-grid">
+            {related.map((item) => (
+              <NewsCard key={item.id} post={item} />
+            ))}
           </div>
         </section>
       ) : null}
 
-      <section className="section tight">
-        <div className="container">
-          <Reveal variant="scale" className="cta-band">
-            <h2>Let&apos;s build your growth engine.</h2>
-            <p>
-              Tell us about your goals and we&apos;ll shape a marketing system
-              around your brand and market.
-            </p>
-            <div className="cta-actions">
-              <Link href="/contact" className="btn btn-glow">
-                Make a request →
-              </Link>
-              <Link href="/blog" className="btn btn-outline">
-                Back to blog
-              </Link>
-            </div>
-          </Reveal>
+      <div className="news-cta-band">
+        <h2>Let&apos;s build your growth engine.</h2>
+        <p>Tell us about your goals and we&apos;ll shape a marketing system around your brand.</p>
+        <div className="news-cta-actions">
+          <Link href="/contact" className="news-btn">
+            Make a request
+          </Link>
+          <Link href="/blog" className="news-btn ghost">
+            Back to the Journal
+          </Link>
         </div>
-      </section>
-    </Layout>
+      </div>
+    </NewsLayout>
   );
 }
 

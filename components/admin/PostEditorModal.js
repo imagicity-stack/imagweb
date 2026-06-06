@@ -261,6 +261,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
 
       <div className="editor-modal-body">
         <div className="editor-main">
+          <div className="editor-main-inner">
           <input
             className="editor-title-input"
             placeholder="Add title"
@@ -292,6 +293,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
               placeholder="Short summary used in listings and social cards (auto-generated if left blank)."
             />
           </label>
+          </div>
         </div>
 
         <aside className="editor-sidebar">
