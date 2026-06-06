@@ -86,6 +86,7 @@ in **Vercel → Settings → Environment Variables** (Production + Preview).
 | `FIREBASE_PROJECT_ID` | Service account JSON → `project_id` |
 | `FIREBASE_CLIENT_EMAIL` | Service account JSON → `client_email` |
 | `FIREBASE_PRIVATE_KEY` | Service account JSON → `private_key` |
+| `FIREBASE_DATABASE_ID` | *Optional* — only if you use a **named** Firestore database; blank = `(default)` |
 | `ADMIN_EMAILS` | Comma-separated admin emails |
 | `GEMINI_API_KEY` | Google AI Studio |
 | `NEXT_PUBLIC_SITE_URL` | `https://imagicity.in` |
@@ -117,6 +118,11 @@ firebase deploy --only firestore:rules,firestore:indexes,storage
 > The composite index (`status` + `publishedAt`) is required for the blog
 > listing query. If you skip the CLI, Firestore will also print a one-click link
 > to create the index the first time the query runs.
+
+> **Using a named Firestore database?** Set `FIREBASE_DATABASE_ID` to that
+> database's ID (blank uses `(default)`), and deploy rules/indexes to it with the
+> `--database` flag, e.g.
+> `firebase deploy --only firestore:rules,firestore:indexes --database <your-db-id>`.
 
 ## 9. Run it
 
