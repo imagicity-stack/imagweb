@@ -8,6 +8,7 @@ import { getStorageInstance } from "../../lib/firebase/client";
 import { slugify, DEFAULT_CATEGORIES } from "../../lib/blog";
 import { SITE_URL } from "../../lib/site";
 import { useAdminAuth } from "./AdminAuthGate";
+import { ThemeToggle } from "./ThemeProvider";
 import RichTextEditor from "./RichTextEditor";
 import SeoPanel from "./SeoPanel";
 
@@ -224,6 +225,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
           ) : savedAt ? (
             <span className="editor-saved">All changes saved</span>
           ) : null}
+          <ThemeToggle />
         </div>
         <div className="editor-modal-bar-right">
           {status === "published" && slug ? (
@@ -259,6 +261,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
 
       <div className="editor-modal-body">
         <div className="editor-main">
+          <div className="editor-main-inner">
           <input
             className="editor-title-input"
             placeholder="Add title"
@@ -290,6 +293,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
               placeholder="Short summary used in listings and social cards (auto-generated if left blank)."
             />
           </label>
+          </div>
         </div>
 
         <aside className="editor-sidebar">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import AdminAuthGate, { useAdminAuth } from "../../components/admin/AdminAuthGate";
 import PostEditorModal from "../../components/admin/PostEditorModal";
+import { ThemeProvider, useTheme, ThemeToggle } from "../../components/admin/ThemeProvider";
 import { formatDate } from "../../lib/blog";
 
 function Dashboard() {
@@ -98,6 +99,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="admin-user">
+            <ThemeToggle />
             {user?.picture ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={user.picture} alt={user.name || user.email} />
@@ -236,6 +238,23 @@ function Dashboard() {
   );
 }
 
+function AdminRoot() {
+  const { theme } = useTheme();
+  return (
+    <div className="admin-root" data-theme={theme}>
+      <div className="bg-mesh" aria-hidden="true">
+        <span className="orb orb-violet" />
+        <span className="orb orb-pink" />
+        <span className="orb orb-aqua" />
+        <span className="grain" />
+      </div>
+      <AdminAuthGate>
+        <Dashboard />
+      </AdminAuthGate>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   return (
     <>
@@ -244,17 +263,9 @@ export default function AdminPage() {
         <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div className="admin-root">
-        <div className="bg-mesh" aria-hidden="true">
-          <span className="orb orb-violet" />
-          <span className="orb orb-pink" />
-          <span className="orb orb-aqua" />
-          <span className="grain" />
-        </div>
-        <AdminAuthGate>
-          <Dashboard />
-        </AdminAuthGate>
-      </div>
+      <ThemeProvider defaultTheme="light">
+        <AdminRoot />
+      </ThemeProvider>
     </>
   );
 }

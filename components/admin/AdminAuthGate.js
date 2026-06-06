@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { ThemeToggle } from "./ThemeProvider";
 import { isFirebaseConfigured } from "../../lib/firebase/client";
 import {
   onAuthChange,
@@ -130,6 +131,9 @@ function AdminLogin() {
 
   return (
     <div className="admin-auth-screen">
+      <span className="admin-auth-toggle">
+        <ThemeToggle />
+      </span>
       <div className="admin-auth-card">
         <div className="admin-auth-brand">
           <span className="admin-auth-logo">✦</span>
@@ -332,6 +336,9 @@ export default function AdminAuthGate({ children }) {
   if (status === "config") {
     return (
       <div className="admin-auth-screen">
+      <span className="admin-auth-toggle">
+        <ThemeToggle />
+      </span>
         <div className="admin-auth-card">
           <h1>Firebase not configured</h1>
           <p className="admin-auth-hint">
@@ -347,6 +354,9 @@ export default function AdminAuthGate({ children }) {
   if (status === "loading" || status === "checking") {
     return (
       <div className="admin-auth-screen">
+      <span className="admin-auth-toggle">
+        <ThemeToggle />
+      </span>
         <div className="admin-loader">
           <span className="admin-spinner" />
           <p>{status === "checking" ? "Verifying access…" : "Loading…"}</p>
@@ -358,6 +368,9 @@ export default function AdminAuthGate({ children }) {
   if (status === "denied") {
     return (
       <div className="admin-auth-screen">
+      <span className="admin-auth-toggle">
+        <ThemeToggle />
+      </span>
         <div className="admin-auth-card">
           <h1>Access denied</h1>
           <p className="admin-auth-hint">{deniedMessage}</p>
