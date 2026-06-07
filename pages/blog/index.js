@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import NewsLayout from "../../components/blog/NewsLayout";
+import Layout from "../../components/Layout";
 import NewsCard from "../../components/blog/NewsCard";
 import { getPublishedPosts } from "../../lib/blogServer";
 import { formatDate } from "../../lib/blog";
@@ -51,12 +51,13 @@ export default function BlogIndex({ posts }) {
   };
 
   return (
-    <NewsLayout
+    <Layout
       title="The Journal"
       description={PAGE_DESCRIPTION}
       keywords="marketing blog, brand strategy, performance marketing, SEO, content marketing, growth"
       jsonLd={jsonLd}
     >
+      <div className="news">
       <div className="news-masthead">
         <span className="news-kicker">The Imagicity Journal</span>
         <h1>Ideas that help brands grow louder.</h1>
@@ -146,7 +147,8 @@ export default function BlogIndex({ posts }) {
           </Link>
         </div>
       </div>
-    </NewsLayout>
+      </div>
+    </Layout>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import NewsLayout from "../../components/blog/NewsLayout";
+import Layout from "../../components/Layout";
 import NewsCard from "../../components/blog/NewsCard";
 import {
   getPostBySlug,
@@ -76,7 +76,7 @@ export default function BlogPost({ post, related }) {
   ];
 
   return (
-    <NewsLayout
+    <Layout
       title={post.seo.title || post.title}
       description={metaDescription}
       canonical={post.seo.canonicalUrl || url}
@@ -93,7 +93,8 @@ export default function BlogPost({ post, related }) {
       }}
       jsonLd={jsonLd}
     >
-      <article className="news-article">
+      <div className="news">
+      <article className="news-article" style={{ paddingTop: "clamp(28px, 4vw, 52px)" }}>
         <nav className="news-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
@@ -223,7 +224,8 @@ export default function BlogPost({ post, related }) {
           </Link>
         </div>
       </div>
-    </NewsLayout>
+      </div>
+    </Layout>
   );
 }
 

@@ -37,6 +37,10 @@ export default function Layout({
   jsonLd = null
 }) {
   const router = useRouter();
+  const isActive = (href) =>
+    href === "/"
+      ? router.pathname === "/"
+      : router.pathname === href || router.pathname.startsWith(`${href}/`);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -107,9 +111,7 @@ export default function Layout({
               <Link
                 key={link.href}
                 href={link.href}
-                className={`nav-link ${
-                  router.pathname === link.href ? "active" : ""
-                }`}
+                className={`nav-link ${isActive(link.href) ? "active" : ""}`}
               >
                 {link.label}
               </Link>
@@ -144,9 +146,7 @@ export default function Layout({
             <Link
               key={link.href}
               href={link.href}
-              className={`mobile-link ${
-                router.pathname === link.href ? "active" : ""
-              }`}
+              className={`mobile-link ${isActive(link.href) ? "active" : ""}`}
               style={{ transitionDelay: `${120 + index * 60}ms` }}
             >
               <span className="mobile-link-index">
