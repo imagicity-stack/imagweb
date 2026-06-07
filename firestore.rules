@@ -12,6 +12,11 @@ service cloud.firestore {
         && request.auth.token.admin == true;
     }
 
+    // The comments, postStats and popups collections are read and written
+    // exclusively through the server (Admin SDK), which bypasses these rules.
+    // They intentionally expose no client rules, so the default deny below
+    // blocks any direct browser access to them.
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;
