@@ -5304,3 +5304,391 @@ body.theme-news {
     align-items: flex-start;
   }
 }
+
+/* ============================================================
+   BLOG COMMENTS (public, scoped under .news)
+   ============================================================ */
+.news-comments {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 24px clamp(24px, 4vw, 48px);
+}
+
+.news-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0 36px;
+}
+
+.news-comment-form input,
+.news-comment-form textarea {
+  font-family: var(--news-sans);
+  font-size: 1rem;
+  color: var(--news-ink);
+  background: #fff;
+  border: 1px solid var(--news-line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-comment-form input::placeholder,
+.news-comment-form textarea::placeholder {
+  color: var(--news-muted);
+}
+
+.news-comment-form input:focus,
+.news-comment-form textarea:focus {
+  outline: none;
+  border-color: var(--news-accent);
+  box-shadow: 0 0 0 3px rgba(209, 17, 73, 0.12);
+}
+
+.news-comment-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Honeypot — visually removed, available to bots only. */
+.news-comment-hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.news-comment-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.news-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.news-comment-error {
+  color: var(--news-accent);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.news-comment-done {
+  color: #1a7f37;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.news-comment-empty {
+  color: var(--news-muted);
+  font-size: 0.95rem;
+}
+
+.news-comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.news-comment {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.news-comment-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--news-display);
+  font-weight: 700;
+  color: #fff;
+  background: var(--news-accent);
+}
+
+.news-comment-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.news-comment-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.news-comment-name {
+  font-weight: 700;
+  color: var(--news-strong);
+}
+
+.news-comment-date {
+  font-size: 0.82rem;
+  color: var(--news-muted);
+}
+
+.news-comment-text {
+  color: var(--news-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+/* ============================================================
+   ADMIN — section nav, comments moderation, insights
+   (inside .admin-root, so design tokens theme automatically)
+   ============================================================ */
+.admin-nav {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.admin-nav button {
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.admin-nav button:hover {
+  color: var(--ink);
+}
+
+.admin-nav button.active {
+  color: var(--bg);
+  background: var(--ink);
+}
+
+.admin-nav-count {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Comments moderation */
+.admin-comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-comment {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  border: 1px solid var(--line);
+}
+
+.admin-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #fff;
+  background: var(--grad-hot);
+}
+
+.admin-comment-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-comment-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.admin-comment-head strong {
+  font-size: 0.95rem;
+}
+
+.admin-comment-loc {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.admin-comment-date {
+  font-size: 0.8rem;
+  color: var(--muted-soft);
+}
+
+.admin-comment-text {
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.admin-comment-foot {
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.admin-comment-foot a,
+.admin-comment-foot span {
+  color: var(--muted);
+}
+
+.admin-comment-foot a:hover {
+  color: var(--ink);
+}
+
+.admin-comment-delete {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #d11149;
+  background: rgba(209, 17, 73, 0.1);
+  border: 1px solid rgba(209, 17, 73, 0.3);
+  transition: background 0.2s ease;
+}
+
+.admin-comment-delete:hover {
+  background: rgba(209, 17, 73, 0.18);
+}
+
+/* Insights */
+.admin-insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-insight {
+  padding: 18px;
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+  border: 1px solid var(--line);
+}
+
+.admin-insight-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.admin-insight-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.admin-insight-views {
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.admin-insight-views strong {
+  font-size: 1.3rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-insight-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.admin-insight-col h4 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-soft);
+  margin-bottom: 8px;
+}
+
+.admin-insight-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-insight-col li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--glass-strong);
+}
+
+.admin-insight-col li span:last-child {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-insight-empty {
+  color: var(--muted-soft);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 620px) {
+  .admin-insight-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    width: 100%;
+  }
+
+  .admin-comment {
+    flex-wrap: wrap;
+  }
+
+  .admin-comment-delete {
+    width: 100%;
+  }
+}

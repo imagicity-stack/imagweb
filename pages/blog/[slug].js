@@ -2,6 +2,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Layout from "../../components/Layout";
 import NewsCard from "../../components/blog/NewsCard";
+import Comments from "../../components/blog/Comments";
+import ViewBeacon from "../../components/blog/ViewBeacon";
 import {
   getPostBySlug,
   getPublishedSlugs,
@@ -90,6 +92,7 @@ export default function BlogPost({ post, related }) {
       jsonLd={jsonLd}
     >
       <div className="news">
+      <ViewBeacon postId={post.id} slug={post.slug} />
       <article className="news-article" style={{ paddingTop: "clamp(28px, 4vw, 52px)" }}>
         <nav className="news-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
@@ -194,6 +197,8 @@ export default function BlogPost({ post, related }) {
           </aside>
         ) : null}
       </article>
+
+      <Comments postId={post.id} />
 
       {related?.length ? (
         <section className="news-related">
