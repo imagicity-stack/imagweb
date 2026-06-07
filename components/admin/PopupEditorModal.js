@@ -9,9 +9,15 @@ import {
   POPUP_PAGES,
   POPUP_TRIGGERS,
   POPUP_FREQUENCIES,
-  POPUP_THEMES
+  POPUP_THEMES,
+  POPUP_SIZES,
+  POPUP_LAYOUTS,
+  POPUP_ALIGN,
+  POPUP_CTA_ALIGN,
+  POPUP_CTA_STYLES
 } from "../../lib/popups";
 import { useAdminAuth } from "./AdminAuthGate";
+import PopupCard from "../PopupCard";
 
 function toLocalInput(iso) {
   if (!iso) return "";
@@ -21,6 +27,24 @@ function toLocalInput(iso) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
     date.getHours()
   )}:${pad(date.getMinutes())}`;
+}
+
+// Segmented chip control for enum-style settings.
+function Chips({ options, value, onChange }) {
+  return (
+    <div className="pop-chip-row">
+      {options.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          className={`pop-chip ${value === option.id ? "active" : ""}`}
+          onClick={() => onChange(option.id)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export default function PopupEditorModal({ popup, onClose, onSaved }) {
@@ -35,6 +59,11 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
   const [ctaLabel, setCtaLabel] = useState(popup?.ctaLabel || "");
   const [ctaUrl, setCtaUrl] = useState(popup?.ctaUrl || "");
   const [theme, setTheme] = useState(popup?.theme || "light");
+  const [size, setSize] = useState(popup?.size || "md");
+  const [layout, setLayout] = useState(popup?.layout || "top");
+  const [align, setAlign] = useState(popup?.align || "left");
+  const [ctaAlign, setCtaAlign] = useState(popup?.ctaAlign || "left");
+  const [ctaStyle, setCtaStyle] = useState(popup?.ctaStyle || "solid");
   const [pages, setPages] = useState(popup?.pages?.length ? popup.pages : ["all"]);
   const [triggerType, setTriggerType] = useState(popup?.trigger?.type || "delay");
   const [delaySeconds, setDelaySeconds] = useState(popup?.trigger?.delaySeconds ?? 5);
@@ -104,6 +133,20 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
     }
   };
 
+  const previewPopup = {
+    heading,
+    body,
+    image,
+    ctaLabel,
+    ctaUrl,
+    theme,
+    size,
+    layout,
+    align,
+    ctaAlign,
+    ctaStyle
+  };
+
   const buildPayload = () => ({
     name: name.trim(),
     heading: heading.trim(),
@@ -112,6 +155,11 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
     ctaLabel: ctaLabel.trim(),
     ctaUrl: ctaUrl.trim(),
     theme,
+    size,
+    layout,
+    align,
+    ctaAlign,
+    ctaStyle,
     pages,
     trigger: { type: triggerType, delaySeconds: Number(delaySeconds) || 0 },
     frequency,
@@ -264,6 +312,8 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
                   maxLength={1200}
                 />
               </label>
+              <div className="pop-field-label">Text alignment</div>
+              <Chips options={POPUP_ALIGN} value={align} onChange={setAlign} />
             </div>
 
             <div className="editor-box">
@@ -296,6 +346,8 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
                   />
                 </label>
               ) : null}
+              <div className="pop-field-label">Image placement</div>
+              <Chips options={POPUP_LAYOUTS} value={layout} onChange={setLayout} />
             </div>
 
             <div className="editor-box">
@@ -319,22 +371,18 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
                   placeholder="/contact"
                 />
               </label>
+              <div className="pop-field-label">Button style</div>
+              <Chips options={POPUP_CTA_STYLES} value={ctaStyle} onChange={setCtaStyle} />
+              <div className="pop-field-label">Button alignment</div>
+              <Chips options={POPUP_CTA_ALIGN} value={ctaAlign} onChange={setCtaAlign} />
             </div>
 
             <div className="editor-box">
-              <h4>Style</h4>
-              <div className="pop-chip-row">
-                {POPUP_THEMES.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={`pop-chip ${theme === option.id ? "active" : ""}`}
-                    onClick={() => setTheme(option.id)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+              <h4>Appearance</h4>
+              <div className="pop-field-label">Theme</div>
+              <Chips options={POPUP_THEMES} value={theme} onChange={setTheme} />
+              <div className="pop-field-label">Size</div>
+              <Chips options={POPUP_SIZES} value={size} onChange={setSize} />
             </div>
 
             <div className="editor-box">
@@ -430,29 +478,7 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
           <div className="pop-preview">
             <span className="pop-preview-label">Live preview</span>
             <div className="pop-preview-stage">
-              <div className={`site-popup site-popup-${theme}`}>
-                <button type="button" className="site-popup-close" aria-hidden="true" tabIndex={-1}>
-                  ×
-                </button>
-                {image.url ? (
-                  <div className="site-popup-media">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={image.url} alt={image.alt || ""} />
-                  </div>
-                ) : null}
-                <div className="site-popup-content">
-                  {heading ? <h3 className="site-popup-heading">{heading}</h3> : null}
-                  {body ? <p className="site-popup-text">{body}</p> : null}
-                  {ctaLabel ? (
-                    <span className="site-popup-cta" role="button" tabIndex={-1}>
-                      {ctaLabel}
-                    </span>
-                  ) : null}
-                  {!heading && !body && !image.url ? (
-                    <p className="pop-preview-hint">Your popup preview appears here.</p>
-                  ) : null}
-                </div>
-              </div>
+              <PopupCard popup={previewPopup} preview />
             </div>
           </div>
         </div>

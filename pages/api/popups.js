@@ -24,6 +24,11 @@ export default async function handler(req, res) {
     ctaLabel: p.ctaLabel,
     ctaUrl: p.ctaUrl,
     theme: p.theme,
+    size: p.size,
+    layout: p.layout,
+    align: p.align,
+    ctaAlign: p.ctaAlign,
+    ctaStyle: p.ctaStyle,
     pages: p.pages,
     trigger: p.trigger,
     frequency: p.frequency
