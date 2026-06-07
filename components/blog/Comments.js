@@ -5,7 +5,7 @@ import { formatDate } from "../../lib/blog";
 // statically cached page always shows fresh discussion) and posts new ones via
 // /api/comments. Comments are plain text and rendered with text interpolation
 // (never HTML), so they're safe by construction.
-export default function Comments({ postId }) {
+export default function Comments({ postId, api = "/api/comments" }) {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", body: "", website: "" });
@@ -15,7 +15,7 @@ export default function Comments({ postId }) {
 
   useEffect(() => {
     let active = true;
-    fetch(`/api/comments?postId=${encodeURIComponent(postId)}`)
+    fetch(`${api}?postId=${encodeURIComponent(postId)}`)
       .then((res) => res.json())
       .then((data) => {
         if (active && data.ok) setComments(data.comments || []);
@@ -27,7 +27,7 @@ export default function Comments({ postId }) {
     return () => {
       active = false;
     };
-  }, [postId]);
+  }, [postId, api]);
 
   const update = (field) => (event) =>
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -38,7 +38,7 @@ export default function Comments({ postId }) {
     setDone(false);
     setSubmitting(true);
     try {
-      const res = await fetch("/api/comments", {
+      const res = await fetch(api, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ postId, ...form })

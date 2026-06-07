@@ -36,7 +36,13 @@ function getImageDimensions(url) {
   });
 }
 
-export default function PostEditorModal({ post, onClose, onSaved }) {
+export default function PostEditorModal({ post, onClose, onSaved, config }) {
+  const cfg = config || {};
+  const apiBase = cfg.apiBase || "/api/admin/posts";
+  const categoriesApi = cfg.categoriesApi || "/api/admin/categories";
+  const storageFolder = cfg.storageFolder || "blog";
+  const publicBase = cfg.publicBase || "/blog";
+
   const { user, getToken } = useAdminAuth();
 
   const [currentId, setCurrentId] = useState(post?.id || null);
@@ -83,7 +89,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
     (async () => {
       try {
         const token = await getToken();
-        const res = await fetch("/api/admin/categories", {
+        const res = await fetch(categoriesApi, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -161,7 +167,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
       const safe = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
       const reference = storageRef(
         storage,
-        `blog/${user?.uid || "admin"}/cover-${Date.now()}-${safe}`
+        `${storageFolder}/${user?.uid || "admin"}/cover-${Date.now()}-${safe}`
       );
       const task = uploadBytesResumable(reference, file, { contentType: file.type });
       await new Promise((resolve, reject) => {
@@ -208,7 +214,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
     };
     try {
       const token = await getToken();
-      const url = currentId ? `/api/admin/posts/${currentId}` : "/api/admin/posts";
+      const url = currentId ? `${apiBase}/${currentId}` : apiBase;
       const method = currentId ? "PUT" : "POST";
       const response = await fetch(url, {
         method,
@@ -241,7 +247,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
     setSaving(true);
     try {
       const token = await getToken();
-      const response = await fetch(`/api/admin/posts/${currentId}`, {
+      const response = await fetch(`${apiBase}/${currentId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -277,7 +283,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
         <div className="editor-modal-bar-right">
           {status === "published" && slug ? (
             <a
-              href={`/blog/${slug}`}
+              href={`${publicBase}/${slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="editor-view"
@@ -316,7 +322,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
               onChange={(e) => setTitle(e.target.value)}
             />
             <div className="editor-permalink">
-              <span>{host}/blog/</span>
+              <span>{host}{publicBase}/</span>
               <input
                 value={slug}
                 onChange={(e) => {
@@ -328,7 +334,12 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
             </div>
           </div>
 
-          <RichTextEditor value={content} onChange={setContent} uid={user?.uid} />
+          <RichTextEditor
+            value={content}
+            onChange={setContent}
+            uid={user?.uid}
+            folder={storageFolder}
+          />
         </div>
 
         <aside className="editor-sidebar">

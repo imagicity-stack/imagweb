@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { formatDate } from "../../lib/blog";
 
-export default function NewsCard({ post }) {
-  const href = `/blog/${post.slug}`;
+export default function NewsCard({ post, basePath = "/blog" }) {
+  const href = `${basePath}/${post.slug}`;
   const date = formatDate(post.publishedAt || post.createdAt);
 
   return (
