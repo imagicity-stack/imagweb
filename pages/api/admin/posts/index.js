@@ -9,6 +9,8 @@ import {
   serializePost
 } from "../../../../lib/blogServer";
 import { getStatsMap } from "../../../../lib/statsServer";
+import { ensureCategories } from "../../../../lib/categoriesServer";
+import { notifyNewPost } from "../../../../lib/newsletterServer";
 import { normalizeIncomingPost, revalidateBlog } from "../../../../lib/postWrite";
 import { POSTS_COLLECTION } from "../../../../lib/blog";
 
@@ -64,7 +66,13 @@ export default async function handler(req, res) {
       const ref = await getAdminDb().collection(POSTS_COLLECTION).add(doc);
       await revalidateBlog(res, [slug]);
       const saved = await ref.get();
-      return res.status(201).json({ ok: true, post: serializePost(saved.id, saved.data()) });
+      const savedPost = serializePost(saved.id, saved.data());
+
+      if (savedPost.category) await ensureCategories([savedPost.category]);
+      // Email subscribers the first time a post goes live.
+      if (savedPost.status === "published") await notifyNewPost(savedPost);
+
+      return res.status(201).json({ ok: true, post: savedPost });
     }
 
     res.setHeader("Allow", ["GET", "POST"]);

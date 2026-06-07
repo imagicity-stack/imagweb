@@ -4,6 +4,8 @@ import { FieldValue } from "firebase-admin/firestore";
 import { verifyAdminRequest, handleApiError } from "../../../../lib/adminAuth";
 import { getAdminDb } from "../../../../lib/firebase/admin";
 import { uniqueSlug, serializePost } from "../../../../lib/blogServer";
+import { ensureCategories } from "../../../../lib/categoriesServer";
+import { notifyNewPost } from "../../../../lib/newsletterServer";
 import { normalizeIncomingPost, revalidateBlog } from "../../../../lib/postWrite";
 import { POSTS_COLLECTION } from "../../../../lib/blog";
 
@@ -70,7 +72,15 @@ export default async function handler(req, res) {
       await ref.update(update);
       await revalidateBlog(res, [slug, existing.slug]);
       const saved = await ref.get();
-      return res.status(200).json({ ok: true, post: serializePost(saved.id, saved.data()) });
+      const savedPost = serializePost(saved.id, saved.data());
+
+      if (savedPost.category) await ensureCategories([savedPost.category]);
+      // Notify subscribers only on the transition from draft → published.
+      if (existing.status !== "published" && savedPost.status === "published") {
+        await notifyNewPost(savedPost);
+      }
+
+      return res.status(200).json({ ok: true, post: savedPost });
     }
 
     if (req.method === "DELETE") {

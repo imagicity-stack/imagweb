@@ -27,7 +27,9 @@ export async function getServerSideProps({ res }) {
     { path: "/services", changefreq: "weekly", priority: "0.9" },
     { path: "/portfolio", changefreq: "monthly", priority: "0.8" },
     { path: "/blog", changefreq: "daily", priority: "0.9" },
-    { path: "/contact", changefreq: "monthly", priority: "0.6" }
+    { path: "/contact", changefreq: "monthly", priority: "0.6" },
+    { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+    { path: "/terms", changefreq: "yearly", priority: "0.3" }
   ];
 
   const servicePages = services.map((service) => ({

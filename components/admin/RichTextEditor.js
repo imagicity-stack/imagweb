@@ -22,6 +22,8 @@ export default function RichTextEditor({ value, onChange, uid }) {
   const [source, setSource] = useState(value || "");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [selectedImg, setSelectedImg] = useState(null);
+  const [altDraft, setAltDraft] = useState("");
 
   useEffect(() => {
     if (areaRef.current && !showSource) {
@@ -33,6 +35,26 @@ export default function RichTextEditor({ value, onChange, uid }) {
 
   const emit = () => {
     if (areaRef.current) onChange(areaRef.current.innerHTML);
+  };
+
+  // Clicking an image selects it so its alt text can be edited inline (alt is an
+  // SEO/accessibility attribute and is never shown to readers).
+  const handleAreaClick = (event) => {
+    const target = event.target;
+    if (target && target.tagName === "IMG") {
+      setSelectedImg(target);
+      setAltDraft(target.getAttribute("alt") || "");
+    } else if (selectedImg) {
+      setSelectedImg(null);
+    }
+  };
+
+  const updateAlt = (nextAlt) => {
+    setAltDraft(nextAlt);
+    if (selectedImg) {
+      selectedImg.setAttribute("alt", nextAlt);
+      emit();
+    }
   };
 
   const runCommand = (command, commandValue) => {
@@ -88,13 +110,22 @@ export default function RichTextEditor({ value, onChange, uid }) {
     setProgress(0);
     try {
       const url = await uploadImage(file);
-      const alt = window.prompt("Describe this image for SEO / alt text:", "") || "";
       areaRef.current?.focus();
-      const figure = `<figure><img src="${escapeAttr(url)}" alt="${escapeAttr(
-        alt
-      )}" loading="lazy" />${alt ? `<figcaption>${alt}</figcaption>` : ""}</figure><p><br/></p>`;
+      // Insert the image with an empty alt — no visible caption. The author sets
+      // alt text via the inline field that appears below the toolbar.
+      const figure = `<figure><img src="${escapeAttr(
+        url
+      )}" alt="" loading="lazy" /></figure><p><br/></p>`;
       exec("insertHTML", figure);
       emit();
+      requestAnimationFrame(() => {
+        const imgs = areaRef.current?.querySelectorAll("img");
+        if (imgs && imgs.length) {
+          const last = imgs[imgs.length - 1];
+          setSelectedImg(last);
+          setAltDraft(last.getAttribute("alt") || "");
+        }
+      });
     } catch (error) {
       window.alert(`Image upload failed: ${error.message || error}`);
     } finally {
@@ -214,6 +245,25 @@ export default function RichTextEditor({ value, onChange, uid }) {
         </div>
       </div>
 
+      {selectedImg && !showSource ? (
+        <div className="editor-altbar">
+          <span className="editor-altbar-label">Image alt text</span>
+          <input
+            type="text"
+            value={altDraft}
+            onChange={(e) => updateAlt(e.target.value)}
+            placeholder="Describe the image for SEO &amp; accessibility (not shown to readers)"
+          />
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setSelectedImg(null)}
+          >
+            Done
+          </button>
+        </div>
+      ) : null}
+
       {showSource ? (
         <textarea
           className="editor-source"
@@ -232,6 +282,7 @@ export default function RichTextEditor({ value, onChange, uid }) {
           suppressContentEditableWarning
           onInput={emit}
           onBlur={emit}
+          onClick={handleAreaClick}
           data-placeholder="Write your story… Use the toolbar to format, add headings, links and images."
         />
       )}
