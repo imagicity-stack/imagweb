@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { pathToPageKey } from "../lib/popups";
+import PopupCard from "./PopupCard";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const storeKey = (id) => `imag_popup_${id}`;
@@ -115,43 +116,7 @@ export default function SitePopup() {
       aria-label={active.heading || "Announcement"}
       onClick={close}
     >
-      <div
-        className={`site-popup site-popup-${active.theme || "light"}`}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <button
-          type="button"
-          className="site-popup-close"
-          onClick={close}
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-        {active.image?.url ? (
-          <div className="site-popup-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={active.image.url} alt={active.image.alt || ""} />
-          </div>
-        ) : null}
-
-        <div className="site-popup-content">
-          {active.heading ? <h3 className="site-popup-heading">{active.heading}</h3> : null}
-          {active.body ? <p className="site-popup-text">{active.body}</p> : null}
-          {active.ctaLabel && active.ctaUrl ? (
-            <a
-              className="site-popup-cta"
-              href={active.ctaUrl}
-              onClick={() => markSeen(active)}
-              {...(/^https?:\/\//i.test(active.ctaUrl)
-                ? { target: "_blank", rel: "noopener noreferrer" }
-                : {})}
-            >
-              {active.ctaLabel}
-            </a>
-          ) : null}
-        </div>
-      </div>
+      <PopupCard popup={active} onClose={close} onCta={() => markSeen(active)} />
     </div>
   );
 }

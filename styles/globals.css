@@ -5285,8 +5285,60 @@ body.theme-news {
 }
 
 @media (max-width: 620px) {
+  /* Mobile blog listing: a dense, organised list — headline on the left,
+     thumbnail on the right (news-app style), with the featured story up top. */
   .news-grid {
     grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 2px;
+  }
+
+  .news-grid .ncard {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--news-line);
+  }
+
+  .news-grid .ncard-body {
+    order: 1;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .news-grid .ncard-media {
+    order: 2;
+    width: 116px;
+    flex-shrink: 0;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 0;
+    border-radius: 10px;
+  }
+
+  .news-grid .ncard-title {
+    font-size: 1.06rem;
+    margin: 0;
+  }
+
+  .news-grid .ncard-kicker,
+  .news-grid .ncard-excerpt,
+  .news-grid .ncard-meta {
+    display: none;
+  }
+
+  /* Category filters scroll sideways like a news nav bar */
+  .news-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .news-filters::-webkit-scrollbar {
+    display: none;
+  }
+  .news-filters button {
+    flex-shrink: 0;
   }
 
   .news-hero-figure {
@@ -6231,4 +6283,129 @@ body.theme-news {
   .pop-check-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================================================
+   SITE POPUP — size / layout / alignment / button variants
+   ============================================================ */
+.site-popup-sm {
+  max-width: 380px;
+}
+.site-popup-md {
+  max-width: 440px;
+}
+.site-popup-lg {
+  max-width: 560px;
+}
+
+.site-popup-align-left .site-popup-content {
+  text-align: left;
+}
+.site-popup-align-center .site-popup-content {
+  text-align: center;
+}
+.site-popup-align-right .site-popup-content {
+  text-align: right;
+}
+
+.site-popup-actions {
+  display: flex;
+  margin-top: 4px;
+}
+.site-popup-actions-left {
+  justify-content: flex-start;
+}
+.site-popup-actions-center {
+  justify-content: center;
+}
+.site-popup-actions-right {
+  justify-content: flex-end;
+}
+.site-popup-actions-full .site-popup-cta {
+  width: 100%;
+}
+
+/* Image beside the content */
+.site-popup-layout-side {
+  display: flex;
+  align-items: stretch;
+  max-width: 660px;
+}
+.site-popup-layout-side .site-popup-media {
+  width: 44%;
+  aspect-ratio: auto;
+  flex-shrink: 0;
+}
+.site-popup-layout-side .site-popup-content {
+  flex: 1;
+  align-self: center;
+}
+
+/* Image as a full background with a scrim */
+.site-popup-layout-background {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 360px;
+}
+.site-popup-layout-background .site-popup-media {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+.site-popup-layout-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.15), rgba(10, 12, 16, 0.86));
+}
+.site-popup-layout-background .site-popup-content {
+  position: relative;
+  z-index: 1;
+}
+.site-popup-layout-background .site-popup-heading,
+.site-popup-layout-background .site-popup-text {
+  color: #fff;
+}
+
+/* Outline button (declared after the solid theme rules so it wins) */
+.site-popup-light .site-popup-cta-outline {
+  background: transparent;
+  color: #15171c;
+  border: 1.5px solid #15171c;
+}
+.site-popup-light .site-popup-cta-outline:hover {
+  background: #15171c;
+  color: #fff;
+}
+.site-popup-dark .site-popup-cta-outline,
+.site-popup-accent .site-popup-cta-outline,
+.site-popup-layout-background .site-popup-cta-outline {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+}
+.site-popup-dark .site-popup-cta-outline:hover,
+.site-popup-accent .site-popup-cta-outline:hover,
+.site-popup-layout-background .site-popup-cta-outline:hover {
+  background: #fff;
+  color: #15171c;
+}
+
+@media (max-width: 540px) {
+  .site-popup-layout-side {
+    display: block;
+  }
+  .site-popup-layout-side .site-popup-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Admin builder sub-field label */
+.pop-field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 14px 0 8px;
 }
