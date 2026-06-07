@@ -1,11 +1,20 @@
 rules_version = '2';
 
-// Blog images are publicly readable (they appear on the live site) but can only
-// be uploaded by an authenticated admin (admin custom claim). Uploads are
-// limited to images under 10MB.
+// Blog + popup images are publicly readable (they appear on the live site) but
+// can only be uploaded by an authenticated admin (admin custom claim). Uploads
+// are limited to images under 10MB.
 service firebase.storage {
   match /b/{bucket}/o {
     match /blog/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.admin == true
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Popup images use the same policy as blog images.
+    match /popups/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
         && request.auth.token.admin == true
