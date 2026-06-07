@@ -6162,6 +6162,62 @@ body.theme-news {
   padding: 10px 12px;
 }
 
+.pop-help {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: -4px 0 12px;
+}
+
+.pop-schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pop-form input[type="datetime-local"] {
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.pop-form input[type="datetime-local"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(209, 17, 73, 0.12);
+}
+
+.pop-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.admin-root[data-theme="dark"] .pop-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+.pop-clear-btn {
+  margin-top: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .pop-schedule-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 760px) {
   .pop-modal-body {
     grid-template-columns: 1fr;

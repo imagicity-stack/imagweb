@@ -26,6 +26,7 @@ function toLocalInput(iso) {
 export default function PopupEditorModal({ popup, onClose, onSaved }) {
   const { user, getToken } = useAdminAuth();
   const isEdit = Boolean(popup?.id);
+  const nowLocal = toLocalInput(new Date().toISOString());
 
   const [name, setName] = useState(popup?.name || "");
   const [heading, setHeading] = useState(popup?.heading || "");
@@ -123,6 +124,22 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
     if (!heading.trim() && !body.trim() && !image.url) {
       setError("Add a heading, some text, or an image before saving.");
       return;
+    }
+    const now = Date.now();
+    if (startAt && new Date(startAt).getTime() < now - 60000) {
+      setError("The start date & time can’t be in the past.");
+      return;
+    }
+    if (endAt) {
+      const endMs = new Date(endAt).getTime();
+      if (endMs < now) {
+        setError("The end date & time can’t be in the past.");
+        return;
+      }
+      if (startAt && endMs <= new Date(startAt).getTime()) {
+        setError("The end time must be after the start time.");
+        return;
+      }
     }
     setSaving(true);
     setError("");
@@ -373,23 +390,40 @@ export default function PopupEditorModal({ popup, onClose, onSaved }) {
             </div>
 
             <div className="editor-box">
-              <h4>Schedule (optional)</h4>
-              <label className="editor-field">
-                <span>Start</span>
-                <input
-                  type="datetime-local"
-                  value={startAt}
-                  onChange={(e) => setStartAt(e.target.value)}
-                />
-              </label>
-              <label className="editor-field">
-                <span>End</span>
-                <input
-                  type="datetime-local"
-                  value={endAt}
-                  onChange={(e) => setEndAt(e.target.value)}
-                />
-              </label>
+              <h4>Schedule</h4>
+              <p className="pop-help">Optional — leave blank to start now and never expire.</p>
+              <div className="pop-schedule-grid">
+                <label className="editor-field">
+                  <span>Starts</span>
+                  <input
+                    type="datetime-local"
+                    min={nowLocal}
+                    value={startAt}
+                    onChange={(e) => setStartAt(e.target.value)}
+                  />
+                </label>
+                <label className="editor-field">
+                  <span>Ends</span>
+                  <input
+                    type="datetime-local"
+                    min={startAt || nowLocal}
+                    value={endAt}
+                    onChange={(e) => setEndAt(e.target.value)}
+                  />
+                </label>
+              </div>
+              {startAt || endAt ? (
+                <button
+                  type="button"
+                  className="pop-clear-btn"
+                  onClick={() => {
+                    setStartAt("");
+                    setEndAt("");
+                  }}
+                >
+                  Clear schedule
+                </button>
+              ) : null}
             </div>
           </div>
 

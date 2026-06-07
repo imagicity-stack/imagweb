@@ -29,6 +29,7 @@ export default async function handler(req, res) {
     frequency: p.frequency
   }));
 
-  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+  // No edge cache so popups created/toggled in the admin reflect immediately.
+  res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({ ok: true, popups: lean });
 }
