@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import SeoHead from "./SeoHead";
+import SitePopup from "./SitePopup";
 import { SOCIAL_PROFILES } from "../lib/site";
 
 const navLinks = [
@@ -246,6 +247,8 @@ export default function Layout({
           <span className="footer-tag">Strategy · Creative · Performance</span>
         </div>
       </footer>
+
+      <SitePopup />
     </div>
   );
 }

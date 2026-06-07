@@ -113,6 +113,42 @@ export default function ContactPage() {
 
       <section className="section tight">
         <div className="container">
+          <Reveal>
+            <div className="free-consult">
+              <div className="free-consult-glow" aria-hidden="true" />
+              <div className="free-consult-content">
+                <span className="free-consult-badge">★ Free for new clients</span>
+                <h2>
+                  Your first consultation is{" "}
+                  <span className="gradient-text">absolutely free</span>.
+                </h2>
+                <p>
+                  Book a no-obligation 45-minute strategy session. We&apos;ll audit
+                  your current marketing, surface the gaps quietly costing you
+                  growth, and hand you a few high-impact moves you can act on right
+                  away — whether or not we end up working together.
+                </p>
+                <ul className="free-consult-list">
+                  <li>A focused audit of your current marketing</li>
+                  <li>2–3 quick wins tailored to your brand</li>
+                  <li>A clear roadmap for what scalable growth looks like</li>
+                </ul>
+                <div className="free-consult-actions">
+                  <a href="#start" className="btn btn-glow">
+                    Claim your free session →
+                  </a>
+                  <span className="free-consult-note">
+                    No card required · Limited slots each month
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="section tight" id="start">
+        <div className="container">
           <div className="contact-layout">
             <Reveal variant="left" className="contact-panel">
               <h3>Let's talk.</h3>

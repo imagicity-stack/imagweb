@@ -5692,3 +5692,487 @@ body.theme-news {
     width: 100%;
   }
 }
+
+/* ============================================================
+   CONTACT — free consultation banner (scoped to .page-shell)
+   ============================================================ */
+.page-shell .free-consult {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: clamp(32px, 5vw, 56px);
+  background: linear-gradient(125deg, rgba(124, 58, 237, 0.08), rgba(209, 17, 73, 0.07));
+  border: 1px solid var(--line);
+}
+
+.page-shell .free-consult-glow {
+  position: absolute;
+  top: -45%;
+  right: -10%;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(209, 17, 73, 0.16), transparent 65%);
+  pointer-events: none;
+}
+
+.page-shell .free-consult-content {
+  position: relative;
+  max-width: 680px;
+}
+
+.page-shell .free-consult-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.page-shell .free-consult h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  margin: 18px 0 14px;
+}
+
+.page-shell .free-consult p {
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.page-shell .free-consult-list {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 28px;
+}
+
+.page-shell .free-consult-list li {
+  position: relative;
+  padding-left: 30px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.page-shell .free-consult-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent);
+}
+
+.page-shell .free-consult-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-shell .free-consult-note {
+  font-size: 0.85rem;
+  color: var(--muted-soft);
+}
+
+/* ============================================================
+   SITE POPUP (public modal + admin live preview) — standalone,
+   so it renders identically inside .page-shell and the admin preview.
+   ============================================================ */
+.site-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 17, 22, 0.55);
+  backdrop-filter: blur(6px);
+  animation: popup-fade 0.25s ease;
+}
+
+@keyframes popup-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.site-popup {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #ffffff;
+  color: #15171c;
+  box-shadow: 0 40px 90px rgba(15, 17, 22, 0.35);
+  animation: popup-rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+@keyframes popup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+.site-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.85);
+  color: #15171c;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.site-popup-close:hover {
+  transform: rotate(90deg);
+}
+
+.site-popup-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #f0f1f4;
+}
+
+.site-popup-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.site-popup-content {
+  padding: clamp(22px, 4vw, 30px);
+}
+
+.site-popup-heading {
+  font-family: "Fraunces", "Newsreader", Georgia, serif;
+  font-weight: 700;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin-bottom: 10px;
+}
+
+.site-popup-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #5b616c;
+  white-space: pre-wrap;
+  margin-bottom: 20px;
+}
+
+.site-popup-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: #15171c;
+  color: #fff;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.site-popup-cta:hover {
+  background: #d11149;
+  transform: translateY(-1px);
+}
+
+/* Dark theme variant */
+.site-popup-dark {
+  background: #14161b;
+  color: #f4f4f6;
+}
+.site-popup-dark .site-popup-text {
+  color: rgba(244, 244, 246, 0.72);
+}
+.site-popup-dark .site-popup-cta {
+  background: #fff;
+  color: #14161b;
+}
+.site-popup-dark .site-popup-cta:hover {
+  background: #d11149;
+  color: #fff;
+}
+.site-popup-dark .site-popup-close {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* Accent theme variant */
+.site-popup-accent {
+  background: linear-gradient(140deg, #d11149, #db2777 70%, #f0707f);
+  color: #fff;
+}
+.site-popup-accent .site-popup-text {
+  color: rgba(255, 255, 255, 0.92);
+}
+.site-popup-accent .site-popup-cta {
+  background: #fff;
+  color: #d11149;
+}
+.site-popup-accent .site-popup-cta:hover {
+  background: #15171c;
+  color: #fff;
+}
+.site-popup-accent .site-popup-close {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+@media (max-width: 620px) {
+  .page-shell .free-consult-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ============================================================
+   ADMIN — primary/secondary nav + popup builder
+   (inside .admin-root, so tokens theme automatically)
+   ============================================================ */
+.admin-nav-primary button {
+  font-size: 1rem;
+  padding: 10px 22px;
+}
+
+.admin-subnav {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-subnav button {
+  position: relative;
+  padding: 4px 2px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+}
+
+.admin-subnav button:hover {
+  color: var(--ink);
+}
+
+.admin-subnav button.active {
+  color: var(--ink);
+}
+
+.admin-subnav button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+/* Popup builder modal */
+.pop-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 6, 15, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+.pop-modal {
+  width: 100%;
+  max-width: 1040px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.pop-modal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--glass);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.pop-modal-bar-left,
+.pop-modal-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pop-active-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.pop-modal-body {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 0;
+  overflow: hidden;
+}
+
+.pop-form {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pop-preview {
+  padding: 24px;
+  border-left: 1px solid var(--line);
+  background:
+    radial-gradient(600px 400px at 80% -10%, rgba(209, 17, 73, 0.08), transparent 60%),
+    var(--glass);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.pop-preview-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-soft);
+  font-weight: 700;
+}
+
+.pop-preview-stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+}
+
+.pop-preview-stage .site-popup {
+  box-shadow: 0 24px 60px rgba(15, 17, 22, 0.25);
+}
+
+.pop-preview-hint {
+  color: #8a909a;
+  font-size: 0.95rem;
+}
+
+.pop-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pop-chip {
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  transition: all 0.2s ease;
+}
+
+.pop-chip.active {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.pop-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pop-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.9rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.pop-form .editor-field select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+@media (max-width: 760px) {
+  .pop-modal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .pop-preview {
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .pop-check-grid {
+    grid-template-columns: 1fr;
+  }
+}
