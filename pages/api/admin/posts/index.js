@@ -8,6 +8,7 @@ import {
   uniqueSlug,
   serializePost
 } from "../../../../lib/blogServer";
+import { getStatsMap } from "../../../../lib/statsServer";
 import { normalizeIncomingPost, revalidateBlog } from "../../../../lib/postWrite";
 import { POSTS_COLLECTION } from "../../../../lib/blog";
 
@@ -18,8 +19,12 @@ export default async function handler(req, res) {
     const user = await verifyAdminRequest(req);
 
     if (req.method === "GET") {
-      const posts = await getAllPostsForAdmin();
-      return res.status(200).json({ ok: true, posts });
+      const [posts, stats] = await Promise.all([getAllPostsForAdmin(), getStatsMap()]);
+      const withStats = posts.map((post) => ({
+        ...post,
+        ...(stats[post.id] || { views: 0, byCountry: {}, byCity: {} })
+      }));
+      return res.status(200).json({ ok: true, posts: withStats });
     }
 
     if (req.method === "POST") {
