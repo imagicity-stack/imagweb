@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 // Fires a single view ping per post, per browser, per day (localStorage guard
 // limits refresh inflation). Renders nothing.
-export default function ViewBeacon({ postId, slug }) {
+export default function ViewBeacon({ postId, slug, api = "/api/views" }) {
   useEffect(() => {
     if (!postId) return;
     const key = `iv_${postId}`;
@@ -13,13 +13,13 @@ export default function ViewBeacon({ postId, slug }) {
     } catch (error) {
       // Private mode / storage disabled — still count the view.
     }
-    fetch("/api/views", {
+    fetch(api, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ postId, slug }),
       keepalive: true
     }).catch(() => {});
-  }, [postId, slug]);
+  }, [postId, slug, api]);
 
   return null;
 }

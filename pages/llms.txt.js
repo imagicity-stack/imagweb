@@ -27,6 +27,7 @@ export async function getServerSideProps({ res }) {
     ["Services", "/services", "The full range of marketing services, grouped by discipline."],
     ["Work", "/portfolio", "Selected projects and outcomes for the brands we've grown."],
     ["Blog", "/blog", "The Imagicity Journal — playbooks on strategy, branding, performance and growth."],
+    ["Creacity", "/creacity", "Your go-to marketing learning school — tips, tricks, design, branding and business."],
     ["Contact", "/contact", "Start a project or make a request."]
   ];
 

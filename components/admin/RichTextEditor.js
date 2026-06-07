@@ -15,7 +15,7 @@ const exec = (command, value = null) => {
 
 const escapeAttr = (value) => String(value || "").replace(/"/g, "&quot;");
 
-export default function RichTextEditor({ value, onChange, uid }) {
+export default function RichTextEditor({ value, onChange, uid, folder = "blog" }) {
   const areaRef = useRef(null);
   const fileRef = useRef(null);
   const [showSource, setShowSource] = useState(false);
@@ -75,7 +75,7 @@ export default function RichTextEditor({ value, onChange, uid }) {
   const uploadImage = (file) => {
     const storage = getStorageInstance();
     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const path = `blog/${uid || "admin"}/${Date.now()}-${safeName}`;
+    const path = `${folder}/${uid || "admin"}/${Date.now()}-${safeName}`;
     const reference = storageRef(storage, path);
     const task = uploadBytesResumable(reference, file, { contentType: file.type });
     return new Promise((resolve, reject) => {
