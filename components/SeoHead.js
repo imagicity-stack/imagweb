@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { SITE_NAME, DEFAULT_OG_IMAGE, absoluteUrl } from "../lib/site";
+import { getIdentitySchema } from "../lib/schema";
 
 // Centralized SEO <head> used by both the marketing Layout and the news-style
 // blog layout so meta tags stay consistent everywhere.
@@ -22,7 +23,10 @@ export default function SeoHead({
   const canonicalUrl =
     canonical || absoluteUrl((router.asPath || "/").split("?")[0].split("#")[0]);
   const resolvedOgImage = ogImage ? absoluteUrl(ogImage) : DEFAULT_OG_IMAGE;
-  const jsonLdItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+  const pageJsonLd = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+  // Brand identity (Organization + WebSite) ships on every page, followed by
+  // any page-specific structured data.
+  const jsonLdItems = [...getIdentitySchema(), ...pageJsonLd];
 
   return (
     <Head>

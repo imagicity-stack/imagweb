@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import SeoHead from "./SeoHead";
+import { SOCIAL_PROFILES } from "../lib/site";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -186,9 +187,16 @@ export default function Layout({
               authority, acquire customers, and scale with clarity.
             </p>
             <div className="footer-socials">
-              {["Instagram", "LinkedIn", "X", "YouTube"].map((social) => (
-                <a key={social} href="#" aria-label={social}>
-                  {social}
+              {SOCIAL_PROFILES.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url || "#"}
+                  aria-label={social.name}
+                  {...(social.url
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                >
+                  {social.name}
                 </a>
               ))}
             </div>

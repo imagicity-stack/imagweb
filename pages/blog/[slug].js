@@ -29,11 +29,7 @@ export default function BlogPost({ post, related }) {
       datePublished: post.publishedAt || post.createdAt,
       dateModified: post.updatedAt || post.publishedAt || post.createdAt,
       author: { "@type": "Person", name: post.author?.name || SITE_NAME },
-      publisher: {
-        "@type": "Organization",
-        name: SITE_NAME,
-        logo: { "@type": "ImageObject", url: absoluteUrl("/ICONS/SSA.png") }
-      },
+      publisher: { "@id": `${SITE_URL}/#organization` },
       ...(keywords ? { keywords } : {}),
       ...(post.category ? { articleSection: post.category } : {}),
       wordCount: post.wordCount || undefined,
