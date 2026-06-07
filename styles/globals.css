@@ -4389,6 +4389,15 @@ body.theme-news {
   color: #fff;
 }
 
+/* The blog renders inside the shared site Layout (.page-shell), so .news acts
+   as a content scope for editorial typography — not a full-page shell with its
+   own header/footer. */
+.page-shell .news {
+  display: block;
+  min-height: 0;
+  background: transparent;
+}
+
 .news-progress {
   position: fixed;
   top: 0;

@@ -1,5 +1,9 @@
 import { useEffect } from "react";
+import Script from "next/script";
 import "../styles/globals.css";
+
+// Google Analytics (gtag.js). Override per-environment with NEXT_PUBLIC_GA_ID.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-HWCGBP7NVK";
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -14,5 +18,25 @@ export default function App({ Component, pageProps }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <>
+      {GA_ID ? (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="gtag-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_ID}');
+            `}
+          </Script>
+        </>
+      ) : null}
+      <Component {...pageProps} />
+    </>
+  );
 }

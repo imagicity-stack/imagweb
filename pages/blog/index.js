@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import NewsLayout from "../../components/blog/NewsLayout";
+import Layout from "../../components/Layout";
 import NewsCard from "../../components/blog/NewsCard";
 import { getPublishedPosts } from "../../lib/blogServer";
 import { formatDate } from "../../lib/blog";
-import { SITE_NAME, absoluteUrl } from "../../lib/site";
+import { SITE_NAME, SITE_URL, absoluteUrl } from "../../lib/site";
 
 const PAGE_DESCRIPTION =
   "Marketing strategy, brand building, performance and growth insights from the Imagicity team — practical playbooks to help bold brands grow.";
@@ -35,11 +35,7 @@ export default function BlogIndex({ posts }) {
     name: `${SITE_NAME} Blog`,
     description: PAGE_DESCRIPTION,
     url: absoluteUrl("/blog"),
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      logo: { "@type": "ImageObject", url: absoluteUrl("/ICONS/SSA.png") }
-    },
+    publisher: { "@id": `${SITE_URL}/#organization` },
     blogPost: posts.slice(0, 12).map((post) => ({
       "@type": "BlogPosting",
       headline: post.title,
@@ -51,12 +47,13 @@ export default function BlogIndex({ posts }) {
   };
 
   return (
-    <NewsLayout
+    <Layout
       title="The Journal"
       description={PAGE_DESCRIPTION}
       keywords="marketing blog, brand strategy, performance marketing, SEO, content marketing, growth"
       jsonLd={jsonLd}
     >
+      <div className="news">
       <div className="news-masthead">
         <span className="news-kicker">The Imagicity Journal</span>
         <h1>Ideas that help brands grow louder.</h1>
@@ -146,7 +143,8 @@ export default function BlogIndex({ posts }) {
           </Link>
         </div>
       </div>
-    </NewsLayout>
+      </div>
+    </Layout>
   );
 }
 
