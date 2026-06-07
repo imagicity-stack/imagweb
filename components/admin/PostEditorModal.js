@@ -62,6 +62,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
   const [error, setError] = useState("");
   const [savedAt, setSavedAt] = useState(null);
   const [activeTab, setActiveTab] = useState("seo");
+  const [categoryOptions, setCategoryOptions] = useState(DEFAULT_CATEGORIES);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -76,6 +77,32 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
     }
   }, [title, slugEdited, currentId]);
 
+  // Load custom categories so the author's own categories are suggested too.
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const token = await getToken();
+        const res = await fetch("/api/admin/categories", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (alive && res.ok && Array.isArray(data.categories)) {
+          const merged = [...new Set([...DEFAULT_CATEGORIES, ...data.categories])].sort((a, b) =>
+            a.localeCompare(b)
+          );
+          setCategoryOptions(merged);
+        }
+      } catch (error) {
+        /* fall back to defaults */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const updateSeo = (field, value) => setSeo((prev) => ({ ...prev, [field]: value }));
 
   const addTags = (incoming) => {
@@ -89,13 +116,32 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
     });
   };
 
+  const commitTagInput = () => {
+    if (tagInput.trim()) {
+      addTags([tagInput]);
+      setTagInput("");
+    }
+  };
+
+  // Splitting on commas lets authors type or paste "a, b, c" and have each
+  // become its own tag automatically.
+  const handleTagChange = (event) => {
+    const value = event.target.value;
+    if (value.includes(",")) {
+      const parts = value.split(",");
+      addTags(parts.slice(0, -1));
+      setTagInput(parts[parts.length - 1].replace(/^\s+/, ""));
+    } else {
+      setTagInput(value);
+    }
+  };
+
   const handleTagKey = (event) => {
-    if (event.key === "Enter" || event.key === ",") {
+    if (event.key === "Enter") {
       event.preventDefault();
-      if (tagInput.trim()) {
-        addTags([tagInput]);
-        setTagInput("");
-      }
+      commitTagInput();
+    } else if (event.key === "Backspace" && !tagInput && tags.length) {
+      setTags((prev) => prev.slice(0, -1));
     }
   };
 
@@ -414,7 +460,7 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
                       placeholder="Choose or type a category"
                     />
                     <datalist id="category-options">
-                      {DEFAULT_CATEGORIES.map((option) => (
+                      {categoryOptions.map((option) => (
                         <option key={option} value={option} />
                       ))}
                     </datalist>
@@ -423,9 +469,10 @@ export default function PostEditorModal({ post, onClose, onSaved }) {
                     <span>Tags</span>
                     <input
                       value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
+                      onChange={handleTagChange}
                       onKeyDown={handleTagKey}
-                      placeholder="Type a tag and press Enter"
+                      onBlur={commitTagInput}
+                      placeholder="Type tags, separated by commas"
                     />
                   </label>
                   {tags.length ? (

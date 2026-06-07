@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import SeoHead from "./SeoHead";
 import SitePopup from "./SitePopup";
+import NewsletterForm from "./NewsletterForm";
 import { SOCIAL_PROFILES } from "../lib/site";
 
 const navLinks = [
@@ -171,6 +172,20 @@ export default function Layout({
 
       <footer className="site-footer">
         <div className="footer-glow" aria-hidden="true" />
+
+        <div className="footer-news">
+          <div className="footer-news-inner">
+            <div className="footer-news-copy">
+              <h3>Never miss a playbook.</h3>
+              <p>
+                Get our latest marketing insights and new articles delivered straight to your
+                inbox. No spam, unsubscribe anytime.
+              </p>
+            </div>
+            <NewsletterForm />
+          </div>
+        </div>
+
         <div className="footer-top">
           <div className="footer-brand">
             <Link href="/" className="brand">
@@ -244,6 +259,10 @@ export default function Layout({
 
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Imagicity. All rights reserved.</span>
+          <nav className="footer-legal" aria-label="Legal">
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Service</Link>
+          </nav>
           <span className="footer-tag">Strategy · Creative · Performance</span>
         </div>
       </footer>
