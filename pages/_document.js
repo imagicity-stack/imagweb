@@ -16,6 +16,7 @@ export default function Document() {
         />
         <link rel="icon" href="/ICONS/SSA.png" type="image/png" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="facebook-domain-verification" content="g60kcuqnyvr8elm72rzi6iconwsxnx" />
       </Head>
       <body>
         <Main />
