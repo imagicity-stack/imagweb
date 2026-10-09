@@ -199,7 +199,8 @@ export default function AboutPage() {
                 <div className="ix-origin-body">
                   <span className="ix-script">where it all started</span>
                   <h3>{FOUNDING_CITY}</h3>
-                  <span className="ix-origin-place">Jharkhand, India · Still home base</span>
+                  <span className="ix-origin-place">Jharkhand, India</span>
+                  <span className="ix-origin-place">Still home base</span>
                 </div>
                 <CurlyArrow className="ix-origin-arrow" size={92} />
               </article>

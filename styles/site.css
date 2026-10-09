@@ -4442,7 +4442,8 @@ html.no-intro .ix-intro {
 
 .ix-contact-grid {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
+  /* minmax(0, …) stops the form's min-content width squeezing the panel. */
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: 36px;
   align-items: start;
 }
@@ -4508,8 +4509,9 @@ a.ix-ci:hover {
 }
 
 .ix-contact-cities {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-top: 22px;
 }
@@ -4540,25 +4542,35 @@ a.ix-ci:hover {
   background: var(--ix-yellow);
 }
 
+/* The chip and caption scale with the tile so nothing collides when the
+   panel is narrow. */
 .ix-contact-cities figure.is-origin svg {
   box-sizing: content-box;
-  margin-bottom: 18px;
-  padding: 10px;
+  width: 42%;
+  height: auto;
+  margin-bottom: 18%;
+  padding: 7%;
   border-radius: 14px;
   background: var(--ix-ink);
 }
 
 .ix-contact-cities figcaption {
   position: absolute;
-  left: 6px;
-  bottom: 6px;
-  padding: 2px 8px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 4px 2px;
+  overflow: hidden;
   background: var(--ix-ink);
   color: var(--ix-yellow);
   font-family: var(--ix-display);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 3.2cqi, 0.8rem);
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .ix-contact-arrow {
@@ -4908,6 +4920,14 @@ a.ix-ci:hover {
 }
 
 @media (max-width: 1080px) {
+  .ix-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ix-contact-panel {
+    position: static;
+  }
+
   .ix-nav,
   .ix-header-cta {
     display: none;
@@ -5192,6 +5212,14 @@ a.ix-ci:hover {
 }
 
 @media (max-width: 620px) {
+  .ix-contact-cities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ix-contact-cities figcaption {
+    font-size: clamp(0.7rem, 4.6cqi, 0.85rem);
+  }
+
   .ix-pillars-grid,
   .ix-process-grid,
   .ix-notes {
