@@ -1,22 +1,21 @@
-import { useEffect } from "react";
 import Script from "next/script";
+import { useRouter } from "next/router";
+import Intro from "../components/Intro";
+import RouteWipe from "../components/RouteWipe";
+import Cursor from "../components/Cursor";
+import Interactions from "../components/Interactions";
 import "../styles/globals.css";
+import "../styles/site.css";
 
 // Google Analytics (gtag.js). Override per-environment with NEXT_PUBLIC_GA_ID.
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-HWCGBP7NVK";
 
+const isBackOffice = (pathname) =>
+  pathname.startsWith("/admin") || pathname.startsWith("/creacity/admin");
+
 export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    const onMove = (event) => {
-      const card = event.target.closest?.(".card");
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
-      card.style.setProperty("--my", `${event.clientY - rect.top}px`);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, []);
+  const router = useRouter();
+  const publicSite = !isBackOffice(router.pathname);
 
   return (
     <>
@@ -34,6 +33,14 @@ export default function App({ Component, pageProps }) {
               gtag('config', '${GA_ID}');
             `}
           </Script>
+        </>
+      ) : null}
+      {publicSite ? (
+        <>
+          <Intro />
+          <RouteWipe />
+          <Cursor />
+          <Interactions />
         </>
       ) : null}
       <Component {...pageProps} />

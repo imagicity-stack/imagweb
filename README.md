@@ -11,6 +11,25 @@ A multi-page Next.js website for Imagicity, a creative marketing agency. The sit
 - Blog (`/blog`) — SEO-optimized, powered by Firebase
 - Contact
 
+## Design system
+
+The public site uses one loud, brand-led UI: cream paper, ink outlines, the
+Imagicity yellow `#FAE80C` and red `#ED2041`, Anton display type and Permanent
+Marker accents. Styles live in `styles/site.css` (scoped to the `.ix` layout);
+`styles/globals.css` keeps the blog, admin and popup styles.
+
+Motion: a first-visit logo opener (`components/Intro.js`), branded page wipes
+between routes (`components/RouteWipe.js`), a cursor halo, magnetic buttons,
+tilt cards, scroll reveals, a pinned horizontal work rail and marquee tapes.
+Everything animates transform/opacity only and respects `prefers-reduced-motion`.
+
+### Imagery
+
+Photos are free Unsplash stock served from their CDN, catalogued in
+`lib/media.js` (`IMG`, `SERVICE_IMAGES`, `CITIES`) and case studies in
+`lib/work.js`. Replace an entry's id with your own shots (or point it at a file
+in `/public`) to swap any image site-wide.
+
 ## Blog + Admin
 
 A state-of-the-art, SEO-first blog with a WordPress-style admin at `/admin`,
