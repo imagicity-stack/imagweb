@@ -1,130 +1,102 @@
-import Link from "next/link";
+import { useState } from "react";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
-
-const projects = [
-  {
-    gradient: "g1",
-    tags: ["Go-To-Market", "Brand", "Web"],
-    title: "Nova Health Launch",
-    body: "Go-to-market strategy, brand identity, and conversion-led landing pages for a digital health startup.",
-    result: "3.1x",
-    metric: "increase in sign-ups"
-  },
-  {
-    gradient: "g2",
-    tags: ["Performance", "CRM", "Content"],
-    title: "Wavelane EdTech Growth",
-    body: "Performance media, CRM automation, and content systems built to scale qualified demand.",
-    result: "2x",
-    metric: "monthly demo requests"
-  },
-  {
-    gradient: "g3",
-    tags: ["Positioning", "Creative"],
-    title: "Orbito Labs Rebrand",
-    body: "Messaging architecture, creative direction, and campaign storytelling for a deep-tech platform.",
-    result: "-34%",
-    metric: "customer acquisition cost"
-  },
-  {
-    gradient: "g4",
-    tags: ["Local", "Social", "Influencer"],
-    title: "Mira Hospitality",
-    body: "Local marketing, influencer activations, and social storytelling to drive city-wide awareness.",
-    result: "5.2M",
-    metric: "organic impressions"
-  },
-  {
-    gradient: "g5",
-    tags: ["Funnel", "Automation"],
-    title: "Lumen Finance",
-    body: "End-to-end lead funnel with WhatsApp automation and AI follow-ups for a fintech launch.",
-    result: "47%",
-    metric: "lead-to-call conversion"
-  },
-  {
-    gradient: "g6",
-    tags: ["Campaign", "Paid Media"],
-    title: "Atlas Academy",
-    body: "Integrated admissions campaign across paid, social, and offline channels for a new cohort.",
-    result: "1.8x",
-    metric: "enrolment vs. target"
-  }
-];
+import Img from "../components/Img";
+import PageHero from "../components/PageHero";
+import Marquee from "../components/Marquee";
+import Testimonials from "../components/Testimonials";
+import CtaBand from "../components/CtaBand";
+import { IMG } from "../lib/media";
+import { projects, projectCategories } from "../lib/work";
 
 export default function PortfolioPage() {
+  const [filter, setFilter] = useState("All");
+  const visible = projects.filter((project) => filter === "All" || project.category === filter);
+
   return (
     <Layout
       title="Work"
       description="A snapshot of the launch campaigns, brand systems, and growth engines Imagicity has built for founders and institutions across categories."
     >
-      <section className="hero-compact">
-        <div className="container">
-          <Reveal>
-            <span className="eyebrow">Selected work</span>
-          </Reveal>
-          <Reveal delay={80}>
-            <h1 className="h-display">
-              Work that moves{" "}
-              <span className="gradient-text">ambitious brands</span>.
-            </h1>
-          </Reveal>
-          <Reveal delay={160}>
-            <p>
-              A snapshot of the launch campaigns, brand systems, and growth
-              engines we've built for founders and institutions across
-              categories.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        label="Selected work"
+        lines={["Work that", "moves"]}
+        script="ambitious brands."
+        text="A snapshot of the launch campaigns, brand systems and growth engines we've built for founders and institutions across categories."
+        badge="Selected work • Real results • "
+        images={[
+          { id: IMG.posterWall, alt: "Street wall covered in campaign posters", caption: "out in the wild" },
+          { id: IMG.hotelLobby, alt: "Hospitality brand space" },
+          { id: IMG.phonePay, alt: "Fintech app payment on a phone" }
+        ]}
+      />
 
-      <section className="section tight">
+      <section className="ix-section ix-work">
         <div className="container">
-          <div className="work-grid">
-            {projects.map((project, index) => (
-              <Reveal
-                key={project.title}
-                delay={(index % 2) * 90}
-                className={`work-card ${project.gradient}`}
+          <div className="ix-filters" role="group" aria-label="Filter projects">
+            {projectCategories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                className={`ix-chip ${filter === category ? "is-on" : ""}`}
+                aria-pressed={filter === category}
+                onClick={() => setFilter(category)}
               >
-                <div className="work-tags">
-                  {project.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
-                </div>
-                <h3>{project.title}</h3>
-                <p>{project.body}</p>
-                <div className="work-result">
-                  <strong>{project.result}</strong>
-                  <span>{project.metric}</span>
-                </div>
+                {category}
+              </button>
+            ))}
+            <span className="ix-filters-count">
+              {String(visible.length).padStart(2, "0")} projects
+            </span>
+          </div>
+
+          <div className="ix-work-grid" key={filter}>
+            {visible.map((project, index) => (
+              <Reveal key={project.slug} delay={(index % 2) * 120} className={`ix-case-wrap is-${index % 2 ? "odd" : "even"}`}>
+                <article className={`ix-case tone-${project.tone}`}>
+                  <div className="ix-case-media" data-tilt>
+                    <Img
+                      id={project.image}
+                      alt={`${project.title} visual`}
+                      width={820}
+                      ratio={index % 3 === 0 ? 1.05 : 0.78}
+                      sizes="(max-width: 760px) 92vw, 46vw"
+                    />
+                    <span className="ix-case-result">
+                      <strong>{project.result}</strong>
+                      <span>{project.metric}</span>
+                    </span>
+                  </div>
+                  <div className="ix-case-body">
+                    <div className="ix-case-tags">
+                      {project.tags.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
+                    </div>
+                    <h3>{project.title}</h3>
+                    <p>{project.body}</p>
+                  </div>
+                </article>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section tight">
-        <div className="container">
-          <Reveal variant="scale" className="cta-band">
-            <h2>Your brand could be the next case study.</h2>
-            <p>
-              Let's build a growth engine worth showing off. Tell us what you're
-              working on.
-            </p>
-            <div className="cta-actions">
-              <Link href="/contact" className="btn btn-glow">
-                Start a project →
-              </Link>
-              <Link href="/services" className="btn btn-outline">
-                Explore services
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <Marquee
+        items={projects.map((project) => `${project.result} ${project.metric}`)}
+        tone="yellow"
+        duration={50}
+      />
+
+      <Testimonials />
+
+      <CtaBand
+        kicker="Your brand could be"
+        title="The next case study."
+        text="Let's build a growth engine worth showing off. Tell us what you're working on."
+        secondary={{ href: "/services", label: "Explore services" }}
+      />
     </Layout>
   );
 }
