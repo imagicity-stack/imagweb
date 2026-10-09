@@ -21,7 +21,12 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Roboto:wght@900&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/ICONS/SSA.png" type="image/png" />
+        {/* Brand mark favicons: ICO for legacy browsers and the default /favicon.ico
+            request, SVG for crisp modern tabs, PNGs for home screens. */}
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#FFF7E8" />
         <meta name="facebook-domain-verification" content="g60kcuqnyvr8elm72rzi6iconwsxnx" />
         <noscript>
