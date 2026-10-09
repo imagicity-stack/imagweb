@@ -40,9 +40,9 @@ export async function getServerSideProps({ res }) {
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    `Founded in ${FOUNDING_PLACE}, Imagicity has since expanded and now partners with founders and marketing teams across ${LOCATIONS.join(
+    `Founded in ${FOUNDING_PLACE}, Imagicity now runs studios in ${LOCATIONS.join(
       ", "
-    )} to build complete marketing systems — not one-off deliverables. We combine go-to-market strategy, brand positioning, creative, content, performance marketing and automation to help ambitious brands build authority, acquire customers and scale with clarity.`,
+    )} and partners with founders and marketing teams to build complete marketing systems — not one-off deliverables. We combine go-to-market strategy, brand positioning, creative, content, performance marketing and automation to help ambitious brands build authority, acquire customers and scale with clarity.`,
     "",
     "## Core pages",
     ...corePages.map(([label, path, note]) => link(label, path, note)),

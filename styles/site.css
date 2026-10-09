@@ -3506,10 +3506,15 @@ html.no-intro .ix-intro {
   rotate: -4deg;
 }
 
+/* On yellow the mark's yellow triangle vanishes, so it sits on an ink chip. */
 .ix-origin-mark {
   position: absolute;
   right: 16px;
   top: 16px;
+  box-sizing: content-box;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--ix-ink);
   animation: ixWobble 5s ease-in-out infinite;
 }
 
@@ -4504,7 +4509,7 @@ a.ix-ci:hover {
 
 .ix-contact-cities {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 22px;
 }
@@ -4525,6 +4530,22 @@ a.ix-ci:hover {
 
 .ix-contact-cities figure:hover .ix-img {
   transform: scale(1.1);
+}
+
+/* Hazaribagh studio tile: brand mark on yellow, sized like the photo tiles. */
+.ix-contact-cities figure.is-origin {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1.2;
+  background: var(--ix-yellow);
+}
+
+.ix-contact-cities figure.is-origin svg {
+  box-sizing: content-box;
+  margin-bottom: 18px;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--ix-ink);
 }
 
 .ix-contact-cities figcaption {

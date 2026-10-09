@@ -5,8 +5,9 @@ import Reveal from "../components/Reveal";
 import Img from "../components/Img";
 import PageHero from "../components/PageHero";
 import { Burst, CurlyArrow, Doodle } from "../components/Doodles";
+import { Mark } from "../components/Logo";
 import { IMG, CITIES } from "../lib/media";
-import { CONTACT_EMAIL, CONTACT_PHONE, LOCATIONS } from "../lib/site";
+import { CONTACT_EMAIL, CONTACT_PHONE, LOCATIONS, FOUNDING_CITY } from "../lib/site";
 
 const initialState = {
   firstName: "",
@@ -181,6 +182,10 @@ export default function ContactPage() {
               })}
             </div>
             <div className="ix-contact-cities">
+              <figure className="is-origin">
+                <Mark size={54} />
+                <figcaption>{FOUNDING_CITY}</figcaption>
+              </figure>
               {CITIES.map((city) => (
                 <figure key={city.name}>
                   <Img id={city.image} alt={`${city.name} skyline`} width={240} ratio={1.2} sizes="120px" />

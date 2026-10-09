@@ -49,7 +49,7 @@ const stats = [
   { to: 120, suffix: "+", label: "Launches & campaigns shipped", icon: "star" },
   { to: 40, suffix: "+", label: "Brands partnered", icon: "heart" },
   { to: 4.8, suffix: "x", decimals: 1, label: "Average return on ad spend", icon: "bolt" },
-  { to: 3, suffix: "", label: "Cities across India & UAE", icon: "smile" }
+  { to: 4, suffix: "", label: "Studios across India & UAE", icon: "smile" }
 ];
 
 const pillars = [
@@ -174,8 +174,8 @@ function Hero() {
           </h1>
           <p className="ix-hero-sub ix-hero-in" style={{ "--hd": "480ms" }}>
             Imagicity blends strategy, storytelling and performance marketing to help startups
-            and institutions launch, grow and scale. Born in Hazaribagh, now making noise from
-            Hyderabad to Dubai.
+            and institutions launch, grow and scale. Born and still based in Hazaribagh, now
+            making noise from Hyderabad to Dubai.
           </p>
           <div className="ix-hero-actions ix-hero-in" style={{ "--hd": "600ms" }}>
             <Link href="/portfolio" className="ix-btn ix-btn-ink" data-magnetic>
@@ -195,8 +195,8 @@ function Hero() {
               <span>avg. return on ads</span>
             </div>
             <div>
-              <strong>3</strong>
-              <span>cities, 2 countries</span>
+              <strong>4</strong>
+              <span>studios, 2 countries</span>
             </div>
           </div>
         </div>

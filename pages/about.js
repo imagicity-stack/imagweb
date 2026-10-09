@@ -43,7 +43,7 @@ const stats = [
   { to: 120, suffix: "+", label: "Projects delivered", icon: "star" },
   { to: 40, suffix: "+", label: "Brands partnered", icon: "heart" },
   { to: 4.8, suffix: "x", decimals: 1, label: "Avg. ROAS", icon: "bolt" },
-  { to: 3, suffix: "", label: "Cities", icon: "smile" }
+  { to: 4, suffix: "", label: "Studios", icon: "smile" }
 ];
 
 const principles = [
@@ -109,9 +109,9 @@ export default function AboutPage() {
             </p>
             <p>
               So we built a different kind of agency, one where positioning, storytelling, paid
-              media and automation are designed as a single growth system. That idea took us from
-              Hazaribagh to Hyderabad, Bengaluru and Dubai. The result is marketing that is both
-              beautiful and brutally effective.
+              media and automation are designed as a single growth system. That idea grew from our
+              Hazaribagh studio into Hyderabad, Bengaluru and Dubai, and Hazaribagh is still home
+              base. The result is marketing that is both beautiful and brutally effective.
             </p>
             <Link href="/portfolio" className="ix-btn ix-btn-ink" data-magnetic>
               See what we&apos;ve built <span className="ix-arrow">→</span>
@@ -199,7 +199,7 @@ export default function AboutPage() {
                 <div className="ix-origin-body">
                   <span className="ix-script">where it all started</span>
                   <h3>{FOUNDING_CITY}</h3>
-                  <span className="ix-origin-place">Jharkhand, India</span>
+                  <span className="ix-origin-place">Jharkhand, India · Still home base</span>
                 </div>
                 <CurlyArrow className="ix-origin-arrow" size={92} />
               </article>
