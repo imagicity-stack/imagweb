@@ -227,8 +227,8 @@ export default function Layout({
                 <Logo size={40} />
               </Link>
               <p>
-                A creative marketing agency helping ambitious brands build authority, win
-                customers and scale with clarity.
+                A creative marketing agency, born in Hazaribagh, helping ambitious brands build
+                authority, win customers and scale with clarity.
               </p>
               {SOCIAL_PROFILES.length ? (
                 <div className="ix-foot-socials">
@@ -310,7 +310,7 @@ export default function Layout({
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms of Service</Link>
           </nav>
-          <span className="ix-foot-made">Made loud in Hyderabad</span>
+          <span className="ix-foot-made">Born loud in Hazaribagh</span>
         </div>
       </footer>
 

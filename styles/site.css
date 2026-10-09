@@ -3466,8 +3466,100 @@ html.no-intro .ix-intro {
 
 .ix-city-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+}
+
+.ix-city-wrap {
+  display: flex;
+}
+
+.ix-city-wrap > .ix-city {
+  width: 100%;
+}
+
+/* Founding city: a designed "day one" card leading the expansion cities.
+   Doubled class so it beats the generic .ix-city rule declared further down. */
+.ix-city.ix-origin {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 280px;
+  padding: 22px;
+  background: var(--ix-yellow);
+  color: var(--ix-ink);
+  box-shadow: 8px 8px 0 var(--ix-red);
+}
+
+.ix-origin-tag {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--ix-ink);
+  color: var(--ix-yellow);
+  font-family: var(--ix-display);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  rotate: -4deg;
+}
+
+/* On yellow the mark's yellow triangle vanishes, so it sits on an ink chip. */
+.ix-origin-mark {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  box-sizing: content-box;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--ix-ink);
+  animation: ixWobble 5s ease-in-out infinite;
+}
+
+.ix-origin-body {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 40px;
+}
+
+.ix-origin-body .ix-script {
+  color: var(--ix-red);
+  font-size: 1.2rem !important;
+}
+
+.ix-origin h3 {
+  margin-top: 4px;
+  font-family: var(--ix-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.ix-origin-place {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ix-origin-arrow {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  rotate: -8deg;
+}
+
+.ix-stack-origin {
+  position: absolute;
+  left: 4%;
+  bottom: 8%;
+  z-index: 4;
+  rotate: -7deg;
 }
 
 .ix-city {
@@ -4350,7 +4442,8 @@ html.no-intro .ix-intro {
 
 .ix-contact-grid {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
+  /* minmax(0, …) stops the form's min-content width squeezing the panel. */
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: 36px;
   align-items: start;
 }
@@ -4416,8 +4509,9 @@ a.ix-ci:hover {
 }
 
 .ix-contact-cities {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-top: 22px;
 }
@@ -4440,17 +4534,43 @@ a.ix-ci:hover {
   transform: scale(1.1);
 }
 
+/* Hazaribagh studio tile: brand mark on yellow, sized like the photo tiles. */
+.ix-contact-cities figure.is-origin {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1.2;
+  background: var(--ix-yellow);
+}
+
+/* The chip and caption scale with the tile so nothing collides when the
+   panel is narrow. */
+.ix-contact-cities figure.is-origin svg {
+  box-sizing: content-box;
+  width: 42%;
+  height: auto;
+  margin-bottom: 18%;
+  padding: 7%;
+  border-radius: 14px;
+  background: var(--ix-ink);
+}
+
 .ix-contact-cities figcaption {
   position: absolute;
-  left: 6px;
-  bottom: 6px;
-  padding: 2px 8px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 4px 2px;
+  overflow: hidden;
   background: var(--ix-ink);
   color: var(--ix-yellow);
   font-family: var(--ix-display);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 3.2cqi, 0.8rem);
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .ix-contact-arrow {
@@ -4800,6 +4920,14 @@ a.ix-ci:hover {
 }
 
 @media (max-width: 1080px) {
+  .ix-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ix-contact-panel {
+    position: static;
+  }
+
   .ix-nav,
   .ix-header-cta {
     display: none;
@@ -4843,7 +4971,8 @@ a.ix-ci:hover {
     padding-left: 0;
   }
 
-  .ix-notes {
+  .ix-notes,
+  .ix-city-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -5083,6 +5212,14 @@ a.ix-ci:hover {
 }
 
 @media (max-width: 620px) {
+  .ix-contact-cities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ix-contact-cities figcaption {
+    font-size: clamp(0.7rem, 4.6cqi, 0.85rem);
+  }
+
   .ix-pillars-grid,
   .ix-process-grid,
   .ix-notes {

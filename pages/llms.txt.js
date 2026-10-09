@@ -10,7 +10,9 @@ import {
   SITE_DESCRIPTION,
   CONTACT_EMAIL,
   CONTACT_PHONE,
-  LOCATIONS
+  LOCATIONS,
+  FOUNDING_CITY,
+  FOUNDING_PLACE
 } from "../lib/site";
 
 export async function getServerSideProps({ res }) {
@@ -34,14 +36,20 @@ export async function getServerSideProps({ res }) {
   const link = (label, path, note) =>
     `- [${label}](${SITE_URL}${path})${note ? `: ${note}` : ""}`;
 
+  // "A, B and C" for prose (the Locations line below keeps the dotted list).
+  const listOf = (items) =>
+    items.length < 2
+      ? items.join("")
+      : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+
   const sections = [
     `# ${SITE_NAME}`,
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    `Imagicity partners with founders and marketing teams across ${LOCATIONS.join(
-      ", "
-    )} to build complete marketing systems — not one-off deliverables. We combine go-to-market strategy, brand positioning, creative, content, performance marketing and automation to help ambitious brands build authority, acquire customers and scale with clarity.`,
+    `Founded in ${FOUNDING_PLACE}, where it is still based, Imagicity also runs studios in ${listOf(
+      LOCATIONS.filter((city) => city !== FOUNDING_CITY)
+    )}. We partner with founders and marketing teams to build complete marketing systems — not one-off deliverables. We combine go-to-market strategy, brand positioning, creative, content, performance marketing and automation to help ambitious brands build authority, acquire customers and scale with clarity.`,
     "",
     "## Core pages",
     ...corePages.map(([label, path, note]) => link(label, path, note)),
@@ -70,6 +78,7 @@ export async function getServerSideProps({ res }) {
     `- Email: ${CONTACT_EMAIL}`,
     `- Phone: ${CONTACT_PHONE}`,
     `- Locations: ${LOCATIONS.join(" · ")}`,
+    `- Founded in: ${FOUNDING_PLACE}`,
     "",
     "## More",
     `- [XML sitemap](${SITE_URL}/sitemap.xml)`,
