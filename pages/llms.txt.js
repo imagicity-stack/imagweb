@@ -10,7 +10,8 @@ import {
   SITE_DESCRIPTION,
   CONTACT_EMAIL,
   CONTACT_PHONE,
-  LOCATIONS
+  LOCATIONS,
+  FOUNDING_PLACE
 } from "../lib/site";
 
 export async function getServerSideProps({ res }) {
@@ -39,7 +40,7 @@ export async function getServerSideProps({ res }) {
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    `Imagicity partners with founders and marketing teams across ${LOCATIONS.join(
+    `Founded in ${FOUNDING_PLACE}, Imagicity has since expanded and now partners with founders and marketing teams across ${LOCATIONS.join(
       ", "
     )} to build complete marketing systems — not one-off deliverables. We combine go-to-market strategy, brand positioning, creative, content, performance marketing and automation to help ambitious brands build authority, acquire customers and scale with clarity.`,
     "",
@@ -70,6 +71,7 @@ export async function getServerSideProps({ res }) {
     `- Email: ${CONTACT_EMAIL}`,
     `- Phone: ${CONTACT_PHONE}`,
     `- Locations: ${LOCATIONS.join(" · ")}`,
+    `- Founded in: ${FOUNDING_PLACE}`,
     "",
     "## More",
     `- [XML sitemap](${SITE_URL}/sitemap.xml)`,

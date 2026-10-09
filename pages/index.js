@@ -174,7 +174,8 @@ function Hero() {
           </h1>
           <p className="ix-hero-sub ix-hero-in" style={{ "--hd": "480ms" }}>
             Imagicity blends strategy, storytelling and performance marketing to help startups
-            and institutions launch, grow and scale. From Hyderabad to Dubai.
+            and institutions launch, grow and scale. Born in Hazaribagh, now making noise from
+            Hyderabad to Dubai.
           </p>
           <div className="ix-hero-actions ix-hero-in" style={{ "--hd": "600ms" }}>
             <Link href="/portfolio" className="ix-btn ix-btn-ink" data-magnetic>
@@ -293,8 +294,9 @@ function AboutBand() {
             Marketing systems, not one-off deliverables.
           </h2>
           <p>
-            Imagicity is a creative marketing agency for founders, institutions and growth teams
-            who want clarity, consistency and measurable momentum.
+            Imagicity started in Hazaribagh, Jharkhand, and grew into a creative marketing agency
+            for founders, institutions and growth teams across India and the UAE who want clarity,
+            consistency and measurable momentum.
           </p>
           <p>
             Most agencies hand you assets. We hand you an engine: strategy, creative, channels and

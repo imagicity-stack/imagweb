@@ -7,8 +7,10 @@ import PageHero from "../components/PageHero";
 import SplitText from "../components/SplitText";
 import Marquee from "../components/Marquee";
 import CtaBand from "../components/CtaBand";
-import { Doodle, Scribble, Smiley, Sparkle } from "../components/Doodles";
+import { CurlyArrow, Doodle, Scribble, Smiley, Sparkle } from "../components/Doodles";
+import { Mark } from "../components/Logo";
 import { IMG, CITIES } from "../lib/media";
+import { FOUNDING_CITY } from "../lib/site";
 
 const values = [
   {
@@ -71,8 +73,8 @@ export default function AboutPage() {
         label="About Imagicity"
         lines={["We build", "marketing"]}
         script="with soul."
-        text="A creative marketing agency built for ambitious founders, institutions and growth teams who want clarity, consistency and measurable momentum."
-        badge="Hyderabad • Bengaluru • Dubai • "
+        text="Born in Hazaribagh, built for ambitious founders, institutions and growth teams who want clarity, consistency and measurable momentum."
+        badge="Est. Hazaribagh • Now everywhere • "
         images={[
           { id: IMG.teamTable, alt: "Team gathered around a planning table", caption: "the crew" },
           { id: IMG.creativeDesk, alt: "Designers working together at a desk" },
@@ -92,6 +94,7 @@ export default function AboutPage() {
               <span className="ix-tape" aria-hidden="true" />
             </figure>
             <Smiley size={86} className="ix-stack-smiley" />
+            <span className="ix-sticker ix-stack-origin">Est. in {FOUNDING_CITY}</span>
           </Reveal>
           <Reveal variant="right" className="ix-split-copy">
             <span className="ix-label">Our story</span>
@@ -100,14 +103,15 @@ export default function AboutPage() {
               <span className="ix-script is-red">marketing theatre.</span>
             </h2>
             <p>
-              We started Imagicity because too many brands were sold pretty decks and disconnected
-              campaigns. Strategy lived in one room, creative in another, and performance somewhere
-              else entirely.
+              Imagicity started in Hazaribagh, Jharkhand. We began because too many brands were
+              sold pretty decks and disconnected campaigns. Strategy lived in one room, creative in
+              another, and performance somewhere else entirely.
             </p>
             <p>
               So we built a different kind of agency, one where positioning, storytelling, paid
-              media and automation are designed as a single growth system. The result is marketing
-              that is both beautiful and brutally effective.
+              media and automation are designed as a single growth system. That idea took us from
+              Hazaribagh to Hyderabad, Bengaluru and Dubai. The result is marketing that is both
+              beautiful and brutally effective.
             </p>
             <Link href="/portfolio" className="ix-btn ix-btn-ink" data-magnetic>
               See what we&apos;ve built <span className="ix-arrow">→</span>
@@ -184,12 +188,24 @@ export default function AboutPage() {
           <Reveal className="ix-head is-center">
             <span className="ix-label">Where we make noise</span>
             <h2 className="ix-h2">
-              Three cities. <span className="ix-script is-red">One loud crew.</span>
+              Started in {FOUNDING_CITY}. <span className="ix-script is-red">Now everywhere.</span>
             </h2>
           </Reveal>
           <div className="ix-city-grid">
+            <Reveal variant="pop" className="ix-city-wrap">
+              <article className="ix-city ix-origin" data-tilt>
+                <span className="ix-origin-tag">Day one</span>
+                <Mark size={92} className="ix-origin-mark" />
+                <div className="ix-origin-body">
+                  <span className="ix-script">where it all started</span>
+                  <h3>{FOUNDING_CITY}</h3>
+                  <span className="ix-origin-place">Jharkhand, India</span>
+                </div>
+                <CurlyArrow className="ix-origin-arrow" size={92} />
+              </article>
+            </Reveal>
             {CITIES.map((city, index) => (
-              <Reveal key={city.name} delay={index * 110} className="ix-city-wrap">
+              <Reveal key={city.name} delay={(index + 1) * 110} className="ix-city-wrap">
                 <article className="ix-city" data-tilt>
                   <Img id={city.image} alt={`${city.name} skyline`} width={560} ratio={1.25} sizes="(max-width: 760px) 90vw, 30vw" />
                   <div className="ix-city-info">
