@@ -4627,6 +4627,16 @@ a.ix-ci:hover {
   translate: -2px -2px;
 }
 
+/* Contact form honeypot: off-screen for people, still in the DOM for bots. */
+.ix-form .ix-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .ix-form-foot {
   grid-column: 1 / -1;
   display: flex;

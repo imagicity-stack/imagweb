@@ -3,6 +3,17 @@ import { useRouter } from "next/router";
 import { SITE_NAME, DEFAULT_OG_IMAGE, absoluteUrl } from "../lib/site";
 import { getIdentitySchema } from "../lib/schema";
 
+// JSON for an inline <script>: escaping <, >, & and the JS line separators
+// means a post title like "</script><script>…" can never close the tag early.
+// The escaped JSON still parses to exactly the same values.
+const safeJsonLd = (value) =>
+  JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+
 // Centralized SEO <head> used by both the marketing Layout and the news-style
 // blog layout so meta tags stay consistent everywhere.
 export default function SeoHead({
@@ -72,7 +83,7 @@ export default function SeoHead({
         <script
           key={`jsonld-${index}`}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(item) }}
         />
       ))}
     </Head>
