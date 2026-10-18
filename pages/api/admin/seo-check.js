@@ -16,16 +16,17 @@ export default async function handler(req, res) {
 
   try {
     await verifyAdminRequest(req);
-    const {
-      title,
-      seoTitle,
-      metaDescription,
-      focusKeyword,
-      content,
-      slug,
-      excerpt,
-      coverImageUrl
-    } = req.body || {};
+    // Bound every field that ends up in the AI prompt.
+    const body = req.body && typeof req.body === "object" ? req.body : {};
+    const clip = (value, max) => (typeof value === "string" ? value.slice(0, max) : "");
+    const title = clip(body.title, 300);
+    const seoTitle = clip(body.seoTitle, 300);
+    const metaDescription = clip(body.metaDescription, 500);
+    const focusKeyword = clip(body.focusKeyword, 120);
+    const content = typeof body.content === "string" ? body.content : "";
+    const slug = clip(body.slug, 200);
+    const excerpt = clip(body.excerpt, 1000);
+    const coverImageUrl = clip(body.coverImageUrl, 2000);
 
     const heuristic = computeSeoScore({
       title,

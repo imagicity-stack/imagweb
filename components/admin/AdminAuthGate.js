@@ -8,6 +8,8 @@ import {
   signInWithEmail,
   signUpWithEmail,
   resetPassword,
+  sendVerificationEmail,
+  reloadCurrentUser,
   createRecaptcha,
   clearRecaptcha,
   sendPhoneOtp,
@@ -287,6 +289,39 @@ export default function AdminAuthGate({ children }) {
   const [status, setStatus] = useState("loading");
   const [user, setUser] = useState(null);
   const [deniedMessage, setDeniedMessage] = useState("");
+  const [verifyNote, setVerifyNote] = useState("");
+  const [verifyBusy, setVerifyBusy] = useState(false);
+
+  const checkSession = async (firebaseUser) => {
+    setStatus("checking");
+    try {
+      const token = await firebaseUser.getIdToken();
+      const response = await fetch("/api/admin/session", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setDeniedMessage(data.error || "You are not authorized for the admin area.");
+        setUser({ email: firebaseUser.email });
+        setStatus(data.code === "email_unverified" ? "verify" : "denied");
+        return;
+      }
+      if (data.claimUpdated) {
+        await firebaseUser.getIdToken(true);
+      }
+      setUser({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || data.user?.name || "",
+        picture: firebaseUser.photoURL || data.user?.picture || ""
+      });
+      setStatus("ready");
+    } catch (error) {
+      setDeniedMessage(friendlyError(error));
+      setStatus("denied");
+    }
+  };
 
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -300,38 +335,37 @@ export default function AdminAuthGate({ children }) {
         setStatus("signedout");
         return;
       }
-      setStatus("checking");
-      try {
-        const token = await firebaseUser.getIdToken();
-        const response = await fetch("/api/admin/session", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) {
-          setDeniedMessage(data.error || "You are not authorized for the admin area.");
-          setUser({ email: firebaseUser.email });
-          setStatus("denied");
-          return;
-        }
-        if (data.claimUpdated) {
-          await firebaseUser.getIdToken(true);
-        }
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          name: firebaseUser.displayName || data.user?.name || "",
-          picture: firebaseUser.photoURL || data.user?.picture || ""
-        });
-        setStatus("ready");
-      } catch (error) {
-        setDeniedMessage(friendlyError(error));
-        setStatus("denied");
-      }
+      await checkSession(firebaseUser);
     });
 
     return () => unsubscribe && unsubscribe();
   }, []);
+
+  const handleSendVerification = async () => {
+    setVerifyBusy(true);
+    setVerifyNote("");
+    try {
+      await sendVerificationEmail();
+      setVerifyNote("Verification email sent. Click the link in it, then come back here.");
+    } catch (error) {
+      setVerifyNote(friendlyError(error));
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
+
+  const handleRecheck = async () => {
+    setVerifyBusy(true);
+    setVerifyNote("");
+    try {
+      const refreshed = await reloadCurrentUser();
+      if (refreshed) await checkSession(refreshed);
+    } catch (error) {
+      setVerifyNote(friendlyError(error));
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
 
   if (status === "config") {
     return (
@@ -360,6 +394,45 @@ export default function AdminAuthGate({ children }) {
         <div className="admin-loader">
           <span className="admin-spinner" />
           <p>{status === "checking" ? "Verifying access…" : "Loading…"}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "verify") {
+    return (
+      <div className="admin-auth-screen">
+        <span className="admin-auth-toggle">
+          <ThemeToggle />
+        </span>
+        <div className="admin-auth-card">
+          <h1>Verify your email</h1>
+          <p className="admin-auth-hint">
+            For security, admin access needs a verified email address. We&apos;ll send a
+            link to <strong>{user?.email}</strong>.
+          </p>
+          <div className="admin-auth-form">
+            <button
+              type="button"
+              className="btn btn-glow"
+              onClick={handleSendVerification}
+              disabled={verifyBusy}
+            >
+              {verifyBusy ? "Please wait…" : "Send verification email"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={handleRecheck}
+              disabled={verifyBusy}
+            >
+              I&apos;ve verified, continue
+            </button>
+          </div>
+          {verifyNote ? <p className="admin-auth-notice">{verifyNote}</p> : null}
+          <button type="button" className="btn btn-outline" onClick={() => signOutUser()}>
+            Sign out
+          </button>
         </div>
       </div>
     );

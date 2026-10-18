@@ -124,6 +124,24 @@ firebase deploy --only firestore:rules,firestore:indexes,storage
 > `--database` flag, e.g.
 > `firebase deploy --only firestore:rules,firestore:indexes --database <your-db-id>`.
 
+> **Creacity (Tips & Tricks) database.** Creacity lives in its own Firestore
+> database (`CREACITY_DATABASE_ID`), and rules are per database, so it needs its
+> own rules too. The site only ever reaches it through the server, so it should
+> deny all browser access: open Firebase console → Firestore → pick the Creacity
+> database → **Rules**, paste the contents of `firestore.creacity.rules`, and
+> **Publish**. Do the same check on the main database with `firestore.rules`.
+
+### Adding and removing admins
+
+- Admin access = a **verified** email listed in `ADMIN_EMAILS`. Google sign-ins
+  are verified automatically; email/password accounts get a "Send verification
+  email" button on `/admin` the first time.
+- To remove an admin, delete their email from `ADMIN_EMAILS` and redeploy. Their
+  API access stops immediately, and the next time their session touches the
+  admin API their `admin` claim is removed and they are signed out everywhere.
+  To cut them off at once (including image uploads), also **disable** the user
+  in Firebase console → Authentication.
+
 ## 9. Run it
 
 ```bash
@@ -133,7 +151,7 @@ npm run dev      # http://localhost:3000
 
 - Visit `/admin`, sign in with an email listed in `ADMIN_EMAILS`.
 - The first successful sign-in grants your account an `admin` custom claim
-  (used by the Storage/Firestore rules).
+  (used by the Storage rules to allow image uploads).
 - Create a post, add a cover image, fill the SEO panel, click **Analyze with
   Gemini**, then **Publish**.
 - The post appears at `/blog/<slug>` and in `/sitemap.xml` within ~60s (ISR), or
@@ -161,6 +179,8 @@ npm run dev      # http://localhost:3000
 - **“Firebase not configured” on /admin** → set the `NEXT_PUBLIC_FIREBASE_*`
   vars and redeploy.
 - **“Access denied” after sign-in** → your email isn’t in `ADMIN_EMAILS`.
+- **“Verify your email”** → click "Send verification email", open the link, then
+  "I've verified, continue".
 - **AI buttons say not configured** → set `GEMINI_API_KEY`.
 - **Blog listing empty but posts exist** → deploy the Firestore composite index
   (step 8).

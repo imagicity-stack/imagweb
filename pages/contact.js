@@ -15,7 +15,9 @@ const initialState = {
   email: "",
   phone: "",
   subject: "",
-  message: ""
+  message: "",
+  // Honeypot: hidden from people, irresistible to bots.
+  website: ""
 };
 
 const contactItems = [
@@ -62,7 +64,8 @@ export default function ContactPage() {
       email: formState.email.trim(),
       phone: formState.phone.trim(),
       subject: formState.subject.trim(),
-      message: formState.message.trim()
+      message: formState.message.trim(),
+      website: formState.website
     };
 
     const contentTypeHeader = `Content${String.fromCharCode(45)}Type`;
@@ -268,6 +271,16 @@ export default function ContactPage() {
                   required
                 />
               </label>
+              <input
+                type="text"
+                name="website"
+                className="ix-hp"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={formState.website}
+                onChange={handleChange}
+              />
               <div className="ix-form-foot">
                 <button
                   type="submit"

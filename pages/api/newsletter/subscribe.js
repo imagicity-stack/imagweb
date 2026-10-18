@@ -4,20 +4,11 @@
 import { subscribeEmail } from "../../../lib/newsletterServer";
 import { sendNewsletterWelcome } from "../../../lib/mailer";
 import { getRequestIp } from "../../../lib/geo";
+import { createRateLimiter } from "../../../lib/rateLimit";
 
-const WINDOW_MS = 60 * 1000;
-const MAX_PER_WINDOW = 5;
-const hits = new Map();
+export const config = { api: { bodyParser: { sizeLimit: "8kb" } } };
 
-function rateLimited(ip) {
-  if (!ip) return false;
-  const now = Date.now();
-  const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > 5000) hits.clear();
-  return recent.length > MAX_PER_WINDOW;
-}
+const isRateLimited = createRateLimiter({ windowMs: 60 * 1000, max: 5 });
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -26,11 +17,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = req.body || {};
+    const body = req.body && typeof req.body === "object" ? req.body : {};
     // Honeypot — bots fill hidden fields; humans never do.
     if (body.website) return res.status(200).json({ ok: true });
 
-    if (rateLimited(getRequestIp(req))) {
+    if (isRateLimited(getRequestIp(req))) {
       return res.status(429).json({ ok: false, error: "Please try again in a moment." });
     }
 
@@ -39,21 +30,24 @@ export default async function handler(req, res) {
     // Send the welcome email only to brand-new subscribers; never block on it.
     if (result.created) {
       try {
-        await sendNewsletterWelcome({ name: result.name, email: result.email });
+        await sendNewsletterWelcome({ email: result.email });
       } catch (mailError) {
         console.error("[newsletter] welcome email failed:", mailError.message);
       }
     }
 
+    // Same answer whether or not the address was already on the list, so the
+    // form can't be used to check who subscribes.
     return res.status(200).json({
       ok: true,
-      message: result.alreadySubscribed
-        ? "You're already on the list — thanks!"
-        : "You're in! Check your inbox for a welcome note."
+      message: "You're on the list! Keep an eye on your inbox."
     });
   } catch (error) {
     const status = error.statusCode || 500;
     if (status >= 500) console.error("[newsletter]", error);
-    return res.status(status).json({ ok: false, error: error.message || "Could not subscribe." });
+    return res.status(status).json({
+      ok: false,
+      error: status < 500 && error.message ? error.message : "Could not subscribe. Please try again."
+    });
   }
 }

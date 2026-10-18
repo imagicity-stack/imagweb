@@ -28,8 +28,8 @@ export default async function handler(req, res) {
 
     const { task } = req.body || {};
     const ctx = req.body?.context || {};
-    const title = String(ctx.title || "").trim();
-    const focusKeyword = String(ctx.focusKeyword || "").trim();
+    const title = String(ctx.title || "").trim().slice(0, 300);
+    const focusKeyword = String(ctx.focusKeyword || "").trim().slice(0, 120);
     const text = stripHtml(ctx.content || "").slice(0, 9000);
     const topic = title || focusKeyword || "the article topic";
 
