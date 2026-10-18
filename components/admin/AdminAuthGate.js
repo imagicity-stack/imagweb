@@ -292,6 +292,7 @@ export default function AdminAuthGate({ children }) {
   const [verifyNote, setVerifyNote] = useState("");
   const [verifyBusy, setVerifyBusy] = useState(false);
 
+  // Resolves to the status it lands on, so callers can react to the outcome.
   const checkSession = async (firebaseUser) => {
     setStatus("checking");
     try {
@@ -302,10 +303,11 @@ export default function AdminAuthGate({ children }) {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
+        const next = data.code === "email_unverified" ? "verify" : "denied";
         setDeniedMessage(data.error || "You are not authorized for the admin area.");
         setUser({ email: firebaseUser.email });
-        setStatus(data.code === "email_unverified" ? "verify" : "denied");
-        return;
+        setStatus(next);
+        return next;
       }
       if (data.claimUpdated) {
         await firebaseUser.getIdToken(true);
@@ -317,9 +319,11 @@ export default function AdminAuthGate({ children }) {
         picture: firebaseUser.photoURL || data.user?.picture || ""
       });
       setStatus("ready");
+      return "ready";
     } catch (error) {
       setDeniedMessage(friendlyError(error));
       setStatus("denied");
+      return "denied";
     }
   };
 
@@ -359,7 +363,9 @@ export default function AdminAuthGate({ children }) {
     setVerifyNote("");
     try {
       const refreshed = await reloadCurrentUser();
-      if (refreshed) await checkSession(refreshed);
+      if (refreshed && (await checkSession(refreshed)) === "verify") {
+        setVerifyNote("Your email isn't verified yet. Open the link we sent, then try again.");
+      }
     } catch (error) {
       setVerifyNote(friendlyError(error));
     } finally {
