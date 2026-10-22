@@ -6,6 +6,7 @@ import Cursor from "../components/Cursor";
 import Interactions from "../components/Interactions";
 import "../styles/globals.css";
 import "../styles/site.css";
+import "../styles/tailwind.css";
 
 // Google Analytics (gtag.js). Override per-environment with NEXT_PUBLIC_GA_ID.
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-HWCGBP7NVK";
