@@ -6,12 +6,24 @@ import PageHero from "../components/PageHero";
 import Marquee from "../components/Marquee";
 import Testimonials from "../components/Testimonials";
 import CtaBand from "../components/CtaBand";
+import WorkTunnel from "../components/WorkTunnel";
 import { IMG } from "../lib/media";
 import { projects, projectCategories } from "../lib/work";
 
 export default function PortfolioPage() {
   const [filter, setFilter] = useState("All");
   const visible = projects.filter((project) => filter === "All" || project.category === filter);
+
+  // A tunnel card links to its case study below. If the current filter hides
+  // that case, show everything first and then scroll to it.
+  const pickProject = (slug, event) => {
+    if (visible.some((project) => project.slug === slug)) return;
+    event.preventDefault();
+    setFilter("All");
+    requestAnimationFrame(() =>
+      document.getElementById(slug)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    );
+  };
 
   return (
     <Layout
@@ -31,6 +43,7 @@ export default function PortfolioPage() {
         ]}
       />
 
+      <WorkTunnel projects={projects} onSelect={pickProject} />
       <section className="ix-section ix-work">
         <div className="container">
           <div className="ix-filters" role="group" aria-label="Filter projects">
@@ -53,7 +66,7 @@ export default function PortfolioPage() {
           <div className="ix-work-grid" key={filter}>
             {visible.map((project, index) => (
               <Reveal key={project.slug} delay={(index % 2) * 120} className={`ix-case-wrap is-${index % 2 ? "odd" : "even"}`}>
-                <article className={`ix-case tone-${project.tone}`}>
+                <article id={project.slug} className={`ix-case tone-${project.tone}`}>
                   <div className="ix-case-media" data-tilt>
                     <Img
                       id={project.image}

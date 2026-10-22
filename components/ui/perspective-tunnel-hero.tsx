@@ -2,52 +2,44 @@
 
 import {
     motion,
-    useTransform,
-    useReducedMotion,
+    useInView,
     useMotionValue,
+    useReducedMotion,
+    useScroll,
     useSpring,
+    useTransform,
     MotionValue,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-const IMAGES = [
-    { src: "https://cdn.21st.dev/assets/mirror/c3/c3fbd2afa140223999a441b32ed986f61d473930002708df805a81532a326aac.jpg", title: "Chroma I" },
-    { src: "https://cdn.21st.dev/assets/mirror/9d/9d8b2f675a5814476ada3736ce439bcda23c5c389e0ebf9b25d8a0c09f3bbcfe.jpg", title: "Prism III" },
-    { src: "https://cdn.21st.dev/assets/mirror/8b/8bb738bf2f00d7f7ed3c3ec034adb9938ad38f4be4ac191d632a6a11ad525574.jpg", title: "Ether IV" },
-    { src: "https://cdn.21st.dev/assets/mirror/ac/ac5ac700b188d7ef16ee9dab868098b59f15c440db3f71d4e8c03262a3287577.jpg", title: "Quantum V" },
-    { src: "https://cdn.21st.dev/assets/mirror/ef/ef25eff6ce655fba459b3b7e7711524dc92499aa18f6c7dbea9a0fcc56a8f908.jpg", title: "Nebula VI" },
-    { src: "https://cdn.21st.dev/assets/mirror/f2/f28b370a5dcbf76240f1504579c4b05fc0ff0bb990a42aff8dc2f73a5dc46072.jpg", title: "Cyber VII" },
-    { src: "https://cdn.21st.dev/assets/mirror/f2/f26a1eac85704dda924820392dedfb72d51d8261d35354f83b35d683617295f3.jpg", title: "Flux VIII" },
-    { src: "https://cdn.21st.dev/assets/mirror/77/7755d23eaaa0aa5b403343f44afa7a29b2d06d3065fe54c602b14ba01d00f2aa.jpg", title: "Aether IX" },
-    { src: "https://cdn.21st.dev/assets/mirror/65/657317761fe9058a1d43711b13c543a71eb5199b7a5d9abf4c28479674e39cf7.jpg", title: "Chroma X" },
-];
+// 3D "fly through" gallery: cards rush out of the depth of the screen toward
+// the viewer while the page scrolls. The section is `length` screens tall and
+// its stage stays pinned (sticky) meanwhile, so it runs on normal page scroll:
+// wheel, trackpad, touch, keyboard and scrollbar all work and nothing is ever
+// trapped. Visitors who ask for reduced motion get a flat, static layout.
 
-
-interface TunnelCardData {
-    item: { src: string; title: string };
+interface TunnelLayout {
     angleCos: number;
     angleSin: number;
     radiusFactorX: number;
     radiusFactorY: number;
     rotationZ: number;
-    index: number;
 }
 
-const TUNNEL_CARDS: TunnelCardData[] = IMAGES.map((item, i) => {
-    const goldenAngle = i * 137.5 * (Math.PI / 180);
-    const radiusFactorX = 0.28 + (i % 3) * 0.08;
-    const radiusFactorY = 0.26 + (i % 2) * 0.09;
-
-    return {
-        item,
-        angleCos: Math.cos(goldenAngle),
-        angleSin: Math.sin(goldenAngle),
-        radiusFactorX,
-        radiusFactorY,
-        rotationZ: (i % 2 === 0 ? 1 : -1) * (3 + (i % 5) * 2),
-        index: i,
-    };
-});
+// Golden-angle spiral, so any number of cards spreads evenly around the centre.
+function buildLayout(count: number): TunnelLayout[] {
+    return Array.from({ length: count }, (_, i) => {
+        const goldenAngle = i * 137.5 * (Math.PI / 180);
+        return {
+            angleCos: Math.cos(goldenAngle),
+            angleSin: Math.sin(goldenAngle),
+            radiusFactorX: 0.28 + (i % 3) * 0.08,
+            radiusFactorY: 0.26 + (i % 2) * 0.09,
+            rotationZ: (i % 2 === 0 ? 1 : -1) * (3 + (i % 5) * 2),
+        };
+    });
+}
 
 const SPRING_CONFIG = { stiffness: 60, damping: 25, mass: 0.5 };
 
@@ -77,16 +69,18 @@ function useCameraParallax(enabled: boolean) {
 }
 
 interface TunnelCardProps {
-    card: TunnelCardData;
+    layout: TunnelLayout;
+    index: number;
+    total: number;
     progress: MotionValue<number>;
     pointer: { x: MotionValue<number>; y: MotionValue<number> };
-    total: number;
     stage: StageDimensions;
+    children: ReactNode;
 }
 
-function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) {
+function TunnelCard({ layout, index, total, progress, pointer, stage, children }: TunnelCardProps) {
     const staggerSpan = 0.55;
-    const start = (card.index / total) * (1 - staggerSpan);
+    const start = (index / total) * (1 - staggerSpan);
     const end = start + staggerSpan;
 
     const localProgress = useTransform(progress, [start, end], [0, 1]);
@@ -96,13 +90,15 @@ function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) 
     const z = useTransform(localProgress, [0, 1], [farZ, nearZ]);
 
     const opacity = useTransform(localProgress, [0, 0.18, 0.82, 0.98], [0, 1, 1, 0]);
+    // Fully faded cards are hidden, so they can't catch clicks or cost paint.
+    const visibility = useTransform(opacity, (o) => (o < 0.01 ? "hidden" : "visible"));
 
     const cardWidth = stage.isMobile
         ? Math.max(130, Math.min(180, stage.width * 0.38))
         : Math.max(180, Math.min(270, stage.width * 0.18));
 
-    const baseX = card.angleCos * (stage.width * card.radiusFactorX);
-    const baseY = card.angleSin * (stage.height * card.radiusFactorY);
+    const baseX = layout.angleCos * (stage.width * layout.radiusFactorX);
+    const baseY = layout.angleSin * (stage.height * layout.radiusFactorY);
     const panStrength = stage.isMobile ? 20 : 45;
 
     const transform = useTransform(
@@ -110,7 +106,7 @@ function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) 
         ([currZ, px, py]: number[]) => {
             const offsetX = baseX - px * panStrength;
             const offsetY = baseY - py * panStrength;
-            return `translate3d(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px), ${currZ}px) rotateZ(${card.rotationZ}deg)`;
+            return `translate3d(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px), ${currZ}px) rotateZ(${layout.rotationZ}deg)`;
         }
     );
 
@@ -120,30 +116,49 @@ function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) 
                 width: cardWidth,
                 transform,
                 opacity,
-                zIndex: card.index + 1,
+                visibility,
+                zIndex: index + 1,
             }}
-            className="pointer-events-auto absolute left-1/2 top-1/2 aspect-[4/5] will-change-transform select-none cursor-pointer"
+            className="pointer-events-auto absolute left-1/2 top-1/2 aspect-[4/5] will-change-transform select-none"
         >
-            <div className="group relative h-full w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-2xl shadow-neutral-950/20 dark:shadow-black/90 ring-1 ring-black/10 dark:ring-white/15 transition-all duration-500 hover:ring-indigo-500/70 dark:hover:ring-indigo-400/70 hover:shadow-indigo-500/25">
-                <img
-                    src={card.item.src}
-                    alt={card.item.title}
-                    draggable={false}
-                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-4 sm:p-5">
-                    <span className="text-xs sm:text-sm font-mono tracking-widest uppercase text-white/95 drop-shadow-md">
-                        {card.item.title}
-                    </span>
-                </div>
-            </div>
+            {children}
         </motion.div>
     );
 }
 
-export default function PerspectiveTunnelHero() {
-    const containerRef = useRef<HTMLDivElement>(null);
+export interface PerspectiveTunnelHeroProps<T> {
+    items: readonly T[];
+    renderCard: (item: T, index: number) => ReactNode;
+    getKey: (item: T, index: number) => string;
+    /**
+     * Backdrop and centre content, drawn behind the cards. Gets the smoothed
+     * 0..1 scroll progress, and whether the tunnel is animated at all.
+     */
+    children?: (progress: MotionValue<number>, state: { animated: boolean }) => ReactNode;
+    /** Scroll distance of the section, in screen heights. */
+    length?: number;
+    className?: string;
+}
+
+export default function PerspectiveTunnelHero<T>({
+    items,
+    renderCard,
+    getKey,
+    children,
+    length = 3,
+    className,
+}: PerspectiveTunnelHeroProps<T>) {
+    const trackRef = useRef<HTMLElement>(null);
+    const stageRef = useRef<HTMLDivElement>(null);
     const reduce = useReducedMotion();
+    const inView = useInView(trackRef);
+    const layout = useMemo(() => buildLayout(items.length), [items.length]);
+
+    // The server always renders the animated version; reduced-motion visitors
+    // switch to the static one after mount, which keeps hydration consistent.
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+    const animated = !(mounted && reduce);
 
     const [stage, setStage] = useState<StageDimensions>({
         width: 1440,
@@ -151,10 +166,10 @@ export default function PerspectiveTunnelHero() {
         isMobile: false,
     });
 
-    // Sized from the hero itself rather than the window, so it also fits a
-    // narrower section or card instead of overflowing it.
+    // Sized from the stage itself rather than the window, so it also fits a
+    // narrower column instead of overflowing it.
     useEffect(() => {
-        const el = containerRef.current;
+        const el = stageRef.current;
         if (!el) return;
 
         const observer = new ResizeObserver(([entry]) => {
@@ -163,122 +178,79 @@ export default function PerspectiveTunnelHero() {
         });
         observer.observe(el);
         return () => observer.disconnect();
-    }, []);
+    }, [animated]);
 
-    // Raw motion value controlled directly by mouse wheel / trackpad / touch
-    const rawProgress = useMotionValue(0);
-    const smoothProgress = useSpring(rawProgress, {
+    // 0 when the section's top enters the bottom of the screen, 1 when its end
+    // scrolls past: the tunnel is already moving as it arrives, then pins.
+    const { scrollYProgress } = useScroll({
+        target: trackRef,
+        offset: ["start end", "end end"],
+    });
+    const progress = useSpring(scrollYProgress, {
         stiffness: 80,
         damping: 30,
         restDelta: 0.0001,
     });
+    const still = useMotionValue(0.5);
 
-    // Wheel and swipe fly through the tunnel while there is tunnel left to
-    // travel. At either end the gesture is handed back to the page, so the
-    // hero never traps the visitor's scroll.
-    useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-
-        const travel = (delta: number, e: Event) => {
-            const current = rawProgress.get();
-            const next = Math.min(1, Math.max(0, current + delta));
-            if (next === current) return;
-            e.preventDefault();
-            rawProgress.set(next);
-        };
-
-        const handleWheel = (e: WheelEvent) => {
-            travel(e.deltaY * 0.0008, e); // Adjust speed of tunnel travel here
-        };
-
-        let lastTouchY: number | null = null;
-        const handleTouchStart = (e: TouchEvent) => {
-            lastTouchY = e.touches[0]?.clientY ?? null;
-        };
-        const handleTouchMove = (e: TouchEvent) => {
-            const y = e.touches[0]?.clientY;
-            if (lastTouchY === null || y === undefined) return;
-            travel((lastTouchY - y) * 0.002, e);
-            lastTouchY = y;
-        };
-
-        el.addEventListener("wheel", handleWheel, { passive: false });
-        el.addEventListener("touchstart", handleTouchStart, { passive: true });
-        el.addEventListener("touchmove", handleTouchMove, { passive: false });
-        return () => {
-            el.removeEventListener("wheel", handleWheel);
-            el.removeEventListener("touchstart", handleTouchStart);
-            el.removeEventListener("touchmove", handleTouchMove);
-        };
-    }, [rawProgress]);
-
-    const pointer = useCameraParallax(!reduce);
-
-    const titleScale = useTransform(smoothProgress, [0, 0.5, 1], [0.7, 1, 1.35]);
-    const titleOpacity = useTransform(smoothProgress, [0, 0.12, 0.85, 1], [0.25, 1, 1, 0]);
-    const promptOpacity = useTransform(smoothProgress, [0, 0.12], [1, 0]);
+    const pointer = useCameraParallax(animated && inView);
 
     return (
-        <div
-            ref={containerRef}
-            className="relative h-[100svh] w-full overflow-hidden bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white select-none flex items-center justify-center"
-            style={{
-                perspective: stage.isMobile ? "900px" : "1200px",
-                transformStyle: "preserve-3d",
-            }}
+        <section
+            ref={trackRef}
+            className={cn("relative", className)}
+            style={animated ? { height: `${length * 100}svh` } : undefined}
         >
-            {/* Immersive Background Grid & Glow */}
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e1b4b_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_60%,transparent_100%)] opacity-70 dark:opacity-65" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.2)_0%,transparent_75%)]" />
+            {animated ? (
+                <div
+                    ref={stageRef}
+                    className="sticky top-0 flex h-svh w-full items-center justify-center overflow-hidden"
+                    style={{
+                        perspective: stage.isMobile ? "900px" : "1200px",
+                        transformStyle: "preserve-3d",
+                    }}
+                >
+                    {children?.(progress, { animated })}
 
-            {/* Depth Ring Guides */}
-            <div className="pointer-events-none absolute h-[48vmin] w-[48vmin] rounded-full border border-indigo-500/15 dark:border-indigo-400/10" />
-            <div className="pointer-events-none absolute h-[76vmin] w-[76vmin] rounded-full border border-dashed border-neutral-300/60 dark:border-white/10" />
-
-            {/* Central Anchor Typography */}
-            <motion.div
-                style={{ scale: titleScale, opacity: titleOpacity }}
-                className="pointer-events-none z-0 flex flex-col items-center text-center px-6 max-w-xl"
-            >
-                <p className="text-xs font-mono uppercase tracking-[0.4em] text-indigo-600 dark:text-indigo-400 mb-4">
-                    Warp Drive Sequence
-                </p>
-                <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter leading-[0.9] bg-gradient-to-b from-neutral-950 via-neutral-800 to-neutral-400 dark:from-white dark:via-white dark:to-white/40 bg-clip-text text-transparent">
-                    INTO THE
-                    <br />
-                    ETHER.
-                </h1>
-                <p className="mt-4 max-w-[36ch] text-sm sm:text-base font-light text-neutral-600 dark:text-neutral-400">
-                    Scroll your trackpad or mouse wheel to fly through the spatial 3D corridor.
-                </p>
-            </motion.div>
-
-            {/* Scroll Prompt */}
-            <motion.div
-                style={{ opacity: promptOpacity }}
-                className="pointer-events-none absolute bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-mono uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400"
-            >
-                <span>Scroll to Explore</span>
-                <div className="h-6 w-px bg-gradient-to-b from-indigo-500 to-transparent" />
-            </motion.div>
-
-            {/* 3D Z-Space Plane */}
-            <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ transformStyle: "preserve-3d" }}
-            >
-                {TUNNEL_CARDS.map((card, i) => (
-                    <TunnelCard
-                        key={i}
-                        card={card}
-                        progress={smoothProgress}
-                        pointer={pointer}
-                        total={TUNNEL_CARDS.length}
-                        stage={stage}
-                    />
-                ))}
-            </div>
-        </div>
+                    {/* 3D Z-Space Plane */}
+                    <div
+                        className="pointer-events-none absolute inset-0"
+                        style={{ transformStyle: "preserve-3d" }}
+                    >
+                        {items.map((item, i) => (
+                            <TunnelCard
+                                key={getKey(item, i)}
+                                layout={layout[i]}
+                                index={i}
+                                total={items.length}
+                                progress={progress}
+                                pointer={pointer}
+                                stage={stage}
+                            >
+                                {renderCard(item, i)}
+                            </TunnelCard>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <div
+                    ref={stageRef}
+                    className="relative flex flex-col items-center gap-12 overflow-hidden px-4 py-24 sm:py-32"
+                >
+                    {children?.(still, { animated })}
+                    <div className="relative z-10 flex max-w-5xl flex-wrap justify-center gap-6">
+                        {items.map((item, i) => (
+                            <div
+                                key={getKey(item, i)}
+                                className="aspect-[4/5] w-[min(42vw,220px)]"
+                                style={{ rotate: `${layout[i].rotationZ / 2}deg` }}
+                            >
+                                {renderCard(item, i)}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </section>
     );
 }

@@ -23,3 +23,15 @@
 /* shadcn convention: `dark:` styles apply under a `.dark` ancestor. The public
    site is light-only, so nothing turns dark unless a page opts in. */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Imagicity brand tokens (bg-ix-ink, text-ix-yellow, font-ix-display, ...),
+   read from the site's own --ix-* variables in site.css: one source of truth. */
+@theme inline {
+  --color-ix-paper: var(--ix-paper);
+  --color-ix-ink: var(--ix-ink);
+  --color-ix-ink-2: var(--ix-ink-2);
+  --color-ix-yellow: var(--ix-yellow);
+  --color-ix-red: var(--ix-red);
+  --font-ix-display: var(--ix-display);
+  --font-ix-script: var(--ix-script);
+}
