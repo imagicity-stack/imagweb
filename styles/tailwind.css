@@ -1,0 +1,37 @@
+/*
+ * Tailwind CSS v4 for the TypeScript / shadcn side of the codebase
+ * (components/ui and other .ts/.tsx files). It sits beside the hand-written
+ * site CSS without changing a single existing page:
+ *  - no Preflight: globals.css already resets the basics, and Preflight would
+ *    restyle every existing page;
+ *  - only .ts/.tsx files are scanned, so class names in the older .js
+ *    components (container, btn, sr-only, ...) never turn into utilities;
+ *  - utilities are unlayered, because the site's unlayered
+ *    `* { margin: 0; padding: 0 }` reset would beat every layered utility;
+ *  - theme values are inlined, so Tailwind's --radius-sm / --font-serif never
+ *    meet the site's own variables of the same name.
+ * components.json sets cssVariables: false for the same reason: shadcn's
+ * --muted / --accent / --radius tokens would overwrite the site's.
+ */
+@import "tailwindcss/theme.css" theme(inline);
+@import "tailwindcss/utilities.css" source(none);
+
+@source "../components/**/*.{ts,tsx}";
+@source "../pages/**/*.{ts,tsx}";
+@source "../lib/**/*.{ts,tsx}";
+
+/* shadcn convention: `dark:` styles apply under a `.dark` ancestor. The public
+   site is light-only, so nothing turns dark unless a page opts in. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Imagicity brand tokens (bg-ix-ink, text-ix-yellow, font-ix-display, ...),
+   read from the site's own --ix-* variables in site.css: one source of truth. */
+@theme inline {
+  --color-ix-paper: var(--ix-paper);
+  --color-ix-ink: var(--ix-ink);
+  --color-ix-ink-2: var(--ix-ink-2);
+  --color-ix-yellow: var(--ix-yellow);
+  --color-ix-red: var(--ix-red);
+  --font-ix-display: var(--ix-display);
+  --font-ix-script: var(--ix-script);
+}

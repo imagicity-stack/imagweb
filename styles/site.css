@@ -4205,6 +4205,11 @@ html.no-intro .ix-intro {
   rotate: -3deg;
 }
 
+/* Room for the fixed header when a tunnel card jumps to a case study. */
+.ix-case {
+  scroll-margin-top: 110px;
+}
+
 .ix-work-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
